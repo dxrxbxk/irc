@@ -21,7 +21,7 @@ Connexion::~Connexion() {
 	//std::cout << "Connexion destructor called : " << sock_fd << std::endl;
 }
 
-Connexion::Connexion(int fd, std::map<int, Connexion> &ref) 
+Connexion::Connexion(int fd, std::map<int, Connexion> &ref)
 : sock_fd(fd), buffer(), m_ptr(&ref) {
 	//std::cout << "Connexion fd constructor called, fd = " << fd << std::endl;
 }
@@ -70,16 +70,29 @@ l_str	Connexion::checkCrlf(void) {
 	return l_msg;
 }
 
+
 void	Connexion::notify(void) {
 	l_str		l_msg;
 
 	readInput();
 	l_msg = checkCrlf();
-	for (l_str::iterator i = l_msg.begin(); i != l_msg.end(); ++i) {
-		PRINT("message " + *i);
-		
+	for (l_str::const_iterator i = l_msg.begin(); i != l_msg.end(); ++i) {
+
 		try {
+			// parse raw message
 			Message msg = Parser::parse(*i);
+			msg.print();
+
+			Command* cmd = CommandFactory::create(*this, msg);
+
+			if (cmd == NULL)
+				std::cout << "Command not found" << std::endl;
+			else {
+				if (cmd->evaluate() == true)
+					cmd->execute();
+				delete cmd;
+			}
+
 		} catch (const std::exception& e) {
 			std::cerr << "Parsing error" << e.what() << std::endl;
 		}

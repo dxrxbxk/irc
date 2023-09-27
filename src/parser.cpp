@@ -12,19 +12,56 @@
 
 #include "parser.hpp"
 
-void	Parser::increment(void) { ++i; }
 
-void	Parser::reset(void) { i = 0; }
+const char* state_debug[] = {
+	"DEFAULT",
+	"PREFIX",
+	"COMMAND",
+	"PARAMS",
+	"MIDDLE",
+	"TRAILING",
+	"COMMAND_END",
+	"ERROR",
+	"END"
+};
 
+const char* chartype_debug[] = {
+	"COLON",
+	"LF",
+	"CR",
+	"SP",
+	"OTHER",
+	"CTL",
+	"NUL",
+};
+
+const char* action_debug[] = {
+	"SKIP",
+	"INCREMENT",
+	"RESET",
+	"ADD_PREFIX",
+	"ADD_COMMAND",
+	"ADD_MIDDLE",
+	"ADD_TRAILING",
+	"P_ERROR"
+};
 void 	Parser::debug(void) {
 	std::cout << "current char: ";
     std::cout << std::hex << static_cast<uint8_t>(*msg);
 
+
     e_chartype type = c_table[static_cast<uint8_t>(*msg)];
-    std::cout << " chartype: \x1b[32m" << c_table[type] << "\x1b[0m";
-    std::cout << " state: \x1b[33m" << tr.state << "\x1b[0m";
-    std::cout << " action: \x1b[34m" << a_table[tr.action] << "\x1b[0m\n" << std::endl;
+    std::cout << " chartype: \x1b[32m" << chartype_debug[type] << "\x1b[0m";
+    std::cout << " state: \x1b[33m" << state_debug[tr.state] << "\x1b[0m";
+    std::cout << " action: \x1b[34m" << action_debug[tr.action] << "\x1b[0m" << std::endl;
 }
+
+
+
+void	Parser::increment(void) { ++i; }
+
+void	Parser::reset(void) { i = 0; }
+
 
 void	Parser::addPrefix(void) {
 	std::string	prefix(msg - i, i);
@@ -57,9 +94,34 @@ void	Parser::pError(void) {
 	PRINT("error");
 }
 
+
+void debug_raw(const char* msg) {
+
+	std::cout << "\n\n\n\x1b[32mRAW: \x1b[0m";
+	while (*msg) {
+		if (*msg < 32) {
+			if (*msg == '\r')
+				std::cout << " CR ";
+			else if (*msg == '\n')
+				std::cout << " LF ";
+			else
+				std::cout << std::hex << static_cast<uint8_t>(*msg);
+		}
+		else {
+			std::cout << *msg;
+		}
+		++msg;
+	}
+	std::cout << std::endl<< std::endl;
+}
+
+
 void	Parser::run(void) {
+
+	debug_raw(msg);
+
 	while (tr.state != ERROR && tr.state != END) {
-		//  			debug();
+		// debug();
 		e_chartype type = c_table[static_cast<uint8_t>(*msg)];
 		tr = t_table[tr.state][type];
 		(this->*a_table[tr.action])();
@@ -67,8 +129,8 @@ void	Parser::run(void) {
 	}
 }
 
-Parser::action_p	Parser::a_table[Parser::A_SIZE] = { 
-	&Parser::skip, 
+Parser::action_p	Parser::a_table[Parser::A_SIZE] = {
+	&Parser::skip,
 	&Parser::increment,
 	&Parser::reset,
 	&Parser::addPrefix,
@@ -80,7 +142,7 @@ Parser::action_p	Parser::a_table[Parser::A_SIZE] = {
 
 Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 	/* DEFAULT */
-	{ 	
+	{
 		{ PREFIX, INCREMENT }, /* COLON */
 		{ ERROR, P_ERROR }, /* LF */
 		{ COMMAND_END, INCREMENT }, /* CR */
@@ -91,7 +153,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 
 	},
 	/* PREFIX */
-	{ 	
+	{
 		{ ERROR, P_ERROR }, /* COLON */
 		{ ERROR, P_ERROR }, /* LF */
 		{ ERROR,  P_ERROR }, /* CR */
@@ -102,10 +164,10 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 
 	},
 	/* COMMAND */
-	{ 	
+	{
 		{ ERROR, P_ERROR }, /* COLON */
-		{ COMMAND_END, ADD_COMMAND }, /* LF */
-		{ ERROR, P_ERROR }, /* CR */
+		{ ERROR, P_ERROR }, /* LF */
+		{ COMMAND_END, ADD_COMMAND }, /* CR */
 		{ PARAMS, ADD_COMMAND }, /* SP */
 		{ COMMAND, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
@@ -113,18 +175,18 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 
 	},
 	/* PARAMS */
-	{ 	
+	{
 		{ TRAILING, SKIP }, /* COLON */
 		{ ERROR, P_ERROR }, /* LF */
 		{ ERROR, P_ERROR }, /* CR */
-		{ ERROR, P_ERROR }, /* SP */ 
+		{ ERROR, P_ERROR }, /* SP */
 		{ MIDDLE, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
 		{ ERROR, P_ERROR }, /* NUL */
 
 	},
 	/* MIDDLE */
-	{ 	
+	{
 		{ MIDDLE, INCREMENT }, /* COLON */
 		{ ERROR, P_ERROR }, /* LF */
 		{ COMMAND_END, ADD_MIDDLE }, /* CR */
@@ -135,7 +197,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 
 	},
 	/* TRAILING */
-	{ 	
+	{
 		{ TRAILING, INCREMENT }, /* COLON */
 		{ ERROR, P_ERROR }, /* LF */
 		{ COMMAND_END, ADD_TRAILING }, /* CR */
@@ -146,7 +208,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 
 	},
 	/* COMMAND_END */
-	{ 	
+	{
 		{ ERROR, P_ERROR }, /* COLON */
 		{ END, SKIP }, /* LF */
 		{ ERROR, P_ERROR }, /* CR */
@@ -191,3 +253,6 @@ const Parser::e_chartype	Parser::c_table[128] = {
     OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
     OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, CTL
 };
+
+
+

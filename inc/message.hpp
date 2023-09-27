@@ -14,6 +14,7 @@
 # define MESSAGE_HPP
 
 # include "types.hpp"
+# include <iostream>
 
 class Message {
 	public:
@@ -25,10 +26,15 @@ class Message {
 		void	addMiddle(std::string& middle);
 		void	addTrailing(std::string& trailing);
 
+		void	print(void) const;
+
+		bool	has_command(void) const;
+		const std::string& get_command(void) const;
+
 	private:
 		std::string	_prefix;
 		std::string	_command;
-		
+
 		l_str		_middle;
 		std::string	_trailing;
 };

@@ -34,12 +34,11 @@ class Parser {
 		void					run(void);
 		const char				*msg;
 		std::size_t				i;
-		Message					request;
+		Message					&request;
 
 		enum 					e_state {
 			DEFAULT,
 			PREFIX,
-			PREFIX_VALUE,
 			COMMAND,
 			PARAMS,
 			MIDDLE,

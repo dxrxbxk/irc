@@ -25,6 +25,8 @@
 # include "parser.hpp"
 # include "types.hpp"
 
+# include "command_factory.hpp"
+
 class Connexion : public notification {
 	public:
 		Connexion();
@@ -35,7 +37,7 @@ class Connexion : public notification {
 
 		void						notify(void);
 		int							getFd(void);
-		void						setFd(int fd); 
+		void						setFd(int fd);
 		void						disconnect(void);
 
 	private:
@@ -46,5 +48,6 @@ class Connexion : public notification {
 		void						readInput(void);
 		l_str						checkCrlf(void);
 };
+
 
 #endif
