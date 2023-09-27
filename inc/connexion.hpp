@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:28 by diroyer           #+#    #+#             */
-/*   Updated: 2023/09/25 14:43:08 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/09/27 16:53:13 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,7 @@
 # include "utils.hpp"
 # include "sharedfd.hpp"
 # include "parser.hpp"
+# include "types.hpp"
 
 class Connexion : public notification {
 	public:
@@ -42,6 +43,8 @@ class Connexion : public notification {
 		std::string					buffer;
 		std::map<int, Connexion>	*m_ptr;
 
+		void						readInput(void);
+		l_str						checkCrlf(void);
 };
 
 #endif

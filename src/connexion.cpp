@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:30 by diroyer           #+#    #+#             */
-/*   Updated: 2023/09/25 14:47:04 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/09/27 16:47:30 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,21 +40,49 @@ int		Connexion::getFd(void) {
 	return sock_fd;
 }
 
-void	Connexion::notify(void) {
-	char		rec_buf[BUFFER_SIZE + 1];
+std::string getResponse(void) {
+	std::string response = ":localhost CAP * LS :";
+	std::string cap = "cap1 cap2 cap3";
+	std::string crlf = "\r\n";
+
+	return response + cap + crlf;
+}
+
+void	Connexion::readInput(void) {
 	ssize_t		rec_len;
-	std::string ret_buf;
-	std::string send_buf;
- 
-	rec_len = recv(sock_fd, rec_buf, BUFFER_SIZE, 0);
+	char		read_buf[BUFFER_SIZE];
+
+	rec_len = recv(sock_fd, read_buf, BUFFER_SIZE, 0);
 	if (rec_len == -1)
 		ERROR(handleSysError("recv"));
 	else {
-		rec_buf[rec_len] = '\0';
-		send_buf = "Hello";
+		buffer.append(read_buf, rec_len);
+	}
+}
+
+l_str	Connexion::checkCrlf(void) {
+	std::string::size_type	pos;
+	l_str					l_msg;
+	while ((pos = buffer.find("\r\n")) != std::string::npos) {
+		l_msg.push_back(buffer.substr(0, pos + 2));
+		buffer.erase(0, pos + 2);
+	}
+	return l_msg;
+}
+
+void	Connexion::notify(void) {
+	l_str		l_msg;
+
+	readInput();
+	l_msg = checkCrlf();
+	for (l_str::iterator i = l_msg.begin(); i != l_msg.end(); ++i) {
+		PRINT("message " + *i);
 		
-		if (send(this->sock_fd, send_buf.c_str(), send_buf.size(), 0) == -1)
-			ERROR(handleSysError("send"));
+		try {
+			Message msg = Parser::parse(*i);
+		} catch (const std::exception& e) {
+			std::cerr << "Parsing error" << e.what() << std::endl;
+		}
 	}
 }
 

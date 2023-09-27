@@ -28,7 +28,8 @@ override FILES			:= main.cpp \
 							connexion.cpp \
 							sharedfd.cpp \
 							socketserver.cpp \
-							parser.cpp
+							parser.cpp \
+							message.cpp
 
 SRCDIR					:= src
 INCDIR					:= inc

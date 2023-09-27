@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/22 01:09:46 by diroyer           #+#    #+#             */
-/*   Updated: 2023/09/25 14:48:56 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/09/27 16:37:56 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,30 +18,33 @@
 # include <stdint.h>
 # include <memory>
 # include "utils.hpp"
+# include "message.hpp"
 
 class Parser {
 	public:
 		//static HttpMessage& parse(const char* buf, HttpMessage&);
-		Parser(const char*);
+		static Message	parse(const std::string&);
+		//Parser(const char*);
 
 	private:
 		typedef void(Parser::*action_p)(void);
 
+		Parser(const std::string&, Message&);
 
 		void					run(void);
 		const char				*msg;
 		std::size_t				i;
+		Message					request;
 
 		enum 					e_state {
 			DEFAULT,
-			START_LINE,
-			START_LINE_END,
-			HEADER_NAME,
-			HEADER_NAME_SP,
-			HEADER_VALUE,
-			HEADER_LINE_END,
-			HEADER_BLOCK_END,
-			BODY,
+			PREFIX,
+			PREFIX_VALUE,
+			COMMAND,
+			PARAMS,
+			MIDDLE,
+			TRAILING,
+			COMMAND_END,
 			ERROR,
 			END,
 			S_SIZE
@@ -51,11 +54,10 @@ class Parser {
 			SKIP,
 			INCREMENT,
 			RESET,
-			ADD_VALUE,
-			ADD_START_LINE,
-			ADD_HEADER_NAME,
-			ADD_HEADER_VALUE,
-			ADD_BODY,
+			ADD_PREFIX,
+			ADD_COMMAND,
+			ADD_MIDDLE,
+			ADD_TRAILING,
 			P_ERROR,
 			A_SIZE
 		};
@@ -65,8 +67,7 @@ class Parser {
 			LF,
 			CR,
 			SP,
-			HTAB,
-			VCHAR,
+			OTHER,
 			CTL,
 			NUL,
 			CT_SIZE
@@ -82,10 +83,10 @@ class Parser {
 		void					skip(void);
 		void					increment(void);
 		void					reset(void);
-		void					addStartLine(void);
-		void					addHeaderName(void);
-		void					addHeaderValue(void);
-		void					addBody(void);
+		void					addPrefix(void);
+		void					addCommand(void);
+		void					addMiddle(void);
+		void					addTrailing(void);
 		void					pError(void);
 		void 					debug(void);
 		void					addValue(void);

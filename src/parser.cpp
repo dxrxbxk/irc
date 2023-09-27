@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/22 01:09:59 by diroyer           #+#    #+#             */
-/*   Updated: 2023/09/25 14:49:22 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/09/27 15:59:36 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,33 +26,28 @@ void 	Parser::debug(void) {
     std::cout << " action: \x1b[34m" << a_table[tr.action] << "\x1b[0m\n" << std::endl;
 }
 
-void	Parser::addStartLine(void) {
+void	Parser::addPrefix(void) {
+	std::string	prefix(msg - i, i);
 	i = 0;
-//	request.addStartLine();
+	request.addPrefix(prefix);
 }
 
-void	Parser::addHeaderName(void) {
-	std::string	header_name(msg - i, i);
+void	Parser::addCommand(void) {
+	std::string	command(msg - i, i);
 	i = 0;
-//	request.addHeaderName(header_name);
+	request.addCommand(command);
 }
 
-void	Parser::addHeaderValue(void) {
-	std::string	header_value(msg - i, i);
+void	Parser::addMiddle(void) {
+	std::string	middle(msg - i, i);
 	i = 0;
-//	request.addHeaderValue(header_value);
+	request.addMiddle(middle);
 }
 
-void	Parser::addBody(void) {
-	std::string	body(msg - i, i);
+void	Parser::addTrailing(void) {
+	std::string	trailing(msg - i, i);
 	i = 0;
-//	request.addBody(body);
-}
-
-void	Parser::addValue(void) {
-	std::string	value(msg - i, i);
-	i = 0;
-//	request.addValue(value);
+	request.addTrailing(trailing);
 }
 
 void	Parser::skip(void) {
@@ -76,132 +71,100 @@ Parser::action_p	Parser::a_table[Parser::A_SIZE] = {
 	&Parser::skip, 
 	&Parser::increment,
 	&Parser::reset,
-	&Parser::addValue,
-	&Parser::addStartLine,
-	&Parser::addHeaderName,
-	&Parser::addHeaderValue,
-	&Parser::addBody,	
+	&Parser::addPrefix,
+	&Parser::addCommand,
+	&Parser::addMiddle,
+	&Parser::addTrailing,
 	&Parser::pError,
 };
 
 Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 	/* DEFAULT */
 	{ 	
+		{ PREFIX, INCREMENT }, /* COLON */
+		{ ERROR, P_ERROR }, /* LF */
+		{ COMMAND_END, INCREMENT }, /* CR */
+		{ ERROR, P_ERROR }, /* SP */
+		{ COMMAND, INCREMENT }, /* OTHER */
+		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* NUL */
+
+	},
+	/* PREFIX */
+	{ 	
 		{ ERROR, P_ERROR }, /* COLON */
+		{ ERROR, P_ERROR }, /* LF */
+		{ ERROR,  P_ERROR }, /* CR */
+		{ COMMAND, ADD_PREFIX }, /* SP */
+		{ PREFIX, INCREMENT}, /* OTHER */
+		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* NUL */
+
+	},
+	/* COMMAND */
+	{ 	
+		{ ERROR, P_ERROR }, /* COLON */
+		{ COMMAND_END, ADD_COMMAND }, /* LF */
+		{ ERROR, P_ERROR }, /* CR */
+		{ PARAMS, ADD_COMMAND }, /* SP */
+		{ COMMAND, INCREMENT }, /* OTHER */
+		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* NUL */
+
+	},
+	/* PARAMS */
+	{ 	
+		{ TRAILING, SKIP }, /* COLON */
 		{ ERROR, P_ERROR }, /* LF */
 		{ ERROR, P_ERROR }, /* CR */
-		{ ERROR, P_ERROR }, /* SP */
-		{ ERROR, P_ERROR }, /* HTAB */
-		{ START_LINE, INCREMENT }, /* VCHAR */
-		{ ERROR, P_ERROR }, /* CTL */
-		{ ERROR, P_ERROR }, /* NUL */
-
-	},
-	/* START_LINE */
-	{ 	
-		{ ERROR, P_ERROR }, /* COLON */
-		{ ERROR, P_ERROR }, /* LF */
-		{ START_LINE_END,  ADD_VALUE}, /* CR */
-		{ START_LINE, ADD_VALUE}, /* SP */
-		{ ERROR, P_ERROR }, /* HTAB */
-		{ START_LINE, INCREMENT}, /* VCHAR */
-		{ ERROR, P_ERROR }, /* CTL */
-		{ ERROR, P_ERROR }, /* NUL */
-
-	},
-	/* START_LINE_END */
-	{ 	
-		{ ERROR, P_ERROR }, /* COLON */
-		{ HEADER_NAME, SKIP }, /* LF */
-		{ ERROR, P_ERROR }, /* CR */
-		{ ERROR, P_ERROR }, /* SP */
-		{ ERROR, P_ERROR }, /* HTAB */
-		{ ERROR, P_ERROR }, /* VCHAR */
-		{ ERROR, P_ERROR }, /* CTL */
-		{ ERROR, P_ERROR }, /* NUL */
-
-	},
-	/* HEADER_NAME */
-	{ 	
-		{ HEADER_NAME_SP, ADD_HEADER_NAME }, /* COLON */
-		{ ERROR, P_ERROR }, /* LF */
-		{ HEADER_BLOCK_END, SKIP}, /* CR */
 		{ ERROR, P_ERROR }, /* SP */ 
-		{ ERROR, P_ERROR }, /* HTAB */
-		{ HEADER_NAME, INCREMENT }, /* VCHAR */
+		{ MIDDLE, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
 		{ ERROR, P_ERROR }, /* NUL */
 
 	},
-	/* HEADER_NAME_SP */
+	/* MIDDLE */
+	{ 	
+		{ MIDDLE, INCREMENT }, /* COLON */
+		{ ERROR, P_ERROR }, /* LF */
+		{ COMMAND_END, ADD_MIDDLE }, /* CR */
+		{ PARAMS, ADD_MIDDLE }, /* SP */
+		{ MIDDLE, INCREMENT }, /* OTHER */
+		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* NUL */
+
+	},
+	/* TRAILING */
+	{ 	
+		{ TRAILING, INCREMENT }, /* COLON */
+		{ ERROR, P_ERROR }, /* LF */
+		{ COMMAND_END, ADD_TRAILING }, /* CR */
+		{ TRAILING, INCREMENT }, /* SP */
+		{ TRAILING, INCREMENT }, /* OTHER */
+		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* NUL */
+
+	},
+	/* COMMAND_END */
 	{ 	
 		{ ERROR, P_ERROR }, /* COLON */
-		{ ERROR, P_ERROR }, /* LF */
-		{ ERROR, P_ERROR }, /* CR */
-		{ HEADER_VALUE, SKIP }, /* SP */
-		{ ERROR, P_ERROR }, /* HTAB */
-		{ ERROR, P_ERROR }, /* VCHAR */
-		{ ERROR, P_ERROR }, /* CTL */
-		{ ERROR, P_ERROR }, /* NUL */
-
-	},
-	/* HEADER_VALUE */
-	{ 	
-		{ HEADER_VALUE, INCREMENT }, /* COLON */
-		{ ERROR, P_ERROR }, /* LF */
-		{ HEADER_LINE_END, ADD_HEADER_VALUE }, /* CR */
-		{ HEADER_VALUE, INCREMENT }, /* SP */
-		{ ERROR, P_ERROR }, /* HTAB */
-		{ HEADER_VALUE, INCREMENT }, /* VCHAR */
-		{ ERROR, P_ERROR }, /* CTL */
-		{ ERROR, P_ERROR }, /* NUL */
-
-	},
-	/* HEADER_LINE_END */
-	{ 	
-		{ ERROR, P_ERROR }, /* COLON */
-		{ HEADER_NAME, SKIP }, /* LF */
+		{ END, SKIP }, /* LF */
 		{ ERROR, P_ERROR }, /* CR */
 		{ ERROR, P_ERROR }, /* SP */
-		{ ERROR, P_ERROR }, /* HTAB */
-		{ ERROR, P_ERROR }, /* VCHAR */
+		{ ERROR, P_ERROR }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
 		{ ERROR, P_ERROR }, /* NUL */
-
-	},
-	/* HEADER_BLOCK_END */
-	{ 	
-		{ ERROR, P_ERROR }, /* COLON */
-		{ BODY, SKIP }, /* LF */
-		{ ERROR, P_ERROR }, /* CR */
-		{ ERROR, P_ERROR }, /* SP */
-		{ ERROR, P_ERROR }, /* HTAB */
-		{ ERROR, P_ERROR }, /* VCHAR */
-		{ ERROR, P_ERROR }, /* CTL */
-		{ ERROR, P_ERROR }, /* NUL */
-
-	},
-	/* BODY */
-	{ 	
-		{ BODY, INCREMENT }, /* COLON */
-		{ BODY, INCREMENT }, /* LF */
-		{ BODY, INCREMENT }, /* CR */
-		{ BODY, INCREMENT }, /* SP */
-		{ BODY, INCREMENT }, /* HTAB */
-		{ BODY, INCREMENT }, /* VCHAR */
-		{ BODY, INCREMENT }, /* CTL */
-		{ END, ADD_BODY }, /* NUL */
 	},
 };
-/*
-HttpMessage&	Parser::parse(const char* buf, HttpMessage& ref) {
-	Parser(buf, ref).run();
-	return ref;
-}
-*/
 
-Parser::Parser(const char* buf) 
-: msg(buf), i(0) {
+Message		Parser::parse(const std::string& ref) {
+	Message	request;
+	Parser(ref, request).run();
+	return request;
+}
+
+Parser::Parser(const std::string& ref, Message& req)
+: msg(ref.c_str()), i(0), request(req) {
 	tr.state = DEFAULT;
 	tr.action = SKIP;
 }
@@ -209,22 +172,22 @@ Parser::Parser(const char* buf)
 const Parser::e_chartype	Parser::c_table[128] = {
 	//0-31
     NUL, CTL, CTL, CTL, CTL, CTL, CTL, CTL,
-    CTL, HTAB, LF, CTL, CTL, CR, CTL, CTL,
+    CTL, CTL, LF, CTL, CTL, CR, CTL, CTL,
     CTL, CTL, CTL, CTL, CTL, CTL, CTL, CTL,
     CTL, CTL, CTL, CTL, CTL, CTL, CTL, CTL,
 	//32-63
-    SP, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
-    VCHAR, VCHAR, COLON, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
+    SP, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+    OTHER, OTHER, COLON, OTHER, OTHER, OTHER, OTHER, OTHER,
 	//64-95
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
 	//96-127
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR,
-    VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, VCHAR, CTL
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
+    OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, CTL
 };

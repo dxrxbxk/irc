@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/16 03:30:50 by diroyer           #+#    #+#             */
-/*   Updated: 2023/08/25 12:12:17 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/09/25 15:14:28 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ Server::~Server() {
 void Server::run(void) {
 	try {
 		signalIgnore();
-		std::string node = "0.0.0.0";
+		std::string node = "127.0.0.1";
 		std::string service = "8080";	
 
 
