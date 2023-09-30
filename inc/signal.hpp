@@ -18,16 +18,16 @@
 # include <csignal>
 
 # include "utils.hpp"
-# include "notification.hpp"
+# include "io_event.hpp"
 
 extern int g_signalPipe[2];
 
-class Signal : public notification {
+class Signal : public IOEvent {
 	public:
 		Signal();
 		~Signal();
 
-		int		getFd(void);
+		int		getFd(void) const;
 		void	notify(void);
 		void	disconnect(void);
 	private:
@@ -39,4 +39,4 @@ void				signalHandler(int signum);
 void				signalIgnore(void);
 
 
-#endif 
+#endif

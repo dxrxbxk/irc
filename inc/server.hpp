@@ -1,69 +1,58 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   socketserver.hpp                                   :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/16 03:32:53 by diroyer           #+#    #+#             */
-/*   Updated: 2023/08/24 07:22:44 by diroyer          ###   ########.fr       */
+/*   Created: 2023/08/21 22:59:22 by diroyer           #+#    #+#             */
+/*   Updated: 2023/08/21 23:30:58 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#ifndef SOCKETSERVER_HPP
+# define SOCKETSERVER_HPP
 
-# include <iostream>
-# include <cstdio>
-# include <string>
-# include <cstring>
-# include <cstdlib>
-# include <cerrno>
-# include <sstream>
-# include <csignal>
-# include <map>
-# include <vector>
+#include "io_event.hpp"
+#include "connexion.hpp"
+#include "epoll.hpp"
+#include "signal.hpp"
 
-# include <arpa/inet.h>
-# include <poll.h>
-# include <sys/socket.h>
-# include <netinet/in.h>
-# include <netinet/tcp.h>
-# include <unistd.h> 
-# include <sys/types.h>
-# include <netdb.h>
-# include <sys/wait.h>
+#include <map>
 
-# include "notification.hpp"
-# include "utils.hpp"
-# include "signal.hpp"
-# include "epoll.hpp"
-# include "sharedfd.hpp"
-# include "connexion.hpp"
-# include "socketserver.hpp"
+struct ServerInfo {
+	const std::string node;
+	const std::string service;
+	const std::string password;
+};
 
-// sfd = server fd
-// cfd = connexion fd (accept())
 
-class Server {
+class Server : public IOEvent {
+
 	public:
-		Server();
-		~Server();
-		// Server(webParser);
+		Server(const ServerInfo&, const int, Signal&);
+		~Server(void);
+		Server(const Server& copy);
+		Server& operator=(const Server& copy);
 
-		void						run(void);
+		void		notify(void);
+		int			getFd(void) const;
+		void		disconnect(void);
+
+		void unmapConnexion(const Connexion& conn);
 
 	private:
-//		struct sockaddr_in  s_addr;
 
-		void						init(struct addrinfo *hints);
-		int							create(std::string, std::string);
-		void						getSocketInfo(int fd); // could be public
-
-		Signal						pipe;
-		Poll						poller;
+		ServerInfo					s_info;
+		Shared_fd					sock_fd;
 		std::map<int, Connexion>	m_conns;
-		std::vector<Socketserver>	v_sock;
+		Poll						poller;
 };
 
 #endif
+
+
+
+
+
+

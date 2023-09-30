@@ -10,25 +10,24 @@
 /*                                                                            */
 /* ************************************************************************** */
 
+#include "server.hpp"
 #include "connexion.hpp"
+
 #define BUFFER_SIZE 1024
 
-Connexion::Connexion() : sock_fd(-1), buffer(), m_ptr(NULL) {
-	//std::cout << "Connexion default constructor called" << std::endl;
+Connexion::Connexion(void)
+: sock_fd(-1), buffer(), s_ptr(NULL) {
 }
 
-Connexion::~Connexion() {
-	//std::cout << "Connexion destructor called : " << sock_fd << std::endl;
-}
+Connexion::~Connexion(void) {}
 
-Connexion::Connexion(int fd, std::map<int, Connexion> &ref)
-: sock_fd(fd), buffer(), m_ptr(&ref) {
-	//std::cout << "Connexion fd constructor called, fd = " << fd << std::endl;
+Connexion::Connexion(int fd, Server &server)
+: sock_fd(fd), buffer(), s_ptr(&server) {
 }
 
 void	Connexion::disconnect(void) {
-	if (m_ptr)
-		m_ptr->erase(sock_fd);
+	if (s_ptr)
+		s_ptr->unmapConnexion(*this);
 	std::cout << "Connexion::disconnect" << std::endl;
 }
 
@@ -36,7 +35,7 @@ void	Connexion::setFd(int fd) {
 	sock_fd = fd;
 }
 
-int		Connexion::getFd(void) {
+int		Connexion::getFd(void) const {
 	return sock_fd;
 }
 
@@ -77,7 +76,27 @@ void	Connexion::notify(void) {
 	readInput();
 	l_msg = checkCrlf();
 
-	handle_message(*this, l_msg);
+	for (l_str::const_iterator i = l_msg.begin(); i != l_msg.end(); ++i) {
+
+		try {
+			// parse raw message
+			Message msg = Parser::parse(*i);
+			msg.print();
+
+			Command* cmd = CommandFactory::create(*this, msg);
+
+			if (cmd == NULL)
+				std::cout << "Command not found" << std::endl;
+			else {
+				if (cmd->evaluate() == true)
+					cmd->execute();
+				delete cmd;
+			}
+
+		} catch (const std::exception& e) {
+			std::cerr << "Parsing error" << e.what() << std::endl;
+		}
+	}
 }
 
 Connexion::Connexion(const Connexion &copy) {
@@ -88,7 +107,7 @@ Connexion& Connexion::operator=(const Connexion &copy) {
 	if (this != &copy) {
 		sock_fd = copy.sock_fd;
 		buffer = copy.buffer;
-		m_ptr = copy.m_ptr;
+		s_ptr = copy.s_ptr;
 	}
 	return *this;
 }

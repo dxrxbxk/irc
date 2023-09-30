@@ -42,35 +42,35 @@ void	Poll::epollWait(void) {
 	nfds = -1;
 	while (is_running) {
 		nfds = epoll_wait(epollfd, v_events.data(), v_events.size(), -1);
-		if (nfds == -1 && errno != EINTR) 
+		if (nfds == -1 && errno != EINTR)
 			throw std::runtime_error("epoll_wait");
 		else if (nfds > 0) {
 			for (int n = 0; n < nfds; ++n) {
 				if (v_events[n].events & EPOLLIN) {
-					notification &ref = getEventData(v_events[n]);
+					IOEvent &ref = getEventData(v_events[n]);
 					ref.notify();
 				}
 				if (v_events[n].events & EPOLLRDHUP) {
-					notification &ref = getEventData(v_events[n]);
+					IOEvent &ref = getEventData(v_events[n]);
 					delEvent(ref);
 					ref.disconnect();
-				}	
+				}
 			}
 		}
 	}
 }
 
-notification&	Poll::getEventData(epoll_event &ref) {
-	return *static_cast<notification *>(ref.data.ptr);
+IOEvent&	Poll::getEventData(epoll_event &ref) {
+	return *static_cast<IOEvent *>(ref.data.ptr);
 }
 
-void	Poll::delEvent(notification &ref) {
+void	Poll::delEvent(IOEvent &ref) {
 	if (epoll_ctl(epollfd, EPOLL_CTL_DEL, ref.getFd(), NULL) == -1)
 		throw std::runtime_error(handleSysError("epoll_ctl"));
 	v_events.resize(v_events.size() - 1);
 }
 
-void	Poll::addEvent(notification &ref) {
+void	Poll::addEvent(IOEvent &ref) {
 	epoll_event ev;
 	std::cout << "Adding new event for " << ref.getFd() << std::endl;
 

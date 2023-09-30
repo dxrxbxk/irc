@@ -19,31 +19,33 @@
 # include <sstream>
 # include <map>
 
-# include "notification.hpp"
+# include "io_event.hpp"
 # include "utils.hpp"
 # include "sharedfd.hpp"
 # include "parser.hpp"
 # include "types.hpp"
-# include "handle_message.hpp"
+# include "command_factory.hpp"
+// # include "handle_message.hpp"
 
+class Server;
 
-class Connexion : public notification {
+class Connexion : public IOEvent {
 	public:
-		Connexion();
-		Connexion(int fd, std::map<int, Connexion> &ref);
-		~Connexion();
-		Connexion(const Connexion &copy);
-		Connexion&operator=(const Connexion &copy);
+		Connexion(void);
+		Connexion(int fd, Server&);
+		~Connexion(void);
+		Connexion(const Connexion&);
+		Connexion& operator=(const Connexion&);
 
 		void						notify(void);
-		int							getFd(void);
+		int							getFd(void) const;
 		void						setFd(int fd);
 		void						disconnect(void);
 
 	private:
 		Shared_fd					sock_fd;
 		std::string					buffer;
-		std::map<int, Connexion>	*m_ptr;
+		Server						*s_ptr;
 
 		void						readInput(void);
 		l_str						checkCrlf(void);

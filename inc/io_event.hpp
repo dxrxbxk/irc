@@ -10,14 +10,14 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef NOTIFICATION_HPP
-# define NOTIFICATION_HPP
+#ifndef IO_EVENT_HPP
+# define IO_EVENT_HPP
 
-class notification {
+class IOEvent {
 	public:
-		inline virtual ~notification() {} ;
+		inline virtual ~IOEvent(void) {} ;
 		virtual void	notify(void) = 0;
-		virtual int		getFd(void) = 0;
+		virtual int		getFd(void) const = 0;
 		virtual void	disconnect(void) = 0;
 	private:
 };

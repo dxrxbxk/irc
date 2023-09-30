@@ -61,7 +61,7 @@ Signal::~Signal() {
 	closeFd(g_signalPipe[1]);
 }
 
-int		Signal::getFd(void) {
+int		Signal::getFd(void) const {
 	return (g_signalPipe[0]);
 }
 

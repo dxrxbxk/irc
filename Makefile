@@ -21,16 +21,15 @@ override RM				:= rm -rvf
 NAME					:= ircserv
 
 override FILES			:= main.cpp \
+						    app.cpp \
 							server.cpp \
 							utils.cpp \
 							epoll.cpp \
 							signal.cpp \
 							connexion.cpp \
 							sharedfd.cpp \
-							socketserver.cpp \
 							parser.cpp \
 							message.cpp \
-							handle_message.cpp \
 							command.cpp \
 							command_factory.cpp \
 							join.cpp

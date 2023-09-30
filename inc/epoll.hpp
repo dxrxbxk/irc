@@ -21,7 +21,7 @@
 # include <cstring>
 # include <cstdio>
 
-# include "notification.hpp"
+# include "io_event.hpp"
 # include "signal.hpp"
 # include "utils.hpp"
 # include "connexion.hpp"
@@ -31,8 +31,8 @@ class Poll {
 		Poll();
 		~Poll();
 
-		void	addEvent(notification &ref);
-		void	delEvent(notification &ref);
+		void	addEvent(IOEvent &ref);
+		void	delEvent(IOEvent &ref);
 		void	run(void);
 		void	stop(void);
 
@@ -48,7 +48,7 @@ class Poll {
 		bool								is_running;
 
 		void 								epollWait(void);
-		notification&						getEventData(epoll_event &ref);
+		IOEvent&						getEventData(epoll_event &ref);
 };
 
 #endif
