@@ -39,6 +39,10 @@ int		Connexion::getFd(void) const {
 	return sock_fd;
 }
 
+Server&	Connexion::getServer(void) const {
+	return *s_ptr;
+}
+
 std::string getResponse(void) {
 	std::string response = ":localhost CAP * LS :";
 	std::string cap = "cap1 cap2 cap3";

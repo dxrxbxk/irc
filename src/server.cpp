@@ -37,7 +37,6 @@ void	Server::notify(void) {
 		ERROR(handleSysError("accept"));
 	} else {
 		std::cout << "Connexion fd created: " << cfd << std::endl;
-		// (m_conns)[cfd] = Connexion(cfd, m_conns);
 		(m_conns)[cfd] = Connexion(cfd, *this);
 		poller.addEvent((m_conns)[cfd]);
 	}
@@ -56,6 +55,14 @@ void	Server::disconnect(void) {
 }
 
 
+void	Server::send(const Connexion& conn, const std::string& msg) {
+	std::cout << "Sending message: " << msg << std::endl;
+	if (::send(conn.getFd(), msg.c_str(), msg.size(), 0) == -1) {
+		// ...
+	}
+}
+
+
 Server& Server::operator=(const Server& copy) {
 	if (this != &copy) {
 		sock_fd = copy.sock_fd;
@@ -64,3 +71,24 @@ Server& Server::operator=(const Server& copy) {
 	}
 	return *this;
 }
+
+
+// -- accessors ---------------------------------------------------------------
+
+const std::string& Server::get_node(void) const {
+	return s_info.node;
+}
+
+const std::string& Server::get_service(void) const {
+	return s_info.service;
+}
+
+const std::string& Server::get_password(void) const {
+	return s_info.password;
+}
+
+bool Server::has_password(void) const {
+	return not s_info.password.empty();
+}
+
+

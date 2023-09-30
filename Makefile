@@ -32,7 +32,9 @@ override FILES			:= main.cpp \
 							message.cpp \
 							command.cpp \
 							command_factory.cpp \
-							join.cpp
+							join.cpp \
+							ping.cpp
+
 
 SRCDIR					:= src
 INCDIR					:= inc

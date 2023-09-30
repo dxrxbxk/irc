@@ -29,9 +29,18 @@ class Message {
 		void	print(void) const;
 
 		bool	has_command(void) const;
+		bool	has_prefix(void) const;
+		bool	has_middle(void) const;
+		bool	has_trailing(void) const;
+
 		const std::string& get_command(void) const;
+		const std::string& get_prefix(void) const;
+		const l_str& get_middle(void) const;
+		const std::string& get_middle(const size_t index) const;
+		const std::string& get_trailing(void) const;
 
 	private:
+
 		std::string	_prefix;
 		std::string	_command;
 

@@ -6,6 +6,7 @@
 
 // forward declaration
 class Connexion;
+class Server;
 
 class Command {
 
@@ -24,6 +25,7 @@ class Command {
 
 		const Message& _msg;
 		Connexion& _conn;
+		Server& _server;
 
 };
 

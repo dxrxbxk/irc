@@ -25,7 +25,6 @@
 # include "parser.hpp"
 # include "types.hpp"
 # include "command_factory.hpp"
-// # include "handle_message.hpp"
 
 class Server;
 
@@ -41,6 +40,8 @@ class Connexion : public IOEvent {
 		int							getFd(void) const;
 		void						setFd(int fd);
 		void						disconnect(void);
+
+		Server&						getServer(void) const;
 
 	private:
 		Shared_fd					sock_fd;

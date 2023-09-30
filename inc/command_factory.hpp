@@ -4,13 +4,13 @@
 # include <map>
 # include <string>
 
-// # include "connexion.hpp"
-class Connexion;
 # include "message.hpp"
-# include "join.hpp"
 # include "command.hpp"
+# include "join.hpp"
+# include "ping.hpp"
 
 
+class Connexion;
 
 class CommandFactory {
 
@@ -25,12 +25,18 @@ class CommandFactory {
 
 	private:
 
-		CommandFactory();
-		~CommandFactory();
+		static CommandFactory& shared(void);
+
+		CommandFactory(void);
+		~CommandFactory(void);
 
 		static map_t init(void);
 
-		static const map_t cmap;
+
+
+
+
+		const map_t cmap;
 
 };
 

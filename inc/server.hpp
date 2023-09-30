@@ -32,14 +32,23 @@ class Server : public IOEvent {
 	public:
 		Server(const ServerInfo&, const int, Signal&);
 		~Server(void);
-		Server(const Server& copy);
-		Server& operator=(const Server& copy);
+		Server(const Server&);
+		Server& operator=(const Server&);
 
 		void		notify(void);
 		int			getFd(void) const;
 		void		disconnect(void);
 
-		void unmapConnexion(const Connexion& conn);
+		void unmapConnexion(const Connexion&);
+
+
+		void send(const Connexion&, const std::string&);
+
+
+		const std::string& get_node(void) const;
+		const std::string& get_service(void) const;
+		const std::string& get_password(void) const;
+		bool has_password(void) const;
 
 	private:
 
