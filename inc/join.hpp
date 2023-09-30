@@ -8,20 +8,15 @@ class Join : public Command {
 
 	public:
 
-		Join(Connexion& conn, const Message& msg) : Command(conn, msg) {}
+		Join(Connexion&, const Message&);
+
 		~Join(void);
 
-		bool evaluate() {
-			std::cout << "Join::evaluate()" << std::endl;
-		}
+		bool evaluate(void);
 
-		void execute() {
-			std::cout << "Join::execute()" << std::endl;
-		}
+		void execute(void);
 
-		static Command* create(const Message& msg) {
-			return new Join(msg);
-		}
+		static Command* create(Connexion&, const Message&);
 
 	private:
 

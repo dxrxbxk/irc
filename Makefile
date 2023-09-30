@@ -29,7 +29,11 @@ override FILES			:= main.cpp \
 							sharedfd.cpp \
 							socketserver.cpp \
 							parser.cpp \
-							message.cpp
+							message.cpp \
+							handle_message.cpp \
+							command.cpp \
+							command_factory.cpp \
+							join.cpp
 
 SRCDIR					:= src
 INCDIR					:= inc

@@ -1,35 +1,30 @@
 #ifndef COMMAND_HPP
 # define COMMAND_HPP
 
-# include "connexion.hpp"
+// # include "connexion.hpp"
 # include "message.hpp"
 
+// forward declaration
+class Connexion;
 
 class Command {
 
 	public:
 
-		Command(Connexion& conn, const Message& msg) : _msg(msg), _conn(conn) {}
-		~Command(void);
+		Command(Connexion&, const Message&);
+
+		virtual ~Command(void);
 
 
-		virtual void evaluate() = 0;
+		virtual bool evaluate() = 0;
+
 		virtual void execute() = 0;
 
-	private:
+	protected:
 
 		const Message& _msg;
 		Connexion& _conn;
 
 };
-
-
-
-
-
-
-
-
-
 
 #endif

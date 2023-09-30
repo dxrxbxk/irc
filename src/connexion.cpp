@@ -76,27 +76,8 @@ void	Connexion::notify(void) {
 
 	readInput();
 	l_msg = checkCrlf();
-	for (l_str::const_iterator i = l_msg.begin(); i != l_msg.end(); ++i) {
 
-		try {
-			// parse raw message
-			Message msg = Parser::parse(*i);
-			msg.print();
-
-			Command* cmd = CommandFactory::create(*this, msg);
-
-			if (cmd == NULL)
-				std::cout << "Command not found" << std::endl;
-			else {
-				if (cmd->evaluate() == true)
-					cmd->execute();
-				delete cmd;
-			}
-
-		} catch (const std::exception& e) {
-			std::cerr << "Parsing error" << e.what() << std::endl;
-		}
-	}
+	handle_message(*this, l_msg);
 }
 
 Connexion::Connexion(const Connexion &copy) {

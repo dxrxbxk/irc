@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:28 by diroyer           #+#    #+#             */
-/*   Updated: 2023/09/27 16:53:13 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/09/30 16:51:25 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,8 +24,8 @@
 # include "sharedfd.hpp"
 # include "parser.hpp"
 # include "types.hpp"
+# include "handle_message.hpp"
 
-# include "command_factory.hpp"
 
 class Connexion : public notification {
 	public:

@@ -4,18 +4,19 @@
 # include <map>
 # include <string>
 
-
-// forward declaration
+// # include "connexion.hpp"
 class Connexion;
-class Command;
-class Message;
+# include "message.hpp"
+# include "join.hpp"
+# include "command.hpp"
+
 
 
 class CommandFactory {
 
 	public:
 
-		typedef Command* (cmd_t)(Connexion&, const Message&);
+		typedef Command* (*cmd_t)(Connexion&, const Message&);
 
 		typedef std::map<std::string, cmd_t> map_t;
 

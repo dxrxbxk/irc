@@ -20,6 +20,7 @@
 #include <map>
 
 class Socketserver : public notification {
+
 	public:
 		Socketserver(std::map<int, Connexion>&, Poll&, int);
 		~Socketserver();
@@ -31,9 +32,16 @@ class Socketserver : public notification {
 		void		disconnect(void);
 
 	private:
+
 		Shared_fd					sock_fd;
 		std::map<int, Connexion>*	m_conns;
 		Poll*						poller;
 };
 
 #endif
+
+
+
+
+
+
