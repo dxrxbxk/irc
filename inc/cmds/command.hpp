@@ -3,6 +3,7 @@
 
 // # include "connexion.hpp"
 # include "message.hpp"
+# include "logger.hpp"
 
 // forward declaration
 class Connexion;
@@ -12,7 +13,7 @@ class Command {
 
 	public:
 
-		Command(Connexion&, const Message&);
+		Command(Connexion&, Message&);
 
 		virtual ~Command(void);
 
@@ -23,10 +24,9 @@ class Command {
 
 	protected:
 
-		const Message& _msg;
+		Message& _msg;
 		Connexion& _conn;
 		Server& _server;
-
 };
 
 #endif

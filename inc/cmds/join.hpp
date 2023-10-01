@@ -3,12 +3,11 @@
 
 #include "command.hpp"
 
-
 class Join : public Command {
 
 	public:
 
-		Join(Connexion&, const Message&);
+		Join(Connexion&, Message&);
 
 		~Join(void);
 
@@ -16,7 +15,7 @@ class Join : public Command {
 
 		void execute(void);
 
-		static Command* create(Connexion&, const Message&);
+		static Command* create(Connexion&, Message&);
 
 	private:
 

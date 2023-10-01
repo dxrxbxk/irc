@@ -19,6 +19,7 @@
 # include <memory>
 # include "utils.hpp"
 # include "message.hpp"
+# include "logger.hpp"
 
 class Parser {
 	public:

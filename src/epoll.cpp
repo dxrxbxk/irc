@@ -11,40 +11,53 @@
 /* ************************************************************************** */
 
 #include "epoll.hpp"
+#include "server.hpp"
 
 const Poll::size_type Poll::DEFAULT_SIZE = 10;
 
-Poll::Poll() : v_events() , is_running(true) {
+Poll::Poll(const Server& server)
+: v_events() , is_running(true) {
 	v_events.reserve(DEFAULT_SIZE);
 
 	epollfd = epoll_create(1);
 	if (epollfd == -1)
 		throw std::runtime_error(handleSysError("epoll_create"));
+
+	addEvent(Logger::shared());
 }
 
 Poll::~Poll() {
 	if (epollfd != -1)
 		close(epollfd);
+	Logger::end();
 }
 
-void	Poll::stop(void) {
+void Poll::stop(void) {
 	this->is_running = false;
-	std::cout << "Poll::disconnect" << std::endl;
 }
 
-void	Poll::run(void) {
+void Poll::run(void) {
 	epollWait();
 }
 
 void	Poll::epollWait(void) {
 	int		nfds;
 
+
+	Logger::start();
+
 	nfds = -1;
-	while (is_running) {
+	while (is_running == true) {
+
+		Logger::render();
+
 		nfds = epoll_wait(epollfd, v_events.data(), v_events.size(), -1);
+
 		if (nfds == -1 && errno != EINTR)
 			throw std::runtime_error("epoll_wait");
+
 		else if (nfds > 0) {
+
 			for (int n = 0; n < nfds; ++n) {
 				if (v_events[n].events & EPOLLIN) {
 					IOEvent &ref = getEventData(v_events[n]);
@@ -58,6 +71,7 @@ void	Poll::epollWait(void) {
 			}
 		}
 	}
+	Logger::end();
 }
 
 IOEvent&	Poll::getEventData(epoll_event &ref) {

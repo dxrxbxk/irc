@@ -1,23 +1,23 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   socketserver.cpp                                   :+:      :+:    :+:   */
+/*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:59:12 by diroyer           #+#    #+#             */
-/*   Updated: 2023/08/25 21:54:17 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/01 20:24:08 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server(const ServerInfo& info, const int fd, Signal& sig)
-: s_info(info), sock_fd(fd), m_conns(), poller() {
+: s_info(info), sock_fd(fd), m_conns(), poller(*this) {
 	std::cout << "Socketserver constructor called" << std::endl;
+	Logger::set_server(*this);
 	poller.addEvent(*this);
 	poller.addEvent(sig);
-	poller.run();
 }
 
 Server::Server(const Server& copy)
@@ -26,6 +26,14 @@ Server::Server(const Server& copy)
 
 Server::~Server(void) {
 	std::cout << "Socketserver destructor called" << std::endl;
+}
+
+void Server::run(void) {
+	poller.run();
+}
+
+void Server::stop(void) {
+	poller.stop();
 }
 
 void	Server::notify(void) {
@@ -55,9 +63,17 @@ void	Server::disconnect(void) {
 }
 
 
-void	Server::send(const Connexion& conn, const std::string& msg) {
-	std::cout << "Sending message: " << msg << std::endl;
-	if (::send(conn.getFd(), msg.c_str(), msg.size(), 0) == -1) {
+void	Server::response(const Connexion& conn, const std::string& msg) {
+
+
+	/* temporary CRLF check during development */
+//	if (msg.size() < 2) { throw std::runtime_error("invalid message"); }
+//	if (msg[msg.size() - 2] != '\r' and msg[msg.size() - 1] != '\n')
+//		throw std::runtime_error("missing CRLF");
+	/* ************************************** */
+
+	Logger::send(msg);
+	if (send(conn.getFd(), msg.c_str(), msg.size(), 0) == -1) {
 		// ...
 	}
 }
@@ -65,26 +81,30 @@ void	Server::send(const Connexion& conn, const std::string& msg) {
 
 Server& Server::operator=(const Server& copy) {
 	if (this != &copy) {
-		sock_fd = copy.sock_fd;
-		m_conns = copy.m_conns;
-		poller = copy.poller;
 	}
 	return *this;
 }
 
-
 // -- accessors ---------------------------------------------------------------
 
-const std::string& Server::get_node(void) const {
-	return s_info.node;
+std::size_t Server::get_nb_conns(void) const {
+	return m_conns.size();
 }
 
-const std::string& Server::get_service(void) const {
-	return s_info.service;
+const std::string& Server::get_addr(void) const {
+	return s_info.addr;
+}
+
+const std::string& Server::get_port(void) const {
+	return s_info.port;
 }
 
 const std::string& Server::get_password(void) const {
 	return s_info.password;
+}
+
+const std::string& Server::get_name(void) const {
+	return s_info.name;
 }
 
 bool Server::has_password(void) const {

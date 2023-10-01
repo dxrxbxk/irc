@@ -1,24 +1,38 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   types.hpp                                          :+:      :+:    :+:   */
+/*   mode.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/27 16:17:02 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 00:48:36 by diroyer          ###   ########.fr       */
+/*   Created: 2023/10/01 19:04:15 by diroyer           #+#    #+#             */
+/*   Updated: 2023/10/02 00:04:04 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TYPES_HPP
-# define TYPES_HPP
 
-# include <list>
-# include <string>
-# include <vector>
+#ifndef MODE_HPP
+# define MODE_HPP
 
-typedef std::vector<std::string>	l_str;
-typedef std::vector<std::string>	vec_str;
+#include "command.hpp"
+
+class Mode : public Command {
+
+	public:
+
+		Mode(Connexion&, Message&);
+		~Mode(void);
+
+		bool evaluate(void);
+		void execute(void);
+
+		static Command* create(Connexion&, Message&);
+
+	private:
+	
+		void	user_mode(void);
+		bool	valid_mode(char c);
+
+};
 
 #endif
-

@@ -1,24 +1,44 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   types.hpp                                          :+:      :+:    :+:   */
+/*   user.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/27 16:17:02 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 00:48:36 by diroyer          ###   ########.fr       */
+/*   Created: 2023/10/01 01:54:34 by diroyer           #+#    #+#             */
+/*   Updated: 2023/10/01 19:43:19 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TYPES_HPP
-# define TYPES_HPP
+#ifndef USER_HPP
+# define USER_HPP
 
-# include <list>
-# include <string>
-# include <vector>
+#include "command.hpp"
+#include <sstream>
 
-typedef std::vector<std::string>	l_str;
-typedef std::vector<std::string>	vec_str;
+class User : public Command {
+
+	public:
+
+		User(Connexion&, Message&);
+
+		~User(void);
+
+		bool evaluate(void);
+
+		void execute(void);
+
+		static Command* create(Connexion&, Message&);
+
+	private:
+		void		add_user(void);
+
+		enum	Index {
+			USERNAME,
+			HOSTNAME,
+			SERVERNAME
+		};
+
+};
 
 #endif
-

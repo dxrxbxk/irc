@@ -7,12 +7,15 @@ CommandFactory::CommandFactory(void)
 
 CommandFactory::~CommandFactory(void) {}
 
-
 CommandFactory::map_t CommandFactory::init(void) {
 	map_t cmap;
 
-	cmap["join"] = &Join::create;
-	cmap["ping"] = &Ping::create;
+	cmap["CAP"] = &Cap::create;
+	cmap["JOIN"] = &Join::create;
+	cmap["NICK"] = &Nick::create;
+	cmap["USER"] = &User::create;
+	cmap["MODE"] = &Mode::create;
+	cmap["PING"] = &Ping::create;
 	// add more commands here...
 
 	return cmap;
@@ -25,7 +28,7 @@ CommandFactory& CommandFactory::shared(void) {
 }
 
 
-Command* CommandFactory::create(Connexion& conn, const Message& msg) {
+Command* CommandFactory::create(Connexion& conn, Message& msg) {
 	CommandFactory& factory = shared();
 
 	map_t::const_iterator it = factory.cmap.find(msg.get_command());

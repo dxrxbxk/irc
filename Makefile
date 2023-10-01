@@ -1,82 +1,170 @@
-#
-#
-#                          M A K E F I L E
-################################################################################
+# -- M A K E F I L E -----------------------------------------------------------
 
-.DELETE_ON_ERROR:
-.DEFAULT_GOAL			:= all
+###############################################################################
+#        ▁▁▁▁▁▁▁▁  ▁▁▁▁▁▁▁▁  ▁▁▁▁ ▁▁▁  ▁▁▁▁▁▁▁▁                               #
+#       ╱        ╲╱        ╲╱    ╱   ╲╱        ╲    language: makefile        #
+#      ╱         ╱         ╱         ╱         ╱    author:   @tutur          #
+#     ╱         ╱         ╱        ▁╱       ▁▁╱     created: 2020-05-01       #
+#     ╲▁▁╱▁▁╱▁▁╱╲▁▁▁╱▁▁▁▁╱╲▁▁▁▁╱▁▁▁╱╲▁▁▁▁▁▁▁▁╱      updated: 2020-05-01       #
+#                                                                             #
+###############################################################################
 
-### C O M P I L E R   F L A G S ################################################
+# -- S E T T I N G S ----------------------------------------------------------
 
-CC						:= clang++
-STD						:= -std=c++98
-CFLAGS					:= -Wall -Wextra -Werror -g3 -gdwarf-4
-LDFLAGS					?= -MMD -MF
+# set default target
+.DEFAULT_GOAL := all
 
-override MKDIR			:= mkdir -pv
-override RM				:= rm -rvf
+# use one shell for all commands
+.ONESHELL:
 
-### D I R E C T O R Y ' S ######################################################
+# delete intermediate files on error
+#.DELETE_ON_ERROR:
 
-NAME					:= ircserv
+# silent mode
+#.SILENT:
 
-override FILES			:= main.cpp \
-						    app.cpp \
-							server.cpp \
-							utils.cpp \
-							epoll.cpp \
-							signal.cpp \
-							connexion.cpp \
-							sharedfd.cpp \
-							parser.cpp \
-							message.cpp \
-							command.cpp \
-							command_factory.cpp \
-							join.cpp \
-							ping.cpp
+# set shell program
+override SHELL := $(shell which zsh)
+
+# set shell flags
+.SHELLFLAGS := -d -f -c -e -o pipefail -u
+
+# set make flags
+override MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
 
 
-SRCDIR					:= src
-INCDIR					:= inc
-OBJDIR					:= _obj
-DEPDIR					:= _dep
+# -- O P E R A T I N G  S Y S T E M -------------------------------------------
 
-### P A T T E R N   R U L E S ##################################################
+override THREAD    := $(shell nproc)
 
-override SUB			:= $(shell find $(SRCDIR) -type d)
-override OBJ			:= $(FILES:%.cpp=$(OBJDIR)/%.o)
-override DEP			:= $(patsubst $(OBJDIR)/%.o, $(DEPDIR)/%.d, $(OBJ))
+# -- T A R G E T S ------------------------------------------------------------
 
-### U T I L I T Y ##############################################################
+# project name
+override PROJECT = ircserv
 
-### C O M P I L A T I O N   F U N C T I O N ####################################
+# main executable
+override EXEC = $(PROJECT)
 
-define COMPILE_RULE
-$(OBJDIR)/%.o:			$(1)/%.cpp Makefile | $(OBJDIR) $(DEPDIR)
-	$$(CC) $$(STD) -I$$(INCDIR) $$(CFLAGS) \
-	-c $$< -o $$@ \
-	$$(LDFLAGS) $$(DEPDIR)/$$(*F).d;
-endef
+# -- D I R E C T O R I E S ----------------------------------------------------
 
-### R E C I P E S ##############################################################
+# source directory
+override SRCDIR := src
 
-.PHONY:					all clean fclean re
+# include directory
+override INCDIR := inc
 
-all:					$(NAME)
+# build directory
+override BLDDIR := build
 
-$(NAME):				$(OBJ)
-						$(CC) $^ -o $@
+# object directory
+override OBJDIR := $(BLDDIR)/object
+
+# dependency directory
+override DEPDIR := $(BLDDIR)/dependency
+
+# -- S O U R C E S ------------------------------------------------------------
+
+# get all source files
+override SRC := $(shell find $(SRCDIR) -type f -name "*.cpp")
+
+# get all header files
+override HDR := $(shell find $(INCDIR) -type f -name "*.hpp")
+
+# get all header directories
+override HDRDIR := $(sort $(dir $(HDR)))
+
+# pattern substitution for object files
+override OBJ := $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o,    $(SRC))
+
+# pattern substitution for dependency files
+override DEP := $(patsubst $(OBJDIR)/%.o,   $(DEPDIR)/%.d,    $(OBJ))
+
+override HIR := $(sort $(dir $(SRC)))
+override OBJHIR := $(HIR:$(SRCDIR)/%=$(OBJDIR)/%)
+override DEPHIR := $(HIR:$(SRCDIR)/%=$(DEPDIR)/%)
+
+# -- C O M P I L E R  S E T T I N G S -----------------------------------------
+
+# make directory if not exists
+MKDIR := mkdir -p
+
+# remove recursively force
+RM := rm -rf
+
+# compiler
+CXX := $(shell which c++)
+
+# compiler standard
+STD := -std=c++98
+
+# compiler optimization
+OPT := -O0 -g3
+
+# compiler flags
+CXXFLAGS :=	-Wall -Wextra -Werror -Wpedantic \
+			-Wno-unused -Wno-unused-variable -Wno-unused-parameter
+
+# dependency flags
+DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
+
+INCLUDES := $(addprefix -I, $(HDRDIR))
+
+DEF ?=
+
+override DEFINES := $(addprefix -D, $(DEF))
+
+
+# -- P H O N Y  T A R G E T S -------------------------------------------------
+
+.PHONY: all clean fclean re obj logger leaks
+
+# -- M A I N  T A R G E T S ---------------------------------------------------
+
+all: obj $(EXEC)
+
+
+logger:
+	@echo "     mode -> \x1b[36m"IRC_LOGGER"\x1b[0m"
+	@$(MAKE) --silent re DEF=IRC_LOGGER
+
+# -- E X E C U T A B L E  T A R G E T -------------------------------------------
+
+$(EXEC): $(OBJ)
+	@echo "  linking -> \x1b[34m"$(EXEC)"\x1b[0m"
+	@$(CXX) $^ -o $@;
+
+
+# -- C O M P I L A T I O N ------------------------------------------------------
+
+# self call with threads
+obj:
+	@$(MAKE) --silent -j$(THREAD) $(OBJ)
 
 -include $(DEP)
-$(foreach DIR, $(SUB), $(eval $(call COMPILE_RULE, $(DIR))))
 
-$(OBJDIR) $(DEPDIR):
-						@$(MKDIR) $@
+$(OBJDIR)/%.o : $(SRCDIR)/%.cpp Makefile | $(OBJHIR) $(DEPHIR)
+	@echo "compiling -> \x1b[33m"$(<F)"\x1b[0m"
+	@$(CXX) $(STD) $(OPT) $(CXXFLAGS) $(DEFINES) $(DEPFLAGS) $(INCLUDES) -c $< -o $@
 
-clean:					;
-						@$(RM) $(OBJDIR) $(DEPDIR)
+# -- D I R E C T O R I E S  C R E A T I O N -------------------------------------
 
-fclean:					clean
-						@$(RM) $(NAME)
+$(OBJHIR) $(DEPHIR) :
+	$(MKDIR) $@
 
-re:						fclean all
+# -- C L E A N I N G ------------------------------------------------------------
+
+clean:
+	$(RM) $(BLDDIR)
+
+
+fclean: clean
+	$(RM) $(EXEC)
+
+
+leaks:
+	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(EXEC)
+
+
+# -- R E C O M P I L E --------------------------------------------------------
+
+re: fclean all

@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.cpp                                         :+:      :+:    :+:   */
+/*   app.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/16 03:30:50 by diroyer           #+#    #+#             */
-/*   Updated: 2023/09/25 15:14:28 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/01 00:28:12 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,12 +28,14 @@ void Irc::run(void) {
 	try {
 		signalIgnore();
 
-		ServerInfo info = {"127.0.0.1", "8080", ""};
+		ServerInfo info = {"straboul", "127.0.0.1", "8080", ""};
 
-		int sock = this->create(info.node, info.service);
+		int sock = this->create(info.addr, info.port);
 
 		signalManager();
-		v_sock.push_back(Server(info, sock, pipe));
+
+		Server server(info, sock, pipe);
+		server.run();
 
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;

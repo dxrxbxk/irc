@@ -9,26 +9,22 @@
 	<< ACTION << std::endl
 
 
-Ping::Ping(Connexion& conn, const Message& msg)
+Ping::Ping(Connexion& conn, Message& msg)
 : Command(conn, msg) {}
 
 Ping::~Ping(void) {}
 
-
 bool Ping::evaluate(void) {
-	HINT("ping", "evaluate");
-
-	return false;
+	if (_msg.get_middle_size() < 1)
+		return false;// ERR_NOORIGIN
+	return true;
 }
-
 
 void Ping::execute(void) {
-	HINT("ping", "execute");
-	std::string msg = "";
-	_server.send(_conn, msg);
+	_server.response(_conn, "PONG :" + _msg.get_middle(0));
 }
 
-Command* Ping::create(Connexion& conn, const Message& msg) {
+Command* Ping::create(Connexion& conn, Message& msg) {
 	return new Ping(conn, msg);
 }
 

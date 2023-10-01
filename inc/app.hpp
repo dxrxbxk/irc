@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
+/*   app.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/16 03:32:53 by diroyer           #+#    #+#             */
-/*   Updated: 2023/08/24 07:22:44 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/01 02:11:22 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SERVER_HPP
-# define SERVER_HPP
+#ifndef IRC_HPP
+# define IRC_HPP
 
 # include <iostream>
 # include <cstdio>

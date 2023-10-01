@@ -25,11 +25,16 @@
 # include "signal.hpp"
 # include "utils.hpp"
 # include "connexion.hpp"
+# include "logger.hpp"
+
+class Server;
 
 class Poll {
+
 	public:
-		Poll();
-		~Poll();
+
+		Poll(const Server&);
+		~Poll(void);
 
 		void	addEvent(IOEvent &ref);
 		void	delEvent(IOEvent &ref);

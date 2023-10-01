@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 15:58:58 by diroyer           #+#    #+#             */
-/*   Updated: 2023/09/27 16:31:45 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/01 18:28:30 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,24 +41,74 @@ bool	Message::has_command(void) const {
 	return !_command.empty();
 }
 
+bool	Message::has_prefix(void) const {
+	return !_prefix.empty();
+}
+
+bool	Message::has_params(void) const {
+	return !_middle.empty();
+}
+
+bool	Message::has_middle(void) const {
+	return !_middle.empty();
+}
+
+bool	Message::has_trailing(void) const {
+	return !_trailing.empty();
+}
+
 const std::string& Message::get_command(void) const {
 	return _command;
 }
 
+std::string& Message::get_prefix(void)  {
+	return _prefix;
+}
+
+l_str&	Message::get_middle(void)  {
+	return _middle;
+}
+
+std::string&	Message::get_middle(const size_t index)  {
+	return _middle[index];
+}
+
+std::string&	Message::get_trailing(void)  {
+	return _trailing;
+}
+
+std::size_t		Message::get_middle_size(void) const {
+	return _middle.size();
+}
 
 // debug
 void Message::print(void) const {
 
-	std::cout << "prefix: " << _prefix << std::endl;
-	std::cout << "command: " << _command << std::endl;
-	std::cout << "middle: ";
-	for (l_str::const_iterator it = _middle.begin(); it != _middle.end(); ++it)
-		std::cout << *it << " ";
-	std::cout << std::endl;
-	std::cout << "trailing: " << _trailing << std::endl;
+	std::string msg;
+
+	if (not _prefix.empty())
+		msg.append("prefix " + _prefix);
+
+	if (not _command.empty()) {
+		if (not _prefix.empty())
+			msg.append(" ");
+		msg.append("command [" + _command + "]");
+	}
+
+	if (not _middle.empty()) {
+
+		if (not _prefix.empty() or not _command.empty())
+			msg.append(" ");
+		msg.append("middle ");
+		for (std::size_t i = 0; i < _middle.size(); i++)
+			msg.append("[" + _middle[i] + "] ");
+	}
+
+	if (not _trailing.empty()) {
+		msg.append("trailing [" + _trailing + "]");
+	}
+
+
+
+	Logger::info(msg);
 }
-
-
-
-
-

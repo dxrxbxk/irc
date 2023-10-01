@@ -45,15 +45,9 @@ const char* action_debug[] = {
 	"ADD_TRAILING",
 	"P_ERROR"
 };
+
 void 	Parser::debug(void) {
-	std::cout << "current char: ";
-    std::cout << std::hex << static_cast<uint8_t>(*msg);
-
-
-    e_chartype type = c_table[static_cast<uint8_t>(*msg)];
-    std::cout << " chartype: \x1b[32m" << chartype_debug[type] << "\x1b[0m";
-    std::cout << " state: \x1b[33m" << state_debug[tr.state] << "\x1b[0m";
-    std::cout << " action: \x1b[34m" << action_debug[tr.action] << "\x1b[0m" << std::endl;
+	Logger::info("current char: " + std::string(1, *msg) + " chartype: " + chartype_debug[c_table[static_cast<uint8_t>(*msg)]] + " state: " + state_debug[tr.state] + " action: " + action_debug[tr.action]);
 }
 
 
@@ -118,7 +112,7 @@ void debug_raw(const char* msg) {
 
 void	Parser::run(void) {
 
-	debug_raw(msg);
+	// Logger::log("parsing request: " + std::string(msg));
 
 	while (tr.state != ERROR && tr.state != END) {
 		// debug();

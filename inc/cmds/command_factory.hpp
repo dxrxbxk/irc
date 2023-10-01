@@ -8,6 +8,10 @@
 # include "command.hpp"
 # include "join.hpp"
 # include "ping.hpp"
+# include "cap.hpp"
+# include "nick.hpp"
+# include "user.hpp"
+# include "mode.hpp"
 
 
 class Connexion;
@@ -16,11 +20,11 @@ class CommandFactory {
 
 	public:
 
-		typedef Command* (*cmd_t)(Connexion&, const Message&);
+		typedef Command* (*cmd_t)(Connexion&, Message&);
 
 		typedef std::map<std::string, cmd_t> map_t;
 
-		static Command* create(Connexion&, const Message&);
+		static Command* create(Connexion&, Message&);
 
 
 	private:
@@ -32,11 +36,7 @@ class CommandFactory {
 
 		static map_t init(void);
 
-
-
-
-
-		const map_t cmap;
+		map_t cmap;
 
 };
 

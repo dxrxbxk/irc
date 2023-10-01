@@ -1,24 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   types.hpp                                          :+:      :+:    :+:   */
+/*   channel.hpp                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/27 16:17:02 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 00:48:36 by diroyer          ###   ########.fr       */
+/*   Created: 2023/10/02 00:44:14 by diroyer           #+#    #+#             */
+/*   Updated: 2023/10/02 01:47:43 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TYPES_HPP
-# define TYPES_HPP
+#ifndef CHANNEL_HPP
+# define CHANNEL_HPP
 
-# include <list>
-# include <string>
 # include <vector>
+# include <string>
+# include "types.hpp"
 
-typedef std::vector<std::string>	l_str;
-typedef std::vector<std::string>	vec_str;
+class Channel {
+	public:
+		Channel(const std::string name);
+		~Channel();
+
+		enum mode {
+			INVITATION,
+			TOPIC,
+			KEY,
+			OPERATOR,
+			USER_LIMIT,
+			NB_MODES
+		};
+	private:
+		Channel();
+
+		std::string	_name;
+		std::string	_topic;
+		vec_str		_user_list;
+		vec_str		_op_list;
+		std::string	_modes[NB_MODES];
+};
 
 #endif
-

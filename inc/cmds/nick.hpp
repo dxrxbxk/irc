@@ -1,24 +1,37 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   types.hpp                                          :+:      :+:    :+:   */
+/*   nick.hpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/09/27 16:17:02 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 00:48:36 by diroyer          ###   ########.fr       */
+/*   Created: 2023/10/01 01:37:54 by diroyer           #+#    #+#             */
+/*   Updated: 2023/10/01 18:48:40 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TYPES_HPP
-# define TYPES_HPP
+#ifndef NICK_HPP
+# define NICK_HPP
 
-# include <list>
-# include <string>
-# include <vector>
+#include "command.hpp"
 
-typedef std::vector<std::string>	l_str;
-typedef std::vector<std::string>	vec_str;
+class Nick : public Command {
+
+	public:
+
+		Nick(Connexion&, Message&);
+
+		~Nick(void);
+
+		bool evaluate(void);
+
+		void execute(void);
+
+		static Command* create(Connexion&, Message&);
+
+	private:
+		void	add_nick(void);
+
+};
 
 #endif
-

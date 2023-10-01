@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:30 by diroyer           #+#    #+#             */
-/*   Updated: 2023/09/27 16:47:30 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/01 23:32:57 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,19 +16,25 @@
 #define BUFFER_SIZE 1024
 
 Connexion::Connexion(void)
-: sock_fd(-1), buffer(), s_ptr(NULL) {
+: sock_fd(-1), buffer(), s_ptr(NULL), _registered(false) {
 }
 
 Connexion::~Connexion(void) {}
 
 Connexion::Connexion(int fd, Server &server)
-: sock_fd(fd), buffer(), s_ptr(&server) {
+: sock_fd(fd), buffer(), s_ptr(&server), _registered(false) {
 }
 
-void	Connexion::disconnect(void) {
-	if (s_ptr)
-		s_ptr->unmapConnexion(*this);
-	std::cout << "Connexion::disconnect" << std::endl;
+void	Connexion::set_register(void) {
+	_registered = true;
+}
+
+bool	Connexion::registered(void) const {
+	return _registered;
+}
+
+ClientInfo&	Connexion::get_client_info(void) {
+	return s_client_info;
 }
 
 void	Connexion::setFd(int fd) {
@@ -82,6 +88,8 @@ void	Connexion::notify(void) {
 
 	for (l_str::const_iterator i = l_msg.begin(); i != l_msg.end(); ++i) {
 
+		Logger::recv(*i);
+
 		try {
 			// parse raw message
 			Message msg = Parser::parse(*i);
@@ -90,7 +98,7 @@ void	Connexion::notify(void) {
 			Command* cmd = CommandFactory::create(*this, msg);
 
 			if (cmd == NULL)
-				std::cout << "Command not found" << std::endl;
+				Logger::info(msg.get_command() + ": command not found");
 			else {
 				if (cmd->evaluate() == true)
 					cmd->execute();
@@ -98,8 +106,16 @@ void	Connexion::notify(void) {
 			}
 
 		} catch (const std::exception& e) {
-			std::cerr << "Parsing error" << e.what() << std::endl;
+			Logger::info("Parsing error: " + std::string(e.what()));
 		}
+	}
+}
+
+
+void	Connexion::disconnect(void) {
+	if (s_ptr) {
+		Logger::info("connexion closed");
+		s_ptr->unmapConnexion(*this);
 	}
 }
 
@@ -112,6 +128,8 @@ Connexion& Connexion::operator=(const Connexion &copy) {
 		sock_fd = copy.sock_fd;
 		buffer = copy.buffer;
 		s_ptr = copy.s_ptr;
+		s_client_info = copy.s_client_info;
+		_registered = copy._registered;
 	}
 	return *this;
 }

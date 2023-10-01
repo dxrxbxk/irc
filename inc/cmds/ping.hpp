@@ -9,7 +9,7 @@ class Ping : public Command {
 
 	public:
 
-		Ping(Connexion&, const Message&);
+		Ping(Connexion&, Message&);
 
 		~Ping(void);
 
@@ -17,7 +17,7 @@ class Ping : public Command {
 
 		void execute(void);
 
-		static Command* create(Connexion&, const Message&);
+		static Command* create(Connexion&, Message&);
 
 	private:
 
