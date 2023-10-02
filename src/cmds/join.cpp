@@ -25,7 +25,6 @@ void	Join::add_user_to_channel(void) {
 void Join::execute(void) {
 	//_server.response(_conn, "");
 	add_user_to_channel();
-	_server.response(_conn, RPL::welcome(_conn.get_client_info()));
 }
 
 Command* Join::create(Connexion& conn, Message& msg) {

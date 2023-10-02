@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:28 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 22:43:33 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 22:54:54 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ struct ClientInfo {
 struct SendInfo {
 	int					reply;
 	const std::string	send_buffer;
-}
+};
 
 class Connexion : public IOEvent {
 	public:

@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 19:04:16 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 00:03:47 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 22:55:10 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,6 @@ Mode::~Mode(void) {}
 
 void	Mode::user_mode(void) {
 	// maybe check if user is registered;
-	_server.response(_conn, ERR::u_mod_unknown_flag(_conn.get_client_info()));
 }
 
 bool	Mode::valid_mode(char c) {

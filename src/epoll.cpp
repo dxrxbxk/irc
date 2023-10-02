@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 18:19:01 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 20:03:58 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 22:56:24 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,12 +58,6 @@ void	Poll::epollWait(void) {
 
 		else if (nfds > 0) {
 			for (int n = 0; n < nfds; ++n) {
-				if (event = listenfd)
-					accept()
-				if (event = EPOLLIN)
-					serverdoiread
-				if (event = EPOLLOUT)
-					serverdoitsend
 				if (v_events[n].events & EPOLLIN) {
 					IOEvent &ref = getEventData(v_events[n]);
 					ref.read();

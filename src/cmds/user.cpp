@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 01:54:20 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 21:25:18 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 22:55:58 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,8 +43,6 @@ void User::execute(void) {
 	if (not _conn.registered()) {
 		_conn.set_register();
 		add_user();
-		_server.response(_conn, RPL::welcome(_conn.get_client_info()));
-		_server.response(_conn, RPL::end_of_motd(_conn.get_client_info()));
 	}
 }
 
