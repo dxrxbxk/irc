@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 01:37:07 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/01 18:48:21 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:07:22 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,23 +21,16 @@ Nick::Nick(Connexion& conn, Message& msg)
 
 Nick::~Nick(void) {}
 
-bool Nick::evaluate(void) {
-
-	// example:
-	if (not _msg.has_params())
-		return false;
-	// check si ya plusieurs middle;
-	return true;
-}
-
 void	Nick::add_nick(void) {
 	ClientInfo&	info = _conn.get_client_info();
 	info.nickname.swap(_msg.get_middle(NICKNAME));
 }
 
-void Nick::execute(void) {
+SendInfo Nick::execute(void) {
+	SendInfo	send_info;
 	//_server.response(_conn, "");
 	add_nick();
+	return send_info;
 }
 
 Command* Nick::create(Connexion& conn, Message& msg) {

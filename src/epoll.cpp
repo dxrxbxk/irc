@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 18:19:01 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 22:56:24 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:46:51 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,6 +62,10 @@ void	Poll::epollWait(void) {
 					IOEvent &ref = getEventData(v_events[n]);
 					ref.read();
 				}
+				if (v_events[n].events & EPOLLOUT) {
+					IOEvent &ref = getEventData(v_events[n]);
+					ref.write();
+				}
 				if (v_events[n].events & EPOLLRDHUP) {
 					IOEvent &ref = getEventData(v_events[n]);
 					delEvent(ref);
@@ -91,6 +95,18 @@ void	Poll::addEvent(IOEvent &ref) {
 	ev.events = EPOLLIN | EPOLLRDHUP;
 	ev.data.ptr = &ref;
 	if (epoll_ctl(epollfd, EPOLL_CTL_ADD, ref.getFd(), &ev) == -1)
-		throw std::runtime_error(handleSysError("epoll_ctl"));
+		throw std::runtime_error(handleSysError("epoll_ctl add"));
 	v_events.resize(v_events.size() + 1);
+}
+
+void	Poll::modEvent(IOEvent &ref) {
+	epoll_event	ev;
+	std::cout << "Moding event for " << ref.getFd() << std::endl;
+
+	memset(&ev, 0, sizeof(epoll_event));
+	ev.events = EPOLLOUT | EPOLLRDHUP;
+	ev.data.ptr = &ref;
+
+	if (epoll_ctl(epollfd, EPOLL_CTL_MOD, ref.getFd(), &ev) == -1)
+		throw std::runtime_error(handleSysError("epoll_ctl mod"));
 }

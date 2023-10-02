@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:30 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 22:43:13 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:55:00 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,8 +49,6 @@ std::string		Connexion::get_nickname(void) {
 	return s_client_info.nickname;
 }
 
-
-
 void	Connexion::readInput(void) {
 	ssize_t		rec_len;
 	char		read_buf[BUFFER_SIZE];
@@ -73,6 +71,14 @@ l_str	Connexion::checkCrlf(void) {
 	return l_msg;
 }
 
+void	Connexion::mod_event(void) {
+	Server	&srv = Server::shared();
+	Poll	&poller = srv.get_poller();	
+
+	poller.modEvent(*this);
+}
+
+void	Connexion::write(void) {}
 
 void	Connexion::read(void) {
 	l_str		l_msg;
@@ -94,9 +100,11 @@ void	Connexion::read(void) {
 			if (cmd == NULL)
 				Logger::info(msg.get_command() + ": command not found");
 			else {
-				if (cmd->evaluate() == true)
-					cmd->execute();
+				s_send_info = cmd->execute();
 				delete cmd;
+
+			this->mod_event();
+
 			}
 
 		} catch (const std::exception& e) {

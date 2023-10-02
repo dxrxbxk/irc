@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 01:54:20 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 22:55:58 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:15:34 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,7 +19,7 @@ User::User(Connexion& conn, Message& msg)
 : Command(conn, msg) {}
 
 User::~User(void) {}
-
+/*
 bool User::evaluate(void) {
 	Logger::info("evaluate");
 	if (_msg.get_middle_size() != 3)
@@ -29,6 +29,7 @@ bool User::evaluate(void) {
 	// example:
 	return true;
 }
+*/
 
 void	User::add_user(void) {
 	ClientInfo&	info = _conn.get_client_info();
@@ -38,12 +39,14 @@ void	User::add_user(void) {
 	info.realname.swap(_msg.get_trailing());
 }
 
-void User::execute(void) {
+SendInfo User::execute(void) {
+	SendInfo	send_info;
 	//std::cout << "registered " << _conn.registered() << std::endl;
 	if (not _conn.registered()) {
 		_conn.set_register();
 		add_user();
 	}
+	return send_info;
 }
 
 Command* User::create(Connexion& conn, Message& msg) {

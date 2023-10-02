@@ -8,22 +8,18 @@ Join::Join(Connexion& conn, Message& msg)
 
 Join::~Join(void) {}
 
-bool Join::evaluate(void) {
-	// example:
-	if (not _msg.has_params())
-		return false;
-	return true;
-}
-
 void	Join::add_user_to_channel(void) {
 	Channel	&chan = _server.get_channel(_msg.get_middle(0), _conn);
 //	std::string nickname = _conn.get_nickname();
 //	srv.add_channel(_msg.middle
 }
 
-void Join::execute(void) {
+SendInfo Join::execute(void) {
+	SendInfo	send_info;
+	//check_params etc;
 	//_server.response(_conn, "");
 	add_user_to_channel();
+	return send_info;
 }
 
 Command* Join::create(Connexion& conn, Message& msg) {

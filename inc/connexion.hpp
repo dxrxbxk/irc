@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:28 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 22:54:54 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:52:26 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,7 @@
 # include "types.hpp"
 # include "command_factory.hpp"
 # include "numerics.hpp"
+# include "send_info.hpp"
 
 class Server;
 
@@ -37,11 +38,6 @@ struct ClientInfo {
 	std::string	nickname;
 };
 
-struct SendInfo {
-	int					reply;
-	const std::string	send_buffer;
-};
-
 class Connexion : public IOEvent {
 	public:
 		Connexion(void);
@@ -51,6 +47,7 @@ class Connexion : public IOEvent {
 		Connexion& operator=(const Connexion&);
 
 		void						read(void);
+		void						write(void);
 		int							getFd(void) const;
 		void						setFd(int fd);
 		void						disconnect(void);
@@ -70,6 +67,7 @@ class Connexion : public IOEvent {
 		void						readInput(void);
 		l_str						checkCrlf(void);
 		bool						_registered;
+		void						mod_event(void);
 };
 
 

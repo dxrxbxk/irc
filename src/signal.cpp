@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 20:55:24 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 19:40:17 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:50:55 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	Signal::disconnect(void) {
 }
+
+void	Signal::write(void) {}
 
 void	signalHandler(int signum) {
 	(void)signum;

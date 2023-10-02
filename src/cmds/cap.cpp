@@ -8,16 +8,14 @@ Cap::Cap(Connexion& conn, Message& msg)
 
 Cap::~Cap(void) {}
 
-bool Cap::evaluate(void) {
-	return true;
-}
-
-void Cap::execute(void) {
+SendInfo Cap::execute(void) {
+	SendInfo	send_info;
 //	_server.response(_conn, "CAP * LS :");
 	if (_msg.get_middle(0) == "END")
-		return ;
+		return send_info;
 	else if (_msg.get_middle(0) == "LS")
 		_server.response(_conn, "CAP * LS :\r\n");
+	return send_info;
 }
 
 Command* Cap::create(Connexion& conn, Message& msg) {

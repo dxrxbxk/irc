@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:59:12 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 19:38:19 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:53:47 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ Server& Server::shared(void) {
 	static Server instance;
 	return instance;
 }
-
 
 void Server::init(ServerInfo& info, const Shared_fd& socket, Signal& signal) {
 
@@ -87,6 +86,8 @@ void setnonblocking(int sock)
                 // modify moditored fd event
                 epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &ev);
 */
+
+void	Server::write(void) {}
 
 void	Server::read(void) {
 	int cfd;
@@ -157,6 +158,10 @@ const std::string& Server::get_name(void) const {
 
 bool Server::has_password(void) const {
 	return not _info.password.empty();
+}
+
+Poll&	Server::get_poller(void) {
+	return _poller;
 }
 
 

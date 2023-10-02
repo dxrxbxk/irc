@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 19:04:15 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 00:04:04 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:10:54 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,8 +23,7 @@ class Mode : public Command {
 		Mode(Connexion&, Message&);
 		~Mode(void);
 
-		bool evaluate(void);
-		void execute(void);
+		SendInfo execute(void);
 
 		static Command* create(Connexion&, Message&);
 

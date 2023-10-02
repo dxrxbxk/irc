@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 01:54:34 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/01 19:43:19 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:11:37 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,9 +24,7 @@ class User : public Command {
 
 		~User(void);
 
-		bool evaluate(void);
-
-		void execute(void);
+		SendInfo execute(void);
 
 		static Command* create(Connexion&, Message&);
 

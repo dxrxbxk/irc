@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 19:04:16 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 22:55:10 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:07:08 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,17 +28,13 @@ bool	Mode::valid_mode(char c) {
 	return (c == 'i' || c == 't' || c == 'k' || c == 'o' || c =='l');
 }
 
-bool Mode::evaluate(void) {
-	// example:
-	if (not _msg.has_params())
-		return false;
-	return true;
-}
-
-void Mode::execute(void) {
+SendInfo	Mode::execute(void) {
+	SendInfo	send_info;
 	//_server.response(_conn, "");
 	if (_msg.get_middle().size() == 2)
 		user_mode();
+
+	return send_info;
 }
 
 Command* Mode::create(Connexion& conn, Message& msg) {

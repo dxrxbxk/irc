@@ -65,6 +65,8 @@ class Logger : public IOEvent {
 
 		void disconnect(void);
 
+		void write(void);
+
 		static Logger& shared(void);
 
 

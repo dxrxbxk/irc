@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 18:19:20 by diroyer           #+#    #+#             */
-/*   Updated: 2023/08/21 20:28:34 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:37:22 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class Poll {
 		~Poll(void);
 
 		void	addEvent(IOEvent &ref);
+		void	modEvent(IOEvent &ref);
 		void	delEvent(IOEvent &ref);
 		void	run(void);
 		void	stop(void);
@@ -53,7 +54,7 @@ class Poll {
 		bool								is_running;
 
 		void 								epollWait(void);
-		IOEvent&						getEventData(epoll_event &ref);
+		IOEvent&							getEventData(epoll_event &ref);
 };
 
 #endif

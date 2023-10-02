@@ -419,6 +419,7 @@ int Logger::getFd(void) const {
 /* disconnect */
 void Logger::disconnect(void) {}
 
+void Logger::write(void) {}
 
 
 // -- private accessors ------------------------------------------------------

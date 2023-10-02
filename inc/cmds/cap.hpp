@@ -11,9 +11,7 @@ class Cap : public Command {
 
 		~Cap(void);
 
-		bool evaluate(void);
-
-		void execute(void);
+		SendInfo execute(void);
 
 		static Command* create(Connexion&, Message&);
 
