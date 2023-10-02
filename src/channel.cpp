@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 00:43:43 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 02:19:11 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 02:24:36 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,15 @@
 Channel::Channel() {
 }
 
-Channel::change_admin(Connexion& old) {
+void	Channel::change_admin(Connexion& old) {
 	_admin = &old;
 }
 
 Channel::Channel(const std::string channel_name, Connexion& creator)
-: _name(name), _admin(&creator) {
+: _name(channel_name), _admin(&creator) {
+}
+
+void	Channel::add_user(Connexion &new_user) {
 }
 
 Channel::~Channel() {} 

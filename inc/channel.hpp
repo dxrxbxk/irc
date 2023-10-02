@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 00:44:14 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 02:17:43 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 02:24:26 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,6 +24,9 @@ class Channel {
 		~Channel();
 		Channel(const Channel&);
 		Channel& operator=(const Channel&);
+
+		void	change_admin(Connexion& old);
+		void	add_user(Connexion &new_user);
 
 		enum mode {
 			INVITATION,
