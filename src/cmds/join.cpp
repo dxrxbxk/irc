@@ -16,8 +16,7 @@ bool Join::evaluate(void) {
 }
 
 void	Join::add_user_to_channel(void) {
-	Server &srv = _conn.getServer();
-	Channel	&chan = srv.get_channel(_msg.get_middle(0), _conn);
+	Channel	&chan = _server.get_channel(_msg.get_middle(0), _conn);
 //	std::string nickname = _conn.get_nickname();
 //	srv.add_channel(_msg.middle
 }
