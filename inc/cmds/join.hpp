@@ -18,6 +18,7 @@ class Join : public Command {
 		static Command* create(Connexion&, Message&);
 
 	private:
+		void	add_user_to_channel(void);
 
 };
 

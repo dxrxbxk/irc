@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 00:44:14 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 02:24:26 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 03:57:14 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,13 +20,15 @@
 
 class Channel {
 	public:
-		Channel(const std::string name, Connexion&);
+		Channel();
+		Channel(std::string name, Connexion&);
 		~Channel();
 		Channel(const Channel&);
 		Channel& operator=(const Channel&);
 
 		void	change_admin(Connexion& old);
 		void	add_user(Connexion &new_user);
+		void	send_msg(const std::string msg);
 
 		enum mode {
 			INVITATION,
@@ -37,7 +39,7 @@ class Channel {
 			NB_MODES
 		};
 	private:
-		Channel();
+		typedef std::map<std::string, Connexion*>::const_iterator const_iterator;
 
 		std::string							_name;
 		Connexion*							_admin;

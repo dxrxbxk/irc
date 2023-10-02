@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/09/27 15:58:58 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/01 18:28:30 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 03:09:53 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,19 +61,19 @@ const std::string& Message::get_command(void) const {
 	return _command;
 }
 
-std::string& Message::get_prefix(void)  {
+std::string& Message::get_prefix(void) {
 	return _prefix;
 }
 
-l_str&	Message::get_middle(void)  {
+l_str&	Message::get_middle(void) {
 	return _middle;
 }
 
-std::string&	Message::get_middle(const size_t index)  {
+std::string&	Message::get_middle(const size_t index) {
 	return _middle[index];
 }
 
-std::string&	Message::get_trailing(void)  {
+std::string&	Message::get_trailing(void) {
 	return _trailing;
 }
 

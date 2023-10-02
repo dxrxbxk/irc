@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 20:55:24 by diroyer           #+#    #+#             */
-/*   Updated: 2023/08/25 21:57:02 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 19:40:17 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,11 @@ int		Signal::getFd(void) const {
 	return (g_signalPipe[0]);
 }
 
-void	Signal::notify(void) {
+void	Signal::read(void) {
 	char c;
 
-	std::cout << "Signal notify" << std::endl;
-	if (read(g_signalPipe[0], &c, sizeof(c)) == -1)
+	std::cout << "Signal read" << std::endl;
+	if (::read(g_signalPipe[0], &c, sizeof(c)) == -1)
 		ERROR(handleSysError("pipe read"));
 	throw std::runtime_error("Signal: Interrupted system call");
 }

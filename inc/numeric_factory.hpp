@@ -1,25 +1,46 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   io_event.hpp                                       :+:      :+:    :+:   */
+/*   numeric_factory.hpp                                :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/08/18 20:07:08 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 19:33:32 by diroyer          ###   ########.fr       */
+/*   Created: 2023/10/02 20:27:38 by diroyer           #+#    #+#             */
+/*   Updated: 2023/10/02 21:14:55 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IO_EVENT_HPP
-# define IO_EVENT_HPP
+#ifndef NUMERIC_FACTORY_HPP
+# define NUMERIC_FACTORY_HPP
 
-class IOEvent {
+# include <map>
+# include <string>
+
+# include "numerics_enum.hpp"
+# include "numerics.hpp"
+
+class Connexion;
+
+class NumericFactory {
+
 	public:
-		inline virtual ~IOEvent(void) {} ;
-		virtual void	read(void) = 0;
-		virtual int		getFd(void) const = 0;
-		virtual void	disconnect(void) = 0;
+
+		typedef Reply::ret_type (*fptr_t)(Reply::arg_type);
+
+		typedef std::map<Reply::code, fptr_t> map_t;
+
 	private:
+
+		static NumericFactory& shared(void);
+
+		NumericFactory(void);
+		~NumericFactory(void);
+
+		static map_t init(void);
+
+		map_t fmap;
+
 };
+
 
 #endif

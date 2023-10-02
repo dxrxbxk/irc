@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 18:19:01 by diroyer           #+#    #+#             */
-/*   Updated: 2023/08/27 16:14:59 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 20:03:58 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,11 +57,16 @@ void	Poll::epollWait(void) {
 			throw std::runtime_error("epoll_wait");
 
 		else if (nfds > 0) {
-
 			for (int n = 0; n < nfds; ++n) {
+				if (event = listenfd)
+					accept()
+				if (event = EPOLLIN)
+					serverdoiread
+				if (event = EPOLLOUT)
+					serverdoitsend
 				if (v_events[n].events & EPOLLIN) {
 					IOEvent &ref = getEventData(v_events[n]);
-					ref.notify();
+					ref.read();
 				}
 				if (v_events[n].events & EPOLLRDHUP) {
 					IOEvent &ref = getEventData(v_events[n]);

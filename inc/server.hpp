@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:59:22 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 02:12:22 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 19:38:32 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 #include "channel.hpp"
 #include "epoll.hpp"
 #include "signal.hpp"
+#include "types.hpp"
 
 #include <map>
 
@@ -41,7 +42,7 @@ class Server : public IOEvent {
 		void 				stop(void);
 
 
-		void				notify(void);
+		void				read(void);
 		int					getFd(void) const;
 		void				disconnect(void);
 
@@ -56,9 +57,15 @@ class Server : public IOEvent {
 		const std::string&	get_port(void) const;
 		const std::string&	get_password(void) const;
 		std::size_t			get_nb_conns(void) const;
+		
 		bool 				has_password(void) const;
 
+		void		add_channel(const std::string channel_name, Connexion &ref);
+		Channel&	get_channel(const std::string channel_name, Connexion &ref);
+		bool		channel_exist(const std::string);
+
 	private:
+		typedef std::map<std::string, Channel>::const_iterator const_iterator;
 
 		ServerInfo						s_info;
 		Shared_fd						sock_fd;

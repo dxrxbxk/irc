@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:59:12 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 02:10:44 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 19:38:19 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,16 @@ Server::Server(const ServerInfo& info, const int fd, Signal& sig)
 	Logger::set_server(*this);
 	poller.addEvent(*this);
 	poller.addEvent(sig);
+}
+
+Channel&	Server::get_channel(const std::string channel_name, Connexion &ref) {
+	if (not _channels.count(channel_name))
+		add_channel(channel_name, ref);
+	return _channels[channel_name];
+}
+
+void	Server::add_channel(const std::string channel_name, Connexion &ref) {
+	_channels[channel_name] = Channel(channel_name, ref);
 }
 
 Server::Server(const Server& copy)
@@ -36,7 +46,27 @@ void Server::stop(void) {
 	poller.stop();
 }
 
-void	Server::notify(void) {
+//yoink
+/*
+void setnonblocking(int sock)
+{
+    int opts;
+    if ((opts = fcntl(sock, F_GETFL)) < 0)
+        errexit("GETFL %d failed", sock);
+    opts = opts | O_NONBLOCK;
+    if (fcntl(sock, F_SETFL, opts) < 0)
+        errexit("SETFL %d failed", sock);
+}
+
+                // modify monitored event to EPOLLOUT,  wait next loop to send respond
+                ev.data.ptr = data;
+                // Modify event to EPOLLOUT
+                ev.events = EPOLLOUT | EPOLLET;
+                // modify moditored fd event
+                epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &ev);
+*/
+
+void	Server::read(void) {
 	int cfd;
 
 	std::cout << "\nSending notification" << std::endl;

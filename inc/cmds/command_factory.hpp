@@ -13,7 +13,6 @@
 # include "user.hpp"
 # include "mode.hpp"
 
-
 class Connexion;
 
 class CommandFactory {

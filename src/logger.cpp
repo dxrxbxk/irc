@@ -406,8 +406,8 @@ void Logger::read_stdin(void) {
 
 // -- public override methods ------------------------------------------------
 
-/* notify */
-void Logger::notify(void) {
+/* read */
+void Logger::read(void) {
 	read_stdin();
 }
 

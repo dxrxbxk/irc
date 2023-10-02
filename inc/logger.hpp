@@ -59,7 +59,7 @@ class Logger : public IOEvent {
 
 		// -- override methods -------------------------------------------------
 
-		void notify(void);
+		void read(void);
 
 		int getFd(void) const;
 

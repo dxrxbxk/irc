@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:30 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/01 23:32:57 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 22:43:13 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,10 @@ int		Connexion::getFd(void) const {
 	return sock_fd;
 }
 
+std::string		Connexion::get_nickname(void) {
+	return s_client_info.nickname;
+}
+
 Server&	Connexion::getServer(void) const {
 	return *s_ptr;
 }
@@ -80,7 +84,7 @@ l_str	Connexion::checkCrlf(void) {
 }
 
 
-void	Connexion::notify(void) {
+void	Connexion::read(void) {
 	l_str		l_msg;
 
 	readInput();
