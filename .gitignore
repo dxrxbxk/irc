@@ -1,6 +1,8 @@
-
-
+build/
 log/
+
+ircserv
+
 **/*.o
 **/*.d
 **/*.json
