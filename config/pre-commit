@@ -1,9 +1,12 @@
-#!/bin/sh
+#!/usr/bin/env -S zsh --no-rcs
 
 make
 if [ $? -ne 0 ]; then
-	echo "Le projet ne compile pas. Le commit a été annulé."
+	echo "\nBUILD \x1b[32mFAILED\x1b[0m. fix errors before commiting...\n"
 	exit 1
+else
+	make fclean
+	echo "\nBUILD \x1b[31mSUCCESS\x1b[0m. commiting...\n"
 fi
 
 exit 0

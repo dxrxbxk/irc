@@ -37,13 +37,8 @@ override MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
 
 override THREAD    := $(shell nproc)
 
-# -- T A R G E T S ------------------------------------------------------------
 
-# project name
-override PROJECT = ircserv
 
-# main executable
-override EXEC = $(PROJECT)
 
 # -- D I R E C T O R I E S ----------------------------------------------------
 
@@ -64,6 +59,20 @@ override DEPDIR := $(BLDDIR)/dependency
 
 # current directory
 override ROOT := $(shell pwd)
+
+
+
+# -- T A R G E T S ------------------------------------------------------------
+
+# project name
+override PROJECT := ircserv
+
+# main executable
+override NAME := $(PROJECT)
+
+# hook script
+override HOOK := $(ROOT)/.git/hooks/pre-commit
+
 
 
 # -- S O U R C E S ------------------------------------------------------------
@@ -87,56 +96,61 @@ override HIR := $(sort $(dir $(SRC)))
 override OBJHIR := $(HIR:$(SRCDIR)/%=$(OBJDIR)/%)
 override DEPHIR := $(HIR:$(SRCDIR)/%=$(DEPDIR)/%)
 
+
+
 # -- C O M P I L E R  S E T T I N G S -----------------------------------------
 
 # make directory if not exists
-MKDIR := mkdir -p
+override MKDIR := mkdir -pv
 
 # remove recursively force
-RM := rm -rf
+override RM := rm -rfv
+
+# leaks detection program
+override VALGRIND := $(shell which valgrind)
+
+# valgrind flags
+override VFLAGS := valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes
 
 # compiler
-CXX := $(shell which c++)
+override CXX := $(shell which c++)
 
 # compiler standard
-STD := -std=c++98
+override STD := -std=c++98
 
 # compiler optimization
-OPT := -O0 -g3
+override OPT := -O0 -g3
 
 # compiler flags
-CXXFLAGS :=	-Wall -Wextra -Werror -Wpedantic \
-			-Wno-unused -Wno-unused-variable -Wno-unused-parameter
+override CXXFLAGS := -Wall -Wextra -Werror -Wpedantic -Wno-unused -Wno-unused-variable -Wno-unused-parameter
 
 # dependency flags
-DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
+override DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
 
-INCLUDES := $(addprefix -I, $(HDRDIR))
+# all include subdirs with -I prefix
+override INCLUDES := $(addprefix -I, $(HDRDIR))
 
 DEF ?=
 
 override DEFINES := $(addprefix -D, $(DEF))
 
 
-override HOOK := $(ROOT)/.git/hooks/pre-commit
 
 
 # -- P H O N Y  T A R G E T S -------------------------------------------------
 
 .PHONY: all clean fclean re obj logger leaks
 
+
 # -- M A I N  T A R G E T S ---------------------------------------------------
 
-all: $(HOOK) obj $(EXEC)
+all: $(HOOK) obj $(NAME)
 
-
-$(HOOK):
-	ln -s $(ROOT)/config/pre-commit $@
 
 # -- E X E C U T A B L E  T A R G E T -------------------------------------------
 
-$(EXEC): $(OBJ)
-	@echo "  linking -> \x1b[34m"$(EXEC)"\x1b[0m"
+$(NAME): $(OBJ)
+	@echo "  linking -> \x1b[34m"$@"\x1b[0m"
 	@$(CXX) $^ -o $@;
 
 
@@ -155,29 +169,35 @@ $(OBJDIR)/%.o : $(SRCDIR)/%.cpp Makefile | $(OBJHIR) $(DEPHIR)
 # -- D I R E C T O R I E S  C R E A T I O N -------------------------------------
 
 $(OBJHIR) $(DEPHIR) :
-	$(MKDIR) $@
+	@$(MKDIR) $@
 
 # -- C L E A N I N G ------------------------------------------------------------
 
 clean:
-	$(RM) $(BLDDIR)
+	@$(RM) $(BLDDIR)
 
 
 fclean: clean
-	$(RM) $(EXEC)
+	@$(RM) $(NAME)
 
-
-leaks:
-	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(EXEC)
-
-logger:
-	@echo "     mode -> \x1b[36m"IRC_LOGGER"\x1b[0m"
-	@$(MAKE) --silent re DEF=IRC_LOGGER
 
 
 # -- R E C O M P I L E --------------------------------------------------------
 
 re: fclean all
+
+
+leaks: all
+	$(VALGRIND) $(VFLAGS) ./$(NAME)
+
+logger:
+	@echo "     mode -> \x1b[36m"IRC_LOGGER"\x1b[0m"
+	@$(MAKE) --silent re DEF=IRC_LOGGER
+
+$(HOOK):
+	ln -s $(ROOT)/config/pre-commit $@
+
+
 
 
 
