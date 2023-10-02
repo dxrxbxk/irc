@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 00:44:14 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 01:47:43 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 02:17:43 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,12 +15,15 @@
 
 # include <vector>
 # include <string>
-# include "types.hpp"
+# include "connexion.hpp"
+
 
 class Channel {
 	public:
-		Channel(const std::string name);
+		Channel(const std::string name, Connexion&);
 		~Channel();
+		Channel(const Channel&);
+		Channel& operator=(const Channel&);
 
 		enum mode {
 			INVITATION,
@@ -33,11 +36,12 @@ class Channel {
 	private:
 		Channel();
 
-		std::string	_name;
-		std::string	_topic;
-		vec_str		_user_list;
-		vec_str		_op_list;
-		std::string	_modes[NB_MODES];
+		std::string							_name;
+		Connexion*							_admin;
+		std::string							_topic;
+		vec_str								_op_list;
+		std::string							_modes[NB_MODES];
+		std::map<std::string, Connexion*>	_users;
 };
 
 #endif

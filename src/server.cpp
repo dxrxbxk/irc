@@ -6,14 +6,14 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:59:12 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/01 20:24:08 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 02:10:44 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "server.hpp"
 
 Server::Server(const ServerInfo& info, const int fd, Signal& sig)
-: s_info(info), sock_fd(fd), m_conns(), poller(*this) {
+: s_info(info), sock_fd(fd), m_conns(), poller(*this), _channels() {
 	std::cout << "Socketserver constructor called" << std::endl;
 	Logger::set_server(*this);
 	poller.addEvent(*this);
@@ -64,14 +64,11 @@ void	Server::disconnect(void) {
 
 
 void	Server::response(const Connexion& conn, const std::string& msg) {
-
-
 	/* temporary CRLF check during development */
-//	if (msg.size() < 2) { throw std::runtime_error("invalid message"); }
-//	if (msg[msg.size() - 2] != '\r' and msg[msg.size() - 1] != '\n')
-//		throw std::runtime_error("missing CRLF");
+	if (msg.size() < 2) { throw std::runtime_error("invalid message"); }
+	if (msg[msg.size() - 2] != '\r' and msg[msg.size() - 1] != '\n')
+		throw std::runtime_error("missing CRLF");
 	/* ************************************** */
-
 	Logger::send(msg);
 	if (send(conn.getFd(), msg.c_str(), msg.size(), 0) == -1) {
 		// ...

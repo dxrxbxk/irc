@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:59:22 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/01 02:37:51 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/02 02:12:22 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 #include "io_event.hpp"
 #include "connexion.hpp"
+#include "channel.hpp"
 #include "epoll.hpp"
 #include "signal.hpp"
 
@@ -59,10 +60,11 @@ class Server : public IOEvent {
 
 	private:
 
-		ServerInfo					s_info;
-		Shared_fd					sock_fd;
-		std::map<int, Connexion>	m_conns;
-		Poll						poller;
+		ServerInfo						s_info;
+		Shared_fd						sock_fd;
+		std::map<int, Connexion>		m_conns;
+		Poll							poller;
+		std::map<std::string, Channel>	_channels;	
 };
 
 #endif
