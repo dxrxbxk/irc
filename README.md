@@ -5,7 +5,6 @@ This project is a part of my coursework at Ecole 42, and it focuses on developin
 
 ## 🔍 Features
 - **IRC Server**: Implement a server to manage user connections, channels, and messages.
-- **Client**: Develop a client application that connects to the server.
 - **User Authentication**: Allow users to authenticate and join channels.
 - **Real-time Chat**: Enable users to send and receive messages in real-time.
 - **Channel Management**: Implement features for creating, joining, and leaving channels.
