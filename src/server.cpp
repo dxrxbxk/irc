@@ -12,12 +12,13 @@
 
 #include "server.hpp"
 
-Server::Server(const ServerInfo& info, const int fd, Signal& sig)
-: s_info(info), sock_fd(fd), m_conns(), poller(*this), _channels() {
-	std::cout << "Socketserver constructor called" << std::endl;
-	Logger::set_server(*this);
-	poller.addEvent(*this);
-	poller.addEvent(sig);
+Server::Server(void)
+:	_initialized(false),
+	_info(),
+	_socket(),
+	_poller(),
+	_conns(),
+	_channels() {
 }
 
 Channel&	Server::get_channel(const std::string channel_name, Connexion &ref) {
@@ -30,20 +31,41 @@ void	Server::add_channel(const std::string channel_name, Connexion &ref) {
 	_channels[channel_name] = Channel(channel_name, ref);
 }
 
-Server::Server(const Server& copy)
-: sock_fd(copy.sock_fd), m_conns(copy.m_conns), poller(copy.poller) {
+Server::Server(const Server&) {}
+
+Server::~Server(void) {}
+
+Server& Server::operator=(const Server&) { return *this; }
+
+
+// -- public static methods ----------------------------------------------------
+
+Server& Server::shared(void) {
+	static Server instance;
+	return instance;
 }
 
-Server::~Server(void) {
-	std::cout << "Socketserver destructor called" << std::endl;
+
+void Server::init(ServerInfo& info, const Shared_fd& socket, Signal& signal) {
+
+	_info = info;
+	_socket = socket;
+
+	Logger::set_server(*this);
+	_poller.addEvent(*this);
+	_poller.addEvent(signal);
+
+	_initialized = true;
+
 }
 
 void Server::run(void) {
-	poller.run();
+	if (_initialized == true)
+		_poller.run();
 }
 
 void Server::stop(void) {
-	poller.stop();
+	_poller.stop();
 }
 
 //yoink
@@ -69,73 +91,72 @@ void setnonblocking(int sock)
 void	Server::read(void) {
 	int cfd;
 
-	std::cout << "\nSending notification" << std::endl;
-	cfd = accept(sock_fd, NULL, NULL);
+	Logger::info("new socket connexion");
+
+	cfd = ::accept(_socket, NULL, NULL);
+
 	if (cfd == -1) {
 		ERROR(handleSysError("accept"));
-	} else {
-		std::cout << "Connexion fd created: " << cfd << std::endl;
-		(m_conns)[cfd] = Connexion(cfd, *this);
-		poller.addEvent((m_conns)[cfd]);
-	}
+		return; }
+
+	Logger::info("connexion accepted");
+	(_conns)[cfd] = Connexion(cfd);
+	_poller.addEvent((_conns)[cfd]);
 }
 
-void Server::unmapConnexion(const Connexion& conn) {
-	m_conns.erase(conn.getFd());
+int Server::getFd(void) const {
+	return _socket;
 }
 
-int		Server::getFd(void) const {
-	return sock_fd;
-}
-
-void	Server::disconnect(void) {
-	std::cout << "Socketserver::disconnect" << std::endl;
+void Server::disconnect(void) {
+	Logger::info("server disconnected");
 }
 
 
-void	Server::response(const Connexion& conn, const std::string& msg) {
+
+void Server::response(const Connexion& conn, const std::string& msg) {
 	/* temporary CRLF check during development */
 	if (msg.size() < 2) { throw std::runtime_error("invalid message"); }
 	if (msg[msg.size() - 2] != '\r' and msg[msg.size() - 1] != '\n')
 		throw std::runtime_error("missing CRLF");
 	/* ************************************** */
 	Logger::send(msg);
-	if (send(conn.getFd(), msg.c_str(), msg.size(), 0) == -1) {
+	if (::send(conn.getFd(), msg.c_str(), msg.size(), 0) == -1) {
 		// ...
 	}
 }
 
-
-Server& Server::operator=(const Server& copy) {
-	if (this != &copy) {
-	}
-	return *this;
+/* remove connexion */
+void Server::unmap_connexion(const Connexion& conn) {
+	_conns.erase(conn.getFd());
 }
 
-// -- accessors ---------------------------------------------------------------
+
+
+// -- public accessors --------------------------------------------------------
 
 std::size_t Server::get_nb_conns(void) const {
-	return m_conns.size();
+	return _conns.size();
 }
 
 const std::string& Server::get_addr(void) const {
-	return s_info.addr;
+	return _info.addr;
 }
 
 const std::string& Server::get_port(void) const {
-	return s_info.port;
+	return _info.port;
 }
 
 const std::string& Server::get_password(void) const {
-	return s_info.password;
+	return _info.password;
 }
 
 const std::string& Server::get_name(void) const {
-	return s_info.name;
+	return _info.name;
 }
 
 bool Server::has_password(void) const {
-	return not s_info.password.empty();
+	return not _info.password.empty();
 }
 
 

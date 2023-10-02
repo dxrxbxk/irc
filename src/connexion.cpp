@@ -16,13 +16,13 @@
 #define BUFFER_SIZE 1024
 
 Connexion::Connexion(void)
-: sock_fd(-1), buffer(), s_ptr(NULL), _registered(false) {
+: sock_fd(-1), buffer(), s_client_info(), _registered(false) {
 }
 
 Connexion::~Connexion(void) {}
 
-Connexion::Connexion(int fd, Server &server)
-: sock_fd(fd), buffer(), s_ptr(&server), _registered(false) {
+Connexion::Connexion(int fd)
+: sock_fd(fd), buffer(), s_client_info(), _registered(false) {
 }
 
 void	Connexion::set_register(void) {
@@ -49,17 +49,7 @@ std::string		Connexion::get_nickname(void) {
 	return s_client_info.nickname;
 }
 
-Server&	Connexion::getServer(void) const {
-	return *s_ptr;
-}
 
-std::string getResponse(void) {
-	std::string response = ":localhost CAP * LS :";
-	std::string cap = "cap1 cap2 cap3";
-	std::string crlf = "\r\n";
-
-	return response + cap + crlf;
-}
 
 void	Connexion::readInput(void) {
 	ssize_t		rec_len;
@@ -117,10 +107,8 @@ void	Connexion::read(void) {
 
 
 void	Connexion::disconnect(void) {
-	if (s_ptr) {
-		Logger::info("connexion closed");
-		s_ptr->unmapConnexion(*this);
-	}
+	Logger::info("connexion closed");
+	Server::shared().unmap_connexion(*this);
 }
 
 Connexion::Connexion(const Connexion &copy) {
@@ -131,7 +119,6 @@ Connexion& Connexion::operator=(const Connexion &copy) {
 	if (this != &copy) {
 		sock_fd = copy.sock_fd;
 		buffer = copy.buffer;
-		s_ptr = copy.s_ptr;
 		s_client_info = copy.s_client_info;
 		_registered = copy._registered;
 	}

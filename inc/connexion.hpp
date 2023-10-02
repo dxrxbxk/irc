@@ -45,7 +45,7 @@ struct SendInfo {
 class Connexion : public IOEvent {
 	public:
 		Connexion(void);
-		Connexion(int fd, Server&);
+		Connexion(int);
 		~Connexion(void);
 		Connexion(const Connexion&);
 		Connexion& operator=(const Connexion&);
@@ -61,12 +61,9 @@ class Connexion : public IOEvent {
 		ClientInfo&					get_client_info(void);
 		std::string					get_nickname(void);
 
-		Server&						getServer(void) const;
-
 	private:
 		Shared_fd					sock_fd;
 		std::string					buffer;
-		Server						*s_ptr;
 		ClientInfo					s_client_info;
 		SendInfo					s_send_info;
 

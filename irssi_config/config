@@ -1,22 +1,21 @@
 servers = (
-	{
-		address = "localhost";
-		port = "8080";
-		use_ssl = "no";
-		ssl_verify = "no";
-		autoconnect = "yes";
-	}
+  {
+    address = "localhost";
+    port = "8080";
+    use_ssl = "no";
+    ssl_verify = "no";
+    autoconnect = "yes";
+  }
 );
 
 settings = {
-	"fe-common/core" = {
-		autolog = "yes";
-	};
-	core = {
-		real_name = "real_richtofen";
-		user_name = "user_richtofen";
-		nick = "nick_richtofen";
-	};
+  "fe-common/core" = { autolog = "yes"; };
+  core = {
+    real_name = "real_richtofen";
+    user_name = "user_richtofen";
+    nick = "nick_richtofen";
+  };
+  "fe-text" = { actlist_sort = "refnum"; };
 };
 
 # Si vous utilisez un script pour l'authentification, assurez-vous de le charger ici.

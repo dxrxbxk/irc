@@ -56,7 +56,6 @@ class Irc {
 		void						getSocketInfo(int fd); // could be public
 
 		Signal						pipe;
-		std::vector<Server>			v_sock;
 };
 
 #endif
