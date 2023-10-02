@@ -15,7 +15,6 @@
 int		g_signalPipe[2];
 
 int	main(int argc, char *argv[]) {
-	fij
 	if (argc < 2) {
 		(void)argc;
 		(void)argv;

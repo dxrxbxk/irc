@@ -62,6 +62,10 @@ override OBJDIR := $(BLDDIR)/object
 # dependency directory
 override DEPDIR := $(BLDDIR)/dependency
 
+# current directory
+override ROOT := $(shell pwd)
+
+
 # -- S O U R C E S ------------------------------------------------------------
 
 # get all source files
@@ -114,18 +118,20 @@ DEF ?=
 override DEFINES := $(addprefix -D, $(DEF))
 
 
+override HOOK := $(ROOT)/.git/hooks/pre-commit
+
+
 # -- P H O N Y  T A R G E T S -------------------------------------------------
 
 .PHONY: all clean fclean re obj logger leaks
 
 # -- M A I N  T A R G E T S ---------------------------------------------------
 
-all: obj $(EXEC)
+all: $(HOOK) obj $(EXEC)
 
 
-logger:
-	@echo "     mode -> \x1b[36m"IRC_LOGGER"\x1b[0m"
-	@$(MAKE) --silent re DEF=IRC_LOGGER
+$(HOOK):
+	ln -s $(ROOT)/config/pre-commit $@
 
 # -- E X E C U T A B L E  T A R G E T -------------------------------------------
 
@@ -164,7 +170,29 @@ fclean: clean
 leaks:
 	valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./$(EXEC)
 
+logger:
+	@echo "     mode -> \x1b[36m"IRC_LOGGER"\x1b[0m"
+	@$(MAKE) --silent re DEF=IRC_LOGGER
+
 
 # -- R E C O M P I L E --------------------------------------------------------
 
 re: fclean all
+
+
+
+
+#invite.hpp
+#join.hpp
+#kick.hpp
+#mode.hpp
+#nick.hpp
+#part.hpp
+#pass.hpp
+#ping.hpp
+#pong.hpp
+#privmsg.hpp
+#quit.hpp
+#topic.hpp
+#user.hpp
+#who.hpp
