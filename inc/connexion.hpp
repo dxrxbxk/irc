@@ -40,7 +40,7 @@ struct ClientInfo {
 class Connexion : public IOEvent {
 	public:
 		Connexion(void);
-		Connexion(int fd, Server&);
+		Connexion(int);
 		~Connexion(void);
 		Connexion(const Connexion&);
 		Connexion& operator=(const Connexion&);
@@ -53,12 +53,9 @@ class Connexion : public IOEvent {
 		void						set_register(void);
 		bool						registered(void) const ;
 
-		Server&						getServer(void) const;
-
 	private:
 		Shared_fd					sock_fd;
 		std::string					buffer;
-		Server						*s_ptr;
 		ClientInfo					s_client_info;
 
 		void						readInput(void);

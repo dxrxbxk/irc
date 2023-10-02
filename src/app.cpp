@@ -16,7 +16,7 @@
 
 
 Irc::Irc()
-: pipe(), v_sock() {
+: pipe() {
 	std::cout << "Server constructor called" << std::endl;
 }
 
@@ -30,11 +30,13 @@ void Irc::run(void) {
 
 		ServerInfo info = {"straboul", "127.0.0.1", "8080", ""};
 
-		int sock = this->create(info.addr, info.port);
+		Shared_fd sock = this->create(info.addr, info.port);
 
 		signalManager();
 
-		Server server(info, sock, pipe);
+		Server& server = Server::shared();
+
+		server.init(info, sock, pipe);
 		server.run();
 
 	} catch (const std::exception &e) {

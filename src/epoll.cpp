@@ -15,7 +15,7 @@
 
 const Poll::size_type Poll::DEFAULT_SIZE = 10;
 
-Poll::Poll(const Server& server)
+Poll::Poll(void)
 : v_events() , is_running(true) {
 	v_events.reserve(DEFAULT_SIZE);
 

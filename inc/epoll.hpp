@@ -33,7 +33,7 @@ class Poll {
 
 	public:
 
-		Poll(const Server&);
+		Poll(void);
 		~Poll(void);
 
 		void	addEvent(IOEvent &ref);
