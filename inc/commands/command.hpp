@@ -3,7 +3,6 @@
 
 # include "message.hpp"
 # include "logger.hpp"
-# include "send_info.hpp"
 # include "numeric_factory.hpp"
 
 // forward declaration

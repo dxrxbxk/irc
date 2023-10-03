@@ -1,26 +1,22 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   send_info.hpp                                      :+:      :+:    :+:   */
+/*   main.cpp                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/03 00:22:07 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/03 02:59:45 by diroyer          ###   ########.fr       */
+/*   Created: 2023/08/15 09:56:29 by diroyer           #+#    #+#             */
+/*   Updated: 2023/10/03 22:31:06 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SEND_INFO_HPP
-# define SEND_INFO_HPP
+#include "irc.hpp"
 
-# include "numerics.hpp"
+int	main(int ac, char** av) {
 
-struct SendInfo {
-	std::string			rpl;
-	std::string			buffer;
-	
-	SendInfo() : rpl(), buffer() {};
-	~SendInfo() {};
-};
-
-#endif
+	if (ac != 3) {
+		std::cerr << "Usage: " << *av << " [port] [password]\n";
+		return EXIT_FAILURE;
+	}
+	return Irc::start(av[1], av[2]);
+}

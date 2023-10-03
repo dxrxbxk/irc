@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   app.cpp                                            :+:      :+:    :+:   */
+/*   irc.cpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/16 03:30:50 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/01 00:28:12 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 22:32:20 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "app.hpp"
+#include "irc.hpp"
 #define BUFFER 1024
 #define BACKLOG 5
 
@@ -24,7 +24,7 @@ int Irc::start(const std::string& port, const std::string& password) {
 	try {
 		ServerInfo info = {"straboul", "127.0.0.1", port, ""};
 
-		Shared_fd sock = create_socket(port);
+		Shared_fd sock = create("127.0.0.1", port);
 
 		Signal::signal_ignore();
 		Signal::signal_manager();

@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/22 01:09:59 by diroyer           #+#    #+#             */
-/*   Updated: 2023/09/27 15:59:36 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 22:09:33 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -170,7 +170,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 	},
 	/* PARAMS */
 	{
-		{ TRAILING, SKIP }, /* COLON */
+		{ TRAILING, INCREMENT }, /* COLON */
 		{ ERROR, P_ERROR }, /* LF */
 		{ ERROR, P_ERROR }, /* CR */
 		{ ERROR, P_ERROR }, /* SP */

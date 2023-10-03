@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:28 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/03 04:04:01 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 22:31:45 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@
 # include "types.hpp"
 # include "command_factory.hpp"
 # include "numerics.hpp"
-# include "send_info.hpp"
 
 class Server;
 class Channel;
