@@ -16,19 +16,25 @@
 # include <vector>
 # include <string>
 # include "connexion.hpp"
+# include "logger.hpp"
 
 
 class Channel {
+
 	public:
-		Channel();
-		Channel(std::string name, Connexion&);
-		~Channel();
+
+		// -- public constructors ---------------------------------------------
+
+		Channel(void);
+		Channel(const std::string&, Connexion&);
+		~Channel(void);
 		Channel(const Channel&);
 		Channel& operator=(const Channel&);
 
-		void	change_admin(Connexion& old);
-		void	add_user(Connexion &new_user);
-		void	send_msg(const std::string msg);
+		void	change_admin(Connexion&);
+		void	add_user(Connexion&);
+		void	remove_user(Connexion&);
+		void	broadcast(const std::string&, const Connexion&);
 
 		enum mode {
 			INVITATION,
@@ -45,8 +51,8 @@ class Channel {
 		Connexion*							_admin;
 		std::string							_topic;
 		vec_str								_op_list;
-		std::string							_modes[NB_MODES];
 		std::map<std::string, Connexion*>	_users;
+		std::string							_modes[NB_MODES];
 };
 
 #endif

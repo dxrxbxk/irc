@@ -57,29 +57,34 @@ bool	Message::has_trailing(void) const {
 	return !_trailing.empty();
 }
 
-const std::string& Message::get_command(void) const {
+
+const std::string& Message::command(void) const {
 	return _command;
 }
 
-std::string& Message::get_prefix(void) {
+std::string& Message::prefix(void) {
 	return _prefix;
 }
 
-l_str&	Message::get_middle(void) {
+l_str&	Message::params(void) {
 	return _middle;
 }
 
-std::string&	Message::get_middle(const size_t index) {
+
+std::string&	Message::param(const std::size_t index) {
 	return _middle[index];
 }
 
-std::string&	Message::get_trailing(void) {
+
+
+std::string&	Message::trailing(void) {
 	return _trailing;
 }
 
-std::size_t		Message::get_middle_size(void) const {
+std::size_t		Message::params_size(void) const {
 	return _middle.size();
 }
+
 
 // debug
 void Message::print(void) const {

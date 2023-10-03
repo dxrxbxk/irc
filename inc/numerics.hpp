@@ -16,9 +16,10 @@
 # include <string>
 # include <sstream>
 
+
 struct ClientInfo;
 
-namespace Reply {
+namespace RPL {
 
 	typedef std::string			ret_type;
 	typedef const ClientInfo&	arg_type;
@@ -29,6 +30,8 @@ namespace Reply {
 
 	/* ************************************************************************** */
 	ret_type	u_mod_unknown_flag(arg_type info);
+
+
 
 	enum code
 	{

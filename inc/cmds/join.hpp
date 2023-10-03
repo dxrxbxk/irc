@@ -11,12 +11,11 @@ class Join : public Command {
 
 		~Join(void);
 
-		SendInfo execute(void);
+		void execute(void);
 
 		static Command* create(Connexion&, Message&);
 
 	private:
-		void	add_user_to_channel(void);
 
 };
 

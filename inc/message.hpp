@@ -35,12 +35,13 @@ class Message {
 		bool	has_params(void) const;
 		bool	has_trailing(void) const;
 
-		const std::string&	get_command(void) const;
-		std::string&	get_prefix(void);
-		l_str&			get_middle(void);
-		std::string&	get_middle(size_t index);
-		std::size_t		get_middle_size() const;
-		std::string&	get_trailing(void);
+		const std::string&	command(void) const;
+
+		std::string&		prefix(void);
+		std::string&		param(std::size_t);
+		l_str&				params(void);
+		std::size_t			params_size(void) const;
+		std::string&		trailing(void);
 
 	private:
 

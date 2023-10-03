@@ -59,11 +59,13 @@ Signal::Signal() {
 
 Signal::~Signal() {
 	std::cout << "Pipe destructor called" << std::endl;
-	closeFd(g_signalPipe[0]);
-	closeFd(g_signalPipe[1]);
+	if (g_signalPipe[0] != -1)
+		::close(g_signalPipe[0]);
+	if (g_signalPipe[1] != -1)
+		::close(g_signalPipe[1]);
 }
 
-int		Signal::getFd(void) const {
+int		Signal::fd(void) const {
 	return (g_signalPipe[0]);
 }
 

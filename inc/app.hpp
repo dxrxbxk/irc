@@ -47,15 +47,16 @@ class Irc {
 		Irc(void);
 		~Irc(void);
 
-		void						run(void);
+		void		run(void);
 
 	private:
 
-		void						init(struct addrinfo *hints);
-		int							create(std::string, std::string);
-		void						getSocketInfo(int fd); // could be public
+		void		init(struct addrinfo*);
+		int			create(const std::string&, const std::string&);
+		int			create2(const std::string&, const unsigned short);
+		void		getSocketInfo(int fd); // could be public
 
-		Signal						pipe;
+		Signal		pipe;
 };
 
 #endif

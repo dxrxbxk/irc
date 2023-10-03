@@ -14,12 +14,12 @@ Ping::Ping(Connexion& conn, Message& msg)
 
 Ping::~Ping() {}
 
-SendInfo Ping::execute(void) {
-	SendInfo	send_info;
-//	if (_msg.get_middle_size() < 1)
-//		;
-	_server.response(_conn, "PONG :" + _msg.get_middle(0));
-	return send_info;
+void Ping::execute(void) {
+
+	if (_msg.params_size() < 1)
+		return;
+
+	_conn.enqueue("PONG :" + _msg.param(0) + CRLF);
 }
 
 Command* Ping::create(Connexion& conn, Message& msg) {

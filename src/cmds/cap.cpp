@@ -8,15 +8,20 @@ Cap::Cap(Connexion& conn, Message& msg)
 
 Cap::~Cap(void) {}
 
-SendInfo Cap::execute(void) {
-	SendInfo	send_info;
-//	_server.response(_conn, "CAP * LS :");
-	if (_msg.get_middle(0) == "END")
-		return send_info;
-	else if (_msg.get_middle(0) == "LS")
-		_server.response(_conn, "CAP * LS :\r\n");
-	return send_info;
+void Cap::execute(void) {
+
+	if (not _msg.has_params())
+		return;
+
+
+	if (_msg.param(0) == "END")
+		return;
+
+	else if (_msg.param(0) == "LS") {
+		_conn.enqueue("CAP * LS :" CRLF);
+	}
 }
+
 
 Command* Cap::create(Connexion& conn, Message& msg) {
 	return new Cap(conn, msg);

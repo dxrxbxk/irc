@@ -12,6 +12,7 @@
 # include "nick.hpp"
 # include "user.hpp"
 # include "mode.hpp"
+# include "privmsg.hpp"
 
 class Connexion;
 

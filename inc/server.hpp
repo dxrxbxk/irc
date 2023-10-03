@@ -48,13 +48,11 @@ class Server : public IOEvent {
 
 		void				read(void);
 		void				write(void);
-		int					getFd(void) const;
+		int					fd(void) const;
 		void				disconnect(void);
 
 
 		// -- public methods ----------------------------------------------------
-
-		void response(const Connexion&, const std::string&);
 
 		void unmap_connexion(const Connexion&);
 
@@ -71,9 +69,8 @@ class Server : public IOEvent {
 
 		bool 				has_password(void) const;
 
-		void		add_channel(const std::string channel_name, Connexion &ref);
-		Channel&	get_channel(const std::string channel_name, Connexion &ref);
-		bool		channel_exist(const std::string);
+		Channel&	get_channel(const std::string&, Connexion &ref);
+		bool		channel_exist(const std::string&) const;
 
 		// -- public static methods --------------------------------------------
 

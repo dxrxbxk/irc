@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 01:37:54 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/03 00:10:58 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 03:59:14 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,12 +23,11 @@ class Nick : public Command {
 
 		~Nick(void);
 
-		SendInfo execute(void);
+		void execute(void);
 
 		static Command* create(Connexion&, Message&);
 
 	private:
-		void	add_nick(void);
 
 };
 

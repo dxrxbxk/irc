@@ -4,10 +4,18 @@
 # include "message.hpp"
 # include "logger.hpp"
 # include "send_info.hpp"
+# include "numeric_factory.hpp"
 
 // forward declaration
 class Server;
 class Connexion;
+
+enum {
+	DO_NOTHING,
+	SEND
+};
+
+#define CRLF "\r\n"
 
 class Command {
 
@@ -17,7 +25,7 @@ class Command {
 
 		virtual ~Command(void);
 
-		virtual SendInfo execute() = 0;
+		virtual void execute() = 0;
 
 	protected:
 

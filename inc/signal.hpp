@@ -27,7 +27,7 @@ class Signal : public IOEvent {
 		Signal();
 		~Signal();
 
-		int		getFd(void) const;
+		int		fd(void) const;
 		void	read(void);
 		void	disconnect(void);
 		void	write(void);

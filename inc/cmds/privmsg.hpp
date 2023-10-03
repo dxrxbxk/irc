@@ -1,15 +1,16 @@
-#ifndef CAP_HPP
-# define CAP_HPP
+#ifndef PRIVMSG_HPP
+# define PRIVMSG_HPP
+
 
 #include "command.hpp"
 
-class Cap : public Command {
+class Privmsg : public Command {
 
 	public:
 
-		Cap(Connexion&, Message&);
+		Privmsg(Connexion&, Message&);
 
-		~Cap(void);
+		~Privmsg(void);
 
 		void execute(void);
 
@@ -18,5 +19,8 @@ class Cap : public Command {
 	private:
 
 };
+
+
+
 
 #endif
