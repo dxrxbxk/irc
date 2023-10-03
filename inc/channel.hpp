@@ -15,6 +15,8 @@
 
 # include <vector>
 # include <string>
+# include <map>
+
 # include "connexion.hpp"
 # include "logger.hpp"
 
@@ -35,6 +37,7 @@ class Channel {
 		void	add_user(Connexion&);
 		void	remove_user(Connexion&);
 		void	broadcast(const std::string&, const Connexion&);
+		std::size_t size(void) const;
 
 		enum mode {
 			INVITATION,

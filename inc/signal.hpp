@@ -20,24 +20,43 @@
 # include "utils.hpp"
 # include "io_event.hpp"
 
-extern int g_signalPipe[2];
 
 class Signal : public IOEvent {
+
+
 	public:
-		Signal();
-		~Signal();
 
-		int		fd(void) const;
-		void	read(void);
-		void	disconnect(void);
-		void	write(void);
+		// -- public IOEvent interface ----------------------------------------
+
+		int			fd(void) const;
+		void		read(void);
+		void		disconnect(void);
+		void		write(void);
+
+		// -- public static methods -------------------------------------------
+
+		/* get instance */
+		static Signal& shared(void);
+
+		static void signal_manager(void);
+		static void signal_ignore(void);
+
 	private:
+
+		// -- private constructors --------------------------------------------
+
+		Signal(void);
+		~Signal(void);
+
+		// -- private members -------------------------------------------------
+
+		int _pipe[2];
+
+
+		// -- private static methods ------------------------------------------
+
+		static void signal_handler(int);
+
 };
-
-void				readSignalPipe(void);
-void				signalManager(void);
-void				signalHandler(int signum);
-void				signalIgnore(void);
-
 
 #endif

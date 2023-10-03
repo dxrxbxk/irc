@@ -188,7 +188,7 @@ re: fclean all
 
 
 leaks: all
-	$(VALGRIND) $(VFLAGS) ./$(NAME)
+	$(VALGRIND) $(VFLAGS) ./$(NAME) 8080 pass
 
 logger:
 	@echo "     mode -> \x1b[36m"IRC_LOGGER"\x1b[0m"

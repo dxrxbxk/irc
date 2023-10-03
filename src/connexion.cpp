@@ -12,8 +12,8 @@
 
 #include "server.hpp"
 #include "connexion.hpp"
+#include "channel.hpp"
 
-#define BUFFER_SIZE 1024
 
 Connexion::Connexion(void)
 :	_socket(),
@@ -21,7 +21,8 @@ Connexion::Connexion(void)
 	_buffer_in(),
 	_buffer_out(),
 	_registered(false),
-	_wait_out(false) {
+	_wait_out(false),
+	_channels() {
 }
 
 Connexion::~Connexion(void) {}
@@ -32,7 +33,8 @@ Connexion::Connexion(int fd)
 	_buffer_in(),
 	_buffer_out(),
 	_registered(false),
-	_wait_out(false) {
+	_wait_out(false),
+	_channels() {
 }
 
 
@@ -42,7 +44,8 @@ Connexion::Connexion(const Connexion& other)
 	_buffer_in(other._buffer_in),
 	_buffer_out(other._buffer_out),
 	_registered(other._registered),
-	_wait_out(other._wait_out) {
+	_wait_out(other._wait_out),
+	_channels(other._channels) {
 }
 
 Connexion& Connexion::operator=(const Connexion &other) {
@@ -53,6 +56,7 @@ Connexion& Connexion::operator=(const Connexion &other) {
 		_buffer_out = other._buffer_out;
 		_registered = other._registered;
 		  _wait_out = other._wait_out;
+		  _channels = other._channels;
 	}
 	return *this;
 }
@@ -63,32 +67,53 @@ Connexion& Connexion::operator=(const Connexion &other) {
 
 // -- connexion accessors ------------------------------------------------------
 
-void	Connexion::set_register(void) {
+void Connexion::login(void) {
 	_registered = true;
 }
 
-bool	Connexion::registered(void) const {
+void Connexion::logout(void) {
+	_registered = false;
+}
+
+bool Connexion::registered(void) const {
 	return _registered;
 }
 
 
+// -- public channel methods ---------------------------------------------------
 
+void Connexion::enter_channel(Channel& channel) {
+	channel.add_user(*this);
+	_channels.insert(&channel);
+}
 
+void Connexion::leave_channel(Channel& channel) {
+	channel.remove_user(*this);
+	_channels.erase(&channel);
+}
 
-
-void	Connexion::readInput(void) {
-	ssize_t		rec_len;
-	char		read_buf[BUFFER_SIZE];
-
-	rec_len = recv(_socket, read_buf, BUFFER_SIZE, 0);
-	if (rec_len == -1)
-		ERROR(handleSysError("recv"));
-	else {
-		_buffer_in.append(read_buf, rec_len);
+void Connexion::leave_channels(void) {
+	for (std::set<Channel*>::iterator it = _channels.begin();
+			it != _channels.end(); ++it) {
+		(*it)->remove_user(*this);
 	}
 }
 
-l_str	Connexion::checkCrlf(void) {
+
+
+void	Connexion::read_input(void) {
+	ssize_t		readed;
+	char		buffer[BUFFER_SIZE];
+
+	readed = ::recv(_socket, buffer, BUFFER_SIZE, 0);
+	if (readed == -1)
+		ERROR(handleSysError("recv"));
+	else {
+		_buffer_in.append(buffer, readed);
+	}
+}
+
+l_str	Connexion::check_crlf(void) {
 	std::string::size_type	pos;
 	l_str					l_msg;
 	while ((pos = _buffer_in.find("\r\n")) != std::string::npos) {
@@ -97,12 +122,6 @@ l_str	Connexion::checkCrlf(void) {
 	}
 	return l_msg;
 }
-
-void	Connexion::mod_event(int flag) {
-	Server::shared().get_poller().modEvent(*this, flag);
-}
-
-
 
 
 // -- IOEvent methods ----------------------------------------------------------
@@ -129,21 +148,19 @@ void	Connexion::write(void) {
 		// clear buffer if error is EAGAIN
 		// EAGAIN means that the socket is not ready for writing
 	}
-
 	_buffer_out.clear();
-
-	// this->mod_event(EPOLLIN);
-	// _wait_out = false;
+	Server::shared().poller().mod_event(*this, EPOLLIN);
+	_wait_out = false;
 }
 
 
 
 
-void	Connexion::read(void) {
+void Connexion::read(void) {
 
-	readInput();
+	read_input();
 
-	const l_str l_msg = checkCrlf();
+	const l_str l_msg = check_crlf();
 
 	for (l_str::const_iterator i = l_msg.begin(); i != l_msg.end(); ++i) {
 
@@ -160,29 +177,26 @@ void	Connexion::read(void) {
 				Logger::info(msg.command() + " <- COMMAND NOT FOUND :(");
 			else {
 				cmd->execute();
-				if (not _buffer_out.empty())
-					write();
 				delete cmd;
 			}
 		} catch (const std::exception& e) {
 			Logger::info("Parsing error: " + std::string(e.what()));
 		}
-
 	}
 }
 
-void	Connexion::disconnect(void) {
+void Connexion::disconnect(void) {
 	Logger::info("connexion closed");
 	Server::shared().unmap_connexion(*this);
+	// remove from all channels
+	leave_channels();
 }
 
 
-void	Connexion::enqueue(const std::string &msg) {
+void Connexion::enqueue(const std::string &msg) {
 	_buffer_out.append(msg);
-	write();
-	return;
 	if (not _wait_out) {
-		this->mod_event(EPOLLOUT | EPOLLIN);
+		Server::shared().poller().mod_event(*this, EPOLLOUT | EPOLLIN);
 		_wait_out = true;
 	}
 }

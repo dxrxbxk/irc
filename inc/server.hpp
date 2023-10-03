@@ -35,7 +35,7 @@ class Server : public IOEvent {
 	public:
 
 		/* initialize server */
-		void init(ServerInfo&, const Shared_fd&, Signal&);
+		void init(ServerInfo&, const Shared_fd&);
 
 		/* run server */
 		void run(void);
@@ -60,17 +60,19 @@ class Server : public IOEvent {
 
 		// -- public accessors -------------------------------------------------
 
-		const std::string&	get_name(void) const;
-		const std::string&	get_addr(void) const;
-		const std::string&	get_port(void) const;
-		const std::string&	get_password(void) const;
+		const std::string&	name(void) const;
+		const std::string&	port(void) const;
+		const std::string&	address(void) const;
+		const std::string&	password(void) const;
 		std::size_t			get_nb_conns(void) const;
-		Poll&				get_poller(void) ;
+		Poll&				poller(void) ;
 
 		bool 				has_password(void) const;
 
 		Channel&	get_channel(const std::string&, Connexion &ref);
+		Channel&	channel(const std::string&);
 		bool		channel_exist(const std::string&) const;
+		Channel&	create_channel(const std::string&, Connexion&);
 
 		// -- public static methods --------------------------------------------
 

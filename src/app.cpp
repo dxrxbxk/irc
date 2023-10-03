@@ -15,34 +15,34 @@
 #define BACKLOG 5
 
 
-Irc::Irc()
-: pipe() {
-	std::cout << "Server constructor called" << std::endl;
-}
+Irc::Irc(void) {}
 
-Irc::~Irc() {
-	std::cout << "Server destructor called" << std::endl;
-}
+Irc::~Irc(void) {}
 
-void Irc::run(void) {
+int Irc::start(const std::string& port, const std::string& password) {
 	try {
-		signalIgnore();
+
+
 
 		ServerInfo info = {"straboul", "127.0.0.1", "8080", ""};
 
-		Shared_fd sock = this->create(info.addr, info.port);
+		Shared_fd sock = create_socket(port);
 
-		signalManager();
+		Signal::signal_ignore();
+		Signal::signal_manager();
 
 		Server& server = Server::shared();
 
-		server.init(info, sock, pipe);
+		server.init(info, sock);
 		server.run();
+		return EXIT_SUCCESS;
 
 	} catch (const std::exception &e) {
 		std::cerr << e.what() << std::endl;
+		return EXIT_FAILURE;
 	}
 }
+
 
 void Irc::init(struct addrinfo *hints) {
 	memset(hints, 0, sizeof(struct addrinfo));
@@ -55,30 +55,20 @@ void Irc::init(struct addrinfo *hints) {
 	hints->ai_next = NULL;
 }
 
-void Irc::getSocketInfo(int fd) {
-	struct sockaddr_in peer;
-	socklen_t addrlen;
-
-	addrlen = sizeof(peer);
-	memset(&peer, 0, sizeof(struct sockaddr));
-	if (getsockname(fd, (struct sockaddr *)&peer, &addrlen) == -1)
-		throw std::runtime_error(handleSysError("getsockname"));
-	std::cout << "IP address: " << custom_inet_ntoa(peer.sin_addr) << std::endl;
-	std::cout << "Port: " << ntohs(peer.sin_port) << std::endl;
-}
 
 
-int		Irc::create2(const std::string& ip, const unsigned short port) {
+int Irc::create_socket(const std::string& port) {
+
+	const struct sockaddr_in addr = {
+		AF_INET, htons(utils::to_integer<unsigned short>
+		(port, "invalid port")), INADDR_ANY, {0},
+	};
 
 	const int socket = ::socket(AF_INET, SOCK_STREAM, 0);
 
 	if (socket == -1)
 		throw std::runtime_error(handleSysError("socket"));
 
-	struct sockaddr_in addr;
-	addr.sin_family = AF_INET;
-	addr.sin_port = htons(port);
-	addr.sin_addr.s_addr = inet_addr(ip.c_str());
 
 	if (::bind(socket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
 		throw std::runtime_error(handleSysError("bind"));
@@ -90,6 +80,19 @@ int		Irc::create2(const std::string& ip, const unsigned short port) {
 }
 
 
+
+void Irc::getSocketInfo(const int fd) {
+	struct sockaddr_in peer;
+	socklen_t addrlen;
+
+	addrlen = sizeof(peer);
+	memset(&peer, 0, sizeof(struct sockaddr));
+	if (getsockname(fd, (struct sockaddr *)&peer, &addrlen) == -1)
+		throw std::runtime_error(handleSysError("getsockname"));
+	std::cout << "IP address: " << custom_inet_ntoa(peer.sin_addr) << std::endl;
+	std::cout << "Port: " << ntohs(peer.sin_port) << std::endl;
+}
+
 int		Irc::create(const std::string& node, const std::string& service) {
 
 	struct addrinfo 		hints;
@@ -100,7 +103,7 @@ int		Irc::create(const std::string& node, const std::string& service) {
 
 	std::cout << "Creating an endpoint for communication" << std::endl;
 
-	this->init(&hints);
+	init(&hints);
 	ret_gai = getaddrinfo(node.c_str(), service.c_str(), &hints, &result);
 	if (ret_gai != 0) {
 		throw std::runtime_error(handleGaiError(ret_gai));
@@ -127,7 +130,7 @@ int		Irc::create(const std::string& node, const std::string& service) {
 	if (rp == NULL)
 		throw std::runtime_error(handleSysError("bind"));
 	else
-		this->getSocketInfo(sfd);
+		getSocketInfo(sfd);
 	if (listen(sfd, BACKLOG) == -1)
 		throw std::runtime_error(handleSysError("listen"));
 

@@ -36,14 +36,16 @@ Server& Server::shared(void) {
 	return instance;
 }
 
-void Server::init(ServerInfo& info, const Shared_fd& socket, Signal& signal) {
+void Server::init(ServerInfo& info, const Shared_fd& socket) {
 
 	_info = info;
 	_socket = socket;
 
 	Logger::set_server(*this);
-	_poller.addEvent(*this);
-	_poller.addEvent(signal);
+	_poller.add_event(*this);
+
+	_poller.add_event(Logger::shared());
+	// _poller.addEvent(Signal::shared());
 
 	_initialized = true;
 
@@ -75,8 +77,8 @@ void	Server::read(void) {
 
 	Logger::info("connexion accepted");
 
-	(_conns)[cfd] = Connexion(cfd);
-	_poller.addEvent((_conns)[cfd]);
+	_conns[cfd] = Connexion(cfd);
+	_poller.add_event(_conns[cfd]);
 }
 
 int Server::fd(void) const {
@@ -94,13 +96,26 @@ void Server::disconnect(void) {
 
 
 Channel&	Server::get_channel(const std::string& channel_name, Connexion &ref) {
-	if (not _channels.count(channel_name))
+	std::size_t size = _channels.count(channel_name);
+	Logger::debug(utils::to_string(size));
+	if (not _channels.count(channel_name)) {
+		Logger::debug("create channel!");
 		_channels[channel_name] = Channel(channel_name, ref);
+	}
 	return _channels[channel_name];
 }
 
 bool	Server::channel_exist(const std::string& channel) const {
 	return _channels.count(channel);
+}
+
+Channel& Server::create_channel(const std::string& name, Connexion& creator) {
+	// Channel& channel = _channels[name] = Channel(name, creator);
+	return _channels[name] = Channel(name, creator);
+}
+
+Channel& Server::channel(const std::string& name) {
+	return _channels[name];
 }
 
 
@@ -118,19 +133,19 @@ std::size_t Server::get_nb_conns(void) const {
 	return _conns.size();
 }
 
-const std::string& Server::get_addr(void) const {
+const std::string& Server::address(void) const {
 	return _info.addr;
 }
 
-const std::string& Server::get_port(void) const {
+const std::string& Server::port(void) const {
 	return _info.port;
 }
 
-const std::string& Server::get_password(void) const {
+const std::string& Server::password(void) const {
 	return _info.password;
 }
 
-const std::string& Server::get_name(void) const {
+const std::string& Server::name(void) const {
 	return _info.name;
 }
 
@@ -138,7 +153,7 @@ bool Server::has_password(void) const {
 	return not _info.password.empty();
 }
 
-Poll&	Server::get_poller(void) {
+Poll&	Server::poller(void) {
 	return _poller;
 }
 

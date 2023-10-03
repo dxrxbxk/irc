@@ -12,16 +12,11 @@
 
 #include "app.hpp"
 
-int		g_signalPipe[2];
+int	main(int ac, char** av) {
 
-int	main(int argc, char *argv[]) {
-	if (argc < 2) {
-		(void)argc;
-		(void)argv;
-
-		Irc app;
-		app.run();
-	} else
-		std::cerr << "Usage: ./webserv [configuration file]" << std::endl;
-	return (0);
+	if (ac != 3) {
+		std::cerr << "Usage: " << *av << " [port] [password]\n";
+		return EXIT_FAILURE;
+	}
+	return Irc::start(av[1], av[2]);
 }

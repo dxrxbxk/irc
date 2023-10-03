@@ -18,6 +18,7 @@
 # include <sys/socket.h>
 # include <sstream>
 # include <map>
+# include <set>
 
 # include "io_event.hpp"
 # include "utils.hpp"
@@ -29,6 +30,7 @@
 # include "send_info.hpp"
 
 class Server;
+class Channel;
 
 struct ClientInfo {
 	std::string username;
@@ -51,8 +53,17 @@ class Connexion : public IOEvent {
 		void						disconnect(void);
 		void						enqueue(const std::string&);
 
-		void						set_register(void);
+		void						login(void);
+		void						logout(void);
 		bool						registered(void) const;
+
+		// -- public channel methods ------------------------------------------
+
+		void						enter_channel(Channel&);
+		void						leave_channel(Channel&);
+		void						leave_channels(void);
+
+
 
 
 		// -- public info accessors -------------------------------------------
@@ -98,10 +109,18 @@ class Connexion : public IOEvent {
 		std::string					_buffer_out;
 		bool						_registered;
 		bool						_wait_out;
+		std::set<Channel*>			_channels;
 
-		void						readInput(void);
-		l_str						checkCrlf(void);
-		void						mod_event(int flag);
+
+		// -- private enums ---------------------------------------------------
+
+		enum { BUFFER_SIZE = 1024 };
+
+
+		// -- private methods -------------------------------------------------
+
+		void						read_input(void);
+		l_str						check_crlf(void);
 };
 
 

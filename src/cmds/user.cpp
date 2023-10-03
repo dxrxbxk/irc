@@ -33,12 +33,14 @@ void User::execute(void) {
 		// need reply numeric error
 		return; }
 
-	if (_conn.registered())
+	if (_conn.registered()) {
+		Logger::debug("User: already \x1b[32mregistered\x1b[0m");
 		return;
+	}
 
 	ClientInfo&	info = _conn.info();
 
-	_conn.set_register();
+	_conn.login();
 	add_user();
 	_conn.enqueue(RPL::welcome(info));
 	_conn.enqueue(RPL::end_of_motd(info));

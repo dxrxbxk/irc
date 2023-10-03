@@ -12,68 +12,75 @@
 
 #include "signal.hpp"
 
-void	Signal::disconnect(void) {
+
+// -- private constructors ----------------------------------------------------
+
+Signal::Signal(void)
+: _pipe() {
+	// init pipe
+	_pipe[0] = -1; _pipe[1] = -1;
+	// // create pipe
+	// if (::pipe(_pipe) == -1)
+	// 	throw std::runtime_error(handleSysError("pipe"));
 }
 
-void	Signal::write(void) {}
-
-void	signalHandler(int signum) {
-	(void)signum;
-	char c = 0;
-	write(g_signalPipe[1], &c, sizeof(c));
+Signal::~Signal(void) {
+	// close pipe
+	// if (_pipe[0] != -1) ::close(_pipe[0]);
+	// if (_pipe[1] != -1) ::close(_pipe[1]);
 }
 
-void	signalManager(void) {
-	if (signal(SIGINT, signalHandler) == SIG_ERR)
-		throw std::runtime_error(handleSysError("signal"));
-	if (signal(SIGABRT, signalHandler) == SIG_ERR)
-		throw std::runtime_error(handleSysError("signal"));
-	if (signal(SIGQUIT, signalHandler) == SIG_ERR)
-		throw std::runtime_error(handleSysError("signal"));
-	if (signal(SIGTERM, signalHandler) == SIG_ERR)
-		throw std::runtime_error(handleSysError("signal"));
-	if (signal(SIGTSTP, signalHandler) == SIG_ERR)
+
+// -- private static methods --------------------------------------------------
+
+Signal& Signal::shared(void) {
+	static Signal signal;
+	return signal;
+}
+
+void Signal::signal_handler(int) {
+	// const char c = 0;
+	// ::write(shared()._pipe[1], &c, sizeof(c));
+}
+
+
+// -- public static methods ---------------------------------------------------
+
+void Signal::signal_manager(void) {
+	// record signal handler
+	if (::signal(SIGINT,  signal_handler) == SIG_ERR
+	 || ::signal(SIGABRT, signal_handler) == SIG_ERR
+	 || ::signal(SIGQUIT, signal_handler) == SIG_ERR
+	 || ::signal(SIGTERM, signal_handler) == SIG_ERR
+	 || ::signal(SIGTSTP, signal_handler) == SIG_ERR)
 		throw std::runtime_error(handleSysError("signal"));
 }
 
-void	signalIgnore(void) {
-	if (signal(SIGINT, SIG_IGN) == SIG_ERR)
-		throw std::runtime_error(handleSysError("signal"));
-	if (signal(SIGABRT, SIG_IGN) == SIG_ERR)
-		throw std::runtime_error(handleSysError("signal"));
-	if (signal(SIGQUIT, SIG_IGN) == SIG_ERR)
-		throw std::runtime_error(handleSysError("signal"));
-	if (signal(SIGTERM, SIG_IGN) == SIG_ERR)
-		throw std::runtime_error(handleSysError("signal"));
-	if (signal(SIGTSTP, SIG_IGN) == SIG_ERR)
+void Signal::signal_ignore(void) {
+	// ignore signals
+	if (::signal(SIGINT,  SIG_IGN) == SIG_ERR
+	 || ::signal(SIGABRT, SIG_IGN) == SIG_ERR
+	 || ::signal(SIGQUIT, SIG_IGN) == SIG_ERR
+	 || ::signal(SIGTERM, SIG_IGN) == SIG_ERR
+	 || ::signal(SIGTSTP, SIG_IGN) == SIG_ERR)
 		throw std::runtime_error(handleSysError("signal"));
 }
 
-Signal::Signal() {
-	std::cout << "Pipe constructor called" << std::endl;
-	g_signalPipe[0] = -1;
-	g_signalPipe[1] = -1;
-	if (pipe(g_signalPipe) == -1)
-		throw std::runtime_error(handleSysError("pipe"));
+
+// -- public IOEvent interface ------------------------------------------------
+
+void Signal::read(void) {
+	// char c;
+	// if (::read(_pipe[0], &c, sizeof(c)) == -1)
+	// 	ERROR(handleSysError("pipe read"));
+	// throw std::runtime_error("Signal: Interrupted system call");
 }
 
-Signal::~Signal() {
-	std::cout << "Pipe destructor called" << std::endl;
-	if (g_signalPipe[0] != -1)
-		::close(g_signalPipe[0]);
-	if (g_signalPipe[1] != -1)
-		::close(g_signalPipe[1]);
+int Signal::fd(void) const {
+	return _pipe[0];
 }
 
-int		Signal::fd(void) const {
-	return (g_signalPipe[0]);
-}
+void Signal::write(void) {}
 
-void	Signal::read(void) {
-	char c;
+void Signal::disconnect(void) {}
 
-	std::cout << "Signal read" << std::endl;
-	if (::read(g_signalPipe[0], &c, sizeof(c)) == -1)
-		ERROR(handleSysError("pipe read"));
-	throw std::runtime_error("Signal: Interrupted system call");
-}

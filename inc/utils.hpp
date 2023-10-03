@@ -24,6 +24,8 @@
 # include <unistd.h>
 # include <fcntl.h>
 
+# include "sharedfd.hpp"
+
 #define GREEN "\x1b[32m"
 #define RESET_C "\x1b[0m"
 #define RED "\x1b[31m"
@@ -42,18 +44,36 @@ std::string			custom_inet_ntoa(struct in_addr addr);
 std::string			intToString(int num);
 
 
-template <typename T>
-static std::string to_string(const T& t) {
-	std::stringstream stream;
-	stream << t;
-	return stream.str();
-}
+void setnonblocking(const int);
 
-template <typename T>
-static std::string to_hex(const T& t) {
-	std::stringstream stream;
-	stream << std::hex << t;
-	return stream.str();
+
+
+
+namespace utils {
+
+	template <typename T>
+	static std::string to_string(const T& t) {
+		std::stringstream stream;
+		stream << t;
+		return stream.str();
+	}
+
+	template <typename T>
+	static std::string to_hex(const T& t) {
+		std::stringstream stream;
+		stream << std::hex << t;
+		return stream.str();
+	}
+
+	template <typename T, std::size_t N>
+	static T to_integer(const std::string& str, const char (&msg)[N]) {
+		std::stringstream ss(str);
+		T integer;
+		if (not (ss >> integer) || not ss.eof())
+			throw std::runtime_error(msg);
+		return integer;
+	}
+
 }
 
 #endif

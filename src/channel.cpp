@@ -18,7 +18,7 @@ Channel::Channel(void)
 
 Channel::Channel(const std::string& channel_name, Connexion& creator)
 : _name(channel_name), _admin(&creator), _topic(), _op_list(), _users(), _modes() {
-	add_user(creator);
+	// add_user(creator);
 }
 
 Channel::~Channel(void) {}
@@ -56,21 +56,24 @@ void	Channel::change_admin(Connexion& old) {
 }
 
 void	Channel::broadcast(const std::string& msg, const Connexion& sender) {
-	Logger::debug("BRDCST");
+	Logger::debug("BROADCAST");
+	Logger::debug("user in channel: " + utils::to_string(size()));
 	for (const_iterator it = _users.begin(); it != _users.end(); ++it) {
 		if (it->second != &sender) {
 			it->second->enqueue(msg);
 		}
-
 	}
 }
 
+std::size_t Channel::size(void) const {
+	return _users.size();
+}
 
-void	Channel::add_user(Connexion &user) {
+void Channel::add_user(Connexion& user) {
 	_users[user.nickname()] = &user;
 }
 
-void	Channel::remove_user(Connexion &user) {
+void	Channel::remove_user(Connexion& user) {
 	_users.erase(user.nickname());
 }
 

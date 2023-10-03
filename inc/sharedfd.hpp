@@ -23,14 +23,13 @@ class Shared_fd {
 	public:
 
 		Shared_fd(void);
-
 		Shared_fd(const int);
-
 		Shared_fd(const Shared_fd&);
 
 		operator int(void) const;
 
 		Shared_fd& operator=(const Shared_fd&);
+
 
 		~Shared_fd(void);
 

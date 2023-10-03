@@ -26,7 +26,7 @@ void	 Privmsg::execute(void) {
 		msg.append(_conn.hostname());
 		msg.append(" PRIVMSG ");
 		msg.append(_msg.param(0));
-		msg.append(" :");
+		msg.append(" ");
 		msg.append(_msg.trailing());
 		msg.append(CRLF);
 

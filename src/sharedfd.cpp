@@ -14,17 +14,16 @@
 
 Shared_fd::Shared_fd(void) : _fd(-1), _count(NULL) {}
 
-Shared_fd::Shared_fd(const int fd) : _fd(-1), _count(NULL) {
+Shared_fd::Shared_fd(const int fd)
+: _fd(fd), _count(NULL) {
 
-	if (fd == -1) 
+	if (_fd == -1)
 		return;
-
-	_fd = fd;
 	_count = new int(1);
 }
 
 
-Shared_fd::Shared_fd(const Shared_fd& other) 
+Shared_fd::Shared_fd(const Shared_fd& other)
 : _fd(other._fd), _count(other._count) {
 		if (_fd != -1) {
 			++(*_count);
@@ -34,6 +33,8 @@ Shared_fd::Shared_fd(const Shared_fd& other)
 Shared_fd::operator int(void) const {
 	return _fd;
 }
+
+
 
 Shared_fd& Shared_fd::operator=(const Shared_fd& other) {
 

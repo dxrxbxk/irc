@@ -544,22 +544,22 @@ const std::string& Logger::header(void) const {
 
 		// get server name
 		hd.append(C1 "       server: " RE);
-		hd.append(_server->get_name());
+		hd.append(_server->name());
 		hd.append(CRLF);
 
 		// get address
 		hd.append(C1 "         node: " RE);
-		hd.append(_server->get_addr());
+		hd.append(_server->address());
 		hd.append(CRLF);
 
 		// get port
 		hd.append(C1 "      service: " RE);
-		hd.append(_server->get_port());
+		hd.append(_server->port());
 		hd.append(CRLF);
 
 		// get number of connections
 		hd.append(C1 "  connections: " RE);
-		hd.append(to_string(_server->get_nb_conns()));
+		hd.append(utils::to_string(_server->get_nb_conns()));
 		hd.append(CRLF);
 
 	}

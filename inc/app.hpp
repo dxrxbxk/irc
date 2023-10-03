@@ -39,24 +39,21 @@
 # include "sharedfd.hpp"
 # include "server.hpp"
 
-// sfd = server fd
-// cfd = connexion fd (accept())
 
 class Irc {
 	public:
 		Irc(void);
 		~Irc(void);
 
-		void		run(void);
+		static int	start(const std::string&, const std::string&);
 
 	private:
 
-		void		init(struct addrinfo*);
-		int			create(const std::string&, const std::string&);
-		int			create2(const std::string&, const unsigned short);
-		void		getSocketInfo(int fd); // could be public
+		static void init(struct addrinfo*);
+		static int	create(const std::string&, const std::string&);
+		static int	create_socket(const std::string&);
+		static void getSocketInfo(const int);
 
-		Signal		pipe;
 };
 
 #endif

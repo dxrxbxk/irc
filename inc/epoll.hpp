@@ -26,6 +26,7 @@
 # include "utils.hpp"
 # include "connexion.hpp"
 # include "logger.hpp"
+# include "utils.hpp"
 
 class Server;
 
@@ -36,9 +37,9 @@ class Poll {
 		Poll(void);
 		~Poll(void);
 
-		void	addEvent(IOEvent& ref);
-		void	modEvent(IOEvent&, int);
-		void	delEvent(IOEvent& ref);
+		void	add_event(IOEvent&);
+		void	mod_event(IOEvent&, int);
+		void	del_event(IOEvent&);
 		void	run(void);
 		void	stop(void);
 
@@ -49,13 +50,14 @@ class Poll {
 		typedef vector_event::size_type		size_type;
 
 		static const size_type				DEFAULT_SIZE;
-		vector_event 						v_events;
-//		size_type							index;
-		int									epollfd;
-		bool								is_running;
+		enum { DEFAULT_EVENTS = 10 };
 
-		void 								epollWait(void);
-		IOEvent&							getEventData(epoll_event &ref);
+		int									_instance;
+		vector_event 						_events;
+		bool								_running;
+
+		IOEvent&							data(epoll_event &ref);
+		epoll_event							new_event(IOEvent& ref, const int flags);
 };
 
 #endif
