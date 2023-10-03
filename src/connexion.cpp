@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:30 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/03 00:55:00 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 02:22:44 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,13 +72,16 @@ l_str	Connexion::checkCrlf(void) {
 }
 
 void	Connexion::mod_event(void) {
-	Server	&srv = Server::shared();
-	Poll	&poller = srv.get_poller();	
-
-	poller.modEvent(*this);
+	Server::shared().get_poller().modEvent(*this, EPOLLOUT);
 }
 
-void	Connexion::write(void) {}
+void	Connexion::write(void) {
+	const std::string&	msg = s_send_info.buffer;
+	if (::send(sock_fd, msg.c_str(), msg.size(), 0) == -1) {
+		//error
+	}
+
+}
 
 void	Connexion::read(void) {
 	l_str		l_msg;
@@ -128,6 +131,7 @@ Connexion& Connexion::operator=(const Connexion &copy) {
 		sock_fd = copy.sock_fd;
 		buffer = copy.buffer;
 		s_client_info = copy.s_client_info;
+		s_send_info = copy.s_send_info;
 		_registered = copy._registered;
 	}
 	return *this;

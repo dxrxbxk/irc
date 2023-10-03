@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 20:26:44 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 21:16:33 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 02:36:32 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,13 @@ NumericFactory::~NumericFactory(void) {}
 NumericFactory& NumericFactory::shared(void) {
 		static NumericFactory instance;
 		return instance;
+}
+
+NumericFactory::fptr_t	NumericFactory::handle_numeric(Reply::code code) {
+	map_t&	fmap = shared().fmap;
+	map_t::iterator it = fmap.find(code);
+
+	return it != fmap.end() ? it->second : NULL;
 }
 
 NumericFactory::map_t NumericFactory::init(void) {

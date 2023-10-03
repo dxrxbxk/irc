@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/02 20:27:38 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 21:14:55 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 02:35:25 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,8 @@ class NumericFactory {
 		typedef Reply::ret_type (*fptr_t)(Reply::arg_type);
 
 		typedef std::map<Reply::code, fptr_t> map_t;
+
+		static	fptr_t	handle_numeric(Reply::code);	
 
 	private:
 

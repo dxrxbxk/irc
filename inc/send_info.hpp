@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/03 00:22:07 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/03 00:22:39 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 02:26:27 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,8 +14,8 @@
 # define SEND_INFO_HPP
 
 struct SendInfo {
-	int					reply;
-	std::string			send_buffer;
+	int					code;
+	std::string			buffer;
 };
 
 #endif
