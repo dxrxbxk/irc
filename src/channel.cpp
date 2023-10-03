@@ -57,7 +57,6 @@ void	Channel::change_admin(Connexion& old) {
 
 void	Channel::broadcast(const std::string& msg, const Connexion& sender) {
 	Logger::debug("BROADCAST");
-	Logger::debug("user in channel: " + utils::to_string(size()));
 	for (const_iterator it = _users.begin(); it != _users.end(); ++it) {
 		if (it->second != &sender) {
 			it->second->enqueue(msg);

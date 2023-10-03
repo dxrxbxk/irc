@@ -14,7 +14,7 @@
 # include <sys/socket.h>
 
 
-// #define IRC_LOGGER_INFO
+#define IRC_LOGGER_INFO
 #define IRC_LOGGER_WARNING
 #define IRC_LOGGER_DEBUG
 #define IRC_LOGGER_ERROR

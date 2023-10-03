@@ -97,21 +97,20 @@ void Server::disconnect(void) {
 
 Channel&	Server::get_channel(const std::string& channel_name, Connexion &ref) {
 	std::size_t size = _channels.count(channel_name);
-	Logger::debug(utils::to_string(size));
 	if (not _channels.count(channel_name)) {
-		Logger::debug("create channel!");
 		_channels[channel_name] = Channel(channel_name, ref);
 	}
 	return _channels[channel_name];
 }
 
-bool	Server::channel_exist(const std::string& channel) const {
-	return _channels.count(channel);
-}
 
 Channel& Server::create_channel(const std::string& name, Connexion& creator) {
 	// Channel& channel = _channels[name] = Channel(name, creator);
 	return _channels[name] = Channel(name, creator);
+}
+
+bool	Server::channel_exist(const std::string& name) const {
+	return _channels.count(name);
 }
 
 Channel& Server::channel(const std::string& name) {

@@ -2,7 +2,7 @@
 
 make logger || exit 1
 
-NAME_1='dirabek'
+NAME_1='didir'
 NAME_2='tutur'
 
 PROGRAM='./ircserv 8080 pass'
