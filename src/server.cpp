@@ -45,7 +45,7 @@ void Server::init(ServerInfo& info, const Shared_fd& socket) {
 	_poller.add_event(*this);
 
 	_poller.add_event(Logger::shared());
-	// _poller.addEvent(Signal::shared());
+	_poller.add_event(Signal::shared());
 
 	_initialized = true;
 

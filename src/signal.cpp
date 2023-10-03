@@ -20,14 +20,14 @@ Signal::Signal(void)
 	// init pipe
 	_pipe[0] = -1; _pipe[1] = -1;
 	// // create pipe
-	// if (::pipe(_pipe) == -1)
-	// 	throw std::runtime_error(handleSysError("pipe"));
+	if (::pipe(_pipe) == -1)
+		throw std::runtime_error(handleSysError("pipe"));
 }
 
 Signal::~Signal(void) {
 	// close pipe
-	// if (_pipe[0] != -1) ::close(_pipe[0]);
-	// if (_pipe[1] != -1) ::close(_pipe[1]);
+	if (_pipe[0] != -1) ::close(_pipe[0]);
+	if (_pipe[1] != -1) ::close(_pipe[1]);
 }
 
 
@@ -39,8 +39,8 @@ Signal& Signal::shared(void) {
 }
 
 void Signal::signal_handler(int) {
-	// const char c = 0;
-	// ::write(shared()._pipe[1], &c, sizeof(c));
+	const char c = 0;
+	::write(shared()._pipe[1], &c, sizeof(c));
 }
 
 
@@ -70,10 +70,10 @@ void Signal::signal_ignore(void) {
 // -- public IOEvent interface ------------------------------------------------
 
 void Signal::read(void) {
-	// char c;
-	// if (::read(_pipe[0], &c, sizeof(c)) == -1)
-	// 	ERROR(handleSysError("pipe read"));
-	// throw std::runtime_error("Signal: Interrupted system call");
+	char c;
+	if (::read(_pipe[0], &c, sizeof(c)) == -1)
+		ERROR(handleSysError("pipe read"));
+	throw std::runtime_error("Signal: Interrupted system call");
 }
 
 int Signal::fd(void) const {

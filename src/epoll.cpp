@@ -47,8 +47,15 @@ void Poll::run(void) {
 		const int nfds = ::epoll_wait(_instance, _events.data(), _events.size(), -1);
 
 		// check for errors
-		if (nfds < 0 && errno != EINTR)
-			throw std::runtime_error("epoll_wait");
+		if (nfds < 0) {
+			if (errno != EINTR)
+				throw std::runtime_error("epoll_wait");
+		}
+		else {
+			// resize vector if needed
+			if (static_cast<std::size_t>(nfds) > _events.size())
+				_events.resize(nfds);
+		}
 
 		// loop over events
 		for (int n = 0; n < nfds; ++n) {
@@ -66,10 +73,6 @@ void Poll::run(void) {
 				del_event(io); io.disconnect();
 			}
 		}
-
-		// resize vector if needed
-		if (static_cast<std::size_t>(nfds) > _events.size())
-			_events.resize(nfds);
 
 	}
 	Logger::end();
@@ -113,3 +116,6 @@ Poll::epoll_event Poll::new_event(IOEvent& io, const int flags) {
 	ev.data.ptr = &io;
 	return ev;
 }
+
+
+

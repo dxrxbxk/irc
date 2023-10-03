@@ -20,11 +20,9 @@ Irc::Irc(void) {}
 Irc::~Irc(void) {}
 
 int Irc::start(const std::string& port, const std::string& password) {
+
 	try {
-
-
-
-		ServerInfo info = {"straboul", "127.0.0.1", "8080", ""};
+		ServerInfo info = {"straboul", "127.0.0.1", port, ""};
 
 		Shared_fd sock = create_socket(port);
 
