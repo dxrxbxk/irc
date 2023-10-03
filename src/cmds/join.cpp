@@ -9,7 +9,7 @@ Join::Join(Connexion& conn, Message& msg)
 Join::~Join(void) {}
 
 
-void	 Join::execute(void) {
+void	Join::execute(void) {
 
 	if (_msg.params_size() != 1)
 		return;

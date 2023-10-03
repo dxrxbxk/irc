@@ -193,6 +193,7 @@ void Connexion::disconnect(void) {
 }
 
 
+
 void Connexion::enqueue(const std::string &msg) {
 	_buffer_out.append(msg);
 	if (not _wait_out) {
