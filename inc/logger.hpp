@@ -14,11 +14,14 @@
 # include <sys/socket.h>
 
 
-#define IRC_LOGGER_INFO
+// #define IRC_LOGGER_INFO
 #define IRC_LOGGER_WARNING
+#define IRC_LOGGER_DEBUG
 #define IRC_LOGGER_ERROR
 #define IRC_LOGGER_RECV
 #define IRC_LOGGER_SEND
+
+#define IRC_LOGGER_IGNORE_PING_PONG
 
 
 class Server;
@@ -48,6 +51,7 @@ class Logger : public IOEvent {
 		static void send(const std::string&);
 		static void error(const std::string&);
 		static void info(const std::string&);
+		static void debug(const std::string&);
 		static void warning(const std::string&);
 
 		/* print all logs */
@@ -61,9 +65,11 @@ class Logger : public IOEvent {
 
 		void read(void);
 
-		int getFd(void) const;
+		int fd(void) const;
 
 		void disconnect(void);
+
+		void write(void);
 
 		static Logger& shared(void);
 
@@ -164,19 +170,7 @@ class Logger : public IOEvent {
 
 		enum { BUFF_SIZE = 1024 };
 
-		template <typename T>
-		static std::string to_string(const T& t) {
-			std::stringstream stream;
-			stream << t;
-			return stream.str();
-		}
 
-		template <typename T>
-		static std::string to_hex(const T& t) {
-			std::stringstream stream;
-			stream << std::hex << t;
-			return stream.str();
-		}
 
 
 };

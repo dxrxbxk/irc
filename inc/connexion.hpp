@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/19 15:41:28 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 22:54:54 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 04:04:01 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,20 +26,15 @@
 # include "types.hpp"
 # include "command_factory.hpp"
 # include "numerics.hpp"
+# include "send_info.hpp"
 
 class Server;
 
 struct ClientInfo {
 	std::string username;
 	std::string	hostname;
-	std::string	servername;
 	std::string	realname;
 	std::string	nickname;
-};
-
-struct SendInfo {
-	int					reply;
-	const std::string	send_buffer;
 };
 
 class Connexion : public IOEvent {
@@ -51,25 +46,62 @@ class Connexion : public IOEvent {
 		Connexion& operator=(const Connexion&);
 
 		void						read(void);
-		int							getFd(void) const;
-		void						setFd(int fd);
+		void						write(void);
+		int							fd(void) const;
 		void						disconnect(void);
-		
+		void						enqueue(const std::string&);
+
 		void						set_register(void);
 		bool						registered(void) const;
-		
-		ClientInfo&					get_client_info(void);
-		std::string					get_nickname(void);
+
+
+		// -- public info accessors -------------------------------------------
+
+		/* client info */
+		ClientInfo&					info(void);
+		const ClientInfo&			info(void) const;
+		void						info(const ClientInfo&);
+		void						info(ClientInfo&);
+
+		/* nickname */
+		std::string&				nickname(void);
+		const std::string&			nickname(void) const;
+		void						nickname(const std::string&);
+		void						nickname(std::string&);
+
+		/* username */
+		std::string&				username(void);
+		const std::string&			username(void) const;
+		void						username(const std::string&);
+		void						username(std::string&);
+
+		/* hostname */
+		std::string&				hostname(void);
+		const std::string&			hostname(void) const;
+		void						hostname(const std::string&);
+		void						hostname(std::string&);
+
+		/* realname */
+		std::string&				realname(void);
+		const std::string&			realname(void) const;
+		void						realname(const std::string&);
+		void						realname(std::string&);
+
 
 	private:
-		Shared_fd					sock_fd;
-		std::string					buffer;
-		ClientInfo					s_client_info;
-		SendInfo					s_send_info;
+
+		// -- private members -------------------------------------------------
+
+		Shared_fd					_socket;
+		ClientInfo					_info;
+		std::string					_buffer_in;
+		std::string					_buffer_out;
+		bool						_registered;
+		bool						_wait_out;
 
 		void						readInput(void);
 		l_str						checkCrlf(void);
-		bool						_registered;
+		void						mod_event(int flag);
 };
 
 

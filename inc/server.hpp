@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:59:22 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 19:38:32 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:48:52 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 
 # include <map>
 
-
 struct ServerInfo {
 	std::string name;
 	std::string addr;
@@ -31,9 +30,7 @@ struct ServerInfo {
 	std::string password;
 };
 
-
 class Server : public IOEvent {
-
 
 	public:
 
@@ -50,13 +47,12 @@ class Server : public IOEvent {
 		// -- IOEvent methods ---------------------------------------------------
 
 		void				read(void);
-		int					getFd(void) const;
+		void				write(void);
+		int					fd(void) const;
 		void				disconnect(void);
 
 
 		// -- public methods ----------------------------------------------------
-
-		void response(const Connexion&, const std::string&);
 
 		void unmap_connexion(const Connexion&);
 
@@ -69,12 +65,12 @@ class Server : public IOEvent {
 		const std::string&	get_port(void) const;
 		const std::string&	get_password(void) const;
 		std::size_t			get_nb_conns(void) const;
+		Poll&				get_poller(void) ;
 
 		bool 				has_password(void) const;
 
-		void		add_channel(const std::string channel_name, Connexion &ref);
-		Channel&	get_channel(const std::string channel_name, Connexion &ref);
-		bool		channel_exist(const std::string);
+		Channel&	get_channel(const std::string&, Connexion &ref);
+		bool		channel_exist(const std::string&) const;
 
 		// -- public static methods --------------------------------------------
 

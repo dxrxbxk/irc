@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/21 22:59:12 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 19:38:19 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:53:47 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,15 +21,6 @@ Server::Server(void)
 	_channels() {
 }
 
-Channel&	Server::get_channel(const std::string channel_name, Connexion &ref) {
-	if (not _channels.count(channel_name))
-		add_channel(channel_name, ref);
-	return _channels[channel_name];
-}
-
-void	Server::add_channel(const std::string channel_name, Connexion &ref) {
-	_channels[channel_name] = Channel(channel_name, ref);
-}
 
 Server::Server(const Server&) {}
 
@@ -44,7 +35,6 @@ Server& Server::shared(void) {
 	static Server instance;
 	return instance;
 }
-
 
 void Server::init(ServerInfo& info, const Shared_fd& socket, Signal& signal) {
 
@@ -68,25 +58,9 @@ void Server::stop(void) {
 	_poller.stop();
 }
 
-//yoink
-/*
-void setnonblocking(int sock)
-{
-    int opts;
-    if ((opts = fcntl(sock, F_GETFL)) < 0)
-        errexit("GETFL %d failed", sock);
-    opts = opts | O_NONBLOCK;
-    if (fcntl(sock, F_SETFL, opts) < 0)
-        errexit("SETFL %d failed", sock);
-}
 
-                // modify monitored event to EPOLLOUT,  wait next loop to send respond
-                ev.data.ptr = data;
-                // Modify event to EPOLLOUT
-                ev.events = EPOLLOUT | EPOLLET;
-                // modify moditored fd event
-                epoll_ctl(epfd, EPOLL_CTL_MOD, fd, &ev);
-*/
+
+void	Server::write(void) {}
 
 void	Server::read(void) {
 	int cfd;
@@ -100,11 +74,12 @@ void	Server::read(void) {
 		return; }
 
 	Logger::info("connexion accepted");
+
 	(_conns)[cfd] = Connexion(cfd);
 	_poller.addEvent((_conns)[cfd]);
 }
 
-int Server::getFd(void) const {
+int Server::fd(void) const {
 	return _socket;
 }
 
@@ -114,21 +89,25 @@ void Server::disconnect(void) {
 
 
 
-void Server::response(const Connexion& conn, const std::string& msg) {
-	/* temporary CRLF check during development */
-	if (msg.size() < 2) { throw std::runtime_error("invalid message"); }
-	if (msg[msg.size() - 2] != '\r' and msg[msg.size() - 1] != '\n')
-		throw std::runtime_error("missing CRLF");
-	/* ************************************** */
-	Logger::send(msg);
-	if (::send(conn.getFd(), msg.c_str(), msg.size(), 0) == -1) {
-		// ...
-	}
+
+// -- channel methods ---------------------------------------------------------
+
+
+Channel&	Server::get_channel(const std::string& channel_name, Connexion &ref) {
+	if (not _channels.count(channel_name))
+		_channels[channel_name] = Channel(channel_name, ref);
+	return _channels[channel_name];
 }
+
+bool	Server::channel_exist(const std::string& channel) const {
+	return _channels.count(channel);
+}
+
+
 
 /* remove connexion */
 void Server::unmap_connexion(const Connexion& conn) {
-	_conns.erase(conn.getFd());
+	_conns.erase(conn.fd());
 }
 
 
@@ -157,6 +136,10 @@ const std::string& Server::get_name(void) const {
 
 bool Server::has_password(void) const {
 	return not _info.password.empty();
+}
+
+Poll&	Server::get_poller(void) {
+	return _poller;
 }
 
 

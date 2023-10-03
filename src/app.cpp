@@ -67,7 +67,30 @@ void Irc::getSocketInfo(int fd) {
 	std::cout << "Port: " << ntohs(peer.sin_port) << std::endl;
 }
 
-int		Irc::create(std::string node, std::string service) {
+
+int		Irc::create2(const std::string& ip, const unsigned short port) {
+
+	const int socket = ::socket(AF_INET, SOCK_STREAM, 0);
+
+	if (socket == -1)
+		throw std::runtime_error(handleSysError("socket"));
+
+	struct sockaddr_in addr;
+	addr.sin_family = AF_INET;
+	addr.sin_port = htons(port);
+	addr.sin_addr.s_addr = inet_addr(ip.c_str());
+
+	if (::bind(socket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+		throw std::runtime_error(handleSysError("bind"));
+
+	if (::listen(socket, SOMAXCONN) == -1)
+		throw std::runtime_error(handleSysError("listen"));
+
+	return socket;
+}
+
+
+int		Irc::create(const std::string& node, const std::string& service) {
 
 	struct addrinfo 		hints;
 	struct addrinfo 		*result, *rp;

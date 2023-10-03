@@ -12,16 +12,14 @@
 Ping::Ping(Connexion& conn, Message& msg)
 : Command(conn, msg) {}
 
-Ping::~Ping(void) {}
-
-bool Ping::evaluate(void) {
-	if (_msg.get_middle_size() < 1)
-		return false;// ERR_NOORIGIN
-	return true;
-}
+Ping::~Ping() {}
 
 void Ping::execute(void) {
-	_server.response(_conn, "PONG :" + _msg.get_middle(0));
+
+	if (_msg.params_size() < 1)
+		return;
+
+	_conn.enqueue("PONG :" + _msg.param(0) + CRLF);
 }
 
 Command* Ping::create(Connexion& conn, Message& msg) {

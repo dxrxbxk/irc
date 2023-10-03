@@ -12,18 +12,11 @@
 
 #include "utils.hpp"
 
-void	closeFd(int fd) {
-	if (fd > 2) {
-		std::cout << "Closing " << fd << std::endl;
-		if (close(fd) == -1)
-			std::cerr << "Error: close: " << strerror(errno) << std::endl;
-	}
-}
 
 std::string custom_inet_ntoa(struct in_addr addr) {
     std::string ip_str;
     for (int i = 0; i < 4; ++i) {
-        ip_str += intToString((addr.s_addr >> (i * 8)) & 0xFF);
+        ip_str += to_string((addr.s_addr >> (i * 8)) & 0xFF);
         if (i < 3) {
             ip_str += ".";
         }
@@ -31,10 +24,13 @@ std::string custom_inet_ntoa(struct in_addr addr) {
     return ip_str;
 }
 
-std::string intToString(int num) {
-	std::ostringstream oss;
-	oss << num;
-	return oss.str();
+void setnonblocking(const int socket) {
+    int opts;
+    if ((opts = ::fcntl(socket, F_GETFL)) < 0)
+		throw std::runtime_error("GETFL failed");
+    opts = opts | O_NONBLOCK;
+    if (::fcntl(socket, F_SETFL, opts) < 0)
+		throw std::runtime_error("SETFL failed");
 }
 
 std::string	handleGaiError(int errcode) {

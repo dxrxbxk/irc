@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 20:56:00 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 19:39:41 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:50:38 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,9 +27,10 @@ class Signal : public IOEvent {
 		Signal();
 		~Signal();
 
-		int		getFd(void) const;
+		int		fd(void) const;
 		void	read(void);
 		void	disconnect(void);
+		void	write(void);
 	private:
 };
 

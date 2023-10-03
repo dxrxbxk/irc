@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/08/18 20:55:24 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 19:40:17 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 00:50:55 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,8 @@
 
 void	Signal::disconnect(void) {
 }
+
+void	Signal::write(void) {}
 
 void	signalHandler(int signum) {
 	(void)signum;
@@ -57,11 +59,13 @@ Signal::Signal() {
 
 Signal::~Signal() {
 	std::cout << "Pipe destructor called" << std::endl;
-	closeFd(g_signalPipe[0]);
-	closeFd(g_signalPipe[1]);
+	if (g_signalPipe[0] != -1)
+		::close(g_signalPipe[0]);
+	if (g_signalPipe[1] != -1)
+		::close(g_signalPipe[1]);
 }
 
-int		Signal::getFd(void) const {
+int		Signal::fd(void) const {
 	return (g_signalPipe[0]);
 }
 

@@ -13,8 +13,6 @@ class Ping : public Command {
 
 		~Ping(void);
 
-		bool evaluate(void);
-
 		void execute(void);
 
 		static Command* create(Connexion&, Message&);

@@ -30,6 +30,8 @@
 #define C2 "\x1b[32m"
 #define C3 "\x1b[33m"
 #define C4 "\x1b[34m"
+#define C5 "\x1b[35m"
+#define C6 "\x1b[36m"
 #define RE "\x1b[0m"
 
 
@@ -222,13 +224,25 @@ void Logger::set_server(Server& server) {
 
 
 void Logger::recv(const std::string& line) {
+#if defined(IRC_LOGGER_IGNORE_PING_PONG)
+	if (line.find("PING") != std::string::npos
+	or line.find("PONG") != std::string::npos)
+		return;
+#endif
 	static_cast<void>(line);
 #if defined(IRC_LOGGER_RECV)
 	shared().log(C2 "   [recv] " RE, line);
 #endif
 }
 
+
+
 void Logger::send(const std::string& line) {
+#if defined(IRC_LOGGER_IGNORE_PING_PONG)
+	if (line.find("PING") != std::string::npos
+	or line.find("PONG") != std::string::npos)
+		return;
+#endif
 	static_cast<void>(line);
 #if defined(IRC_LOGGER_SEND)
 	shared().log(C3 "   [send] " RE, line);
@@ -253,6 +267,13 @@ void Logger::info(const std::string& line) {
 	static_cast<void>(line);
 #if defined(IRC_LOGGER_INFO)
 	shared().log(C4 "   [info] " RE, line);
+#endif
+}
+
+void Logger::debug(const std::string& line) {
+	static_cast<void>(line);
+#if defined(IRC_LOGGER_DEBUG)
+	shared().log(C5 "   [DEBUG] " RE, line);
 #endif
 }
 
@@ -412,13 +433,14 @@ void Logger::read(void) {
 }
 
 /* get file descriptor */
-int Logger::getFd(void) const {
+int Logger::fd(void) const {
 	return STDIN_FILENO;
 }
 
 /* disconnect */
 void Logger::disconnect(void) {}
 
+void Logger::write(void) {}
 
 
 // -- private accessors ------------------------------------------------------

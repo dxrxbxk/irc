@@ -1,34 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   nick.hpp                                           :+:      :+:    :+:   */
+/*   send_info.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/01 01:37:54 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/03 03:59:14 by diroyer          ###   ########.fr       */
+/*   Created: 2023/10/03 00:22:07 by diroyer           #+#    #+#             */
+/*   Updated: 2023/10/03 02:59:45 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef NICK_HPP
-# define NICK_HPP
+#ifndef SEND_INFO_HPP
+# define SEND_INFO_HPP
 
-#include "command.hpp"
+# include "numerics.hpp"
 
-class Nick : public Command {
-
-	public:
-
-		Nick(Connexion&, Message&);
-
-		~Nick(void);
-
-		void execute(void);
-
-		static Command* create(Connexion&, Message&);
-
-	private:
-
+struct SendInfo {
+	std::string			rpl;
+	std::string			buffer;
+	
+	SendInfo() : rpl(), buffer() {};
+	~SendInfo() {};
 };
 
 #endif

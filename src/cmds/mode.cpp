@@ -6,7 +6,7 @@
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2023/10/01 19:04:16 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 22:55:10 by diroyer          ###   ########.fr       */
+/*   Updated: 2023/10/03 04:03:30 by diroyer          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,25 +20,14 @@ Mode::Mode(Connexion& conn, Message& msg)
 
 Mode::~Mode(void) {}
 
-void	Mode::user_mode(void) {
-	// maybe check if user is registered;
-}
 
 bool	Mode::valid_mode(char c) {
 	return (c == 'i' || c == 't' || c == 'k' || c == 'o' || c =='l');
 }
 
-bool Mode::evaluate(void) {
-	// example:
-	if (not _msg.has_params())
-		return false;
-	return true;
-}
-
-void Mode::execute(void) {
-	//_server.response(_conn, "");
-	if (_msg.get_middle().size() == 2)
-		user_mode();
+void	Mode::execute(void) {
+	if (_msg.params_size() == 2)
+		_conn.enqueue(RPL::u_mod_unknown_flag(_conn.info()));
 }
 
 Command* Mode::create(Connexion& conn, Message& msg) {

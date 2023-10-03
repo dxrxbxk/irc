@@ -13,7 +13,7 @@ settings = {
   core = {
     real_name = "real_richtofen";
     user_name = "user_richtofen";
-    nick = "nick_richtofen";
+    nick = "poutine";
   };
   "fe-text" = { actlist_sort = "refnum"; };
 };
@@ -21,3 +21,4 @@ settings = {
 # Si vous utilisez un script pour l'authentification, assurez-vous de le charger ici.
 # Cependant, je recommande fortement d'utiliser une méthode plus sécurisée pour stocker le mot de passe.
 
+logs = { };
