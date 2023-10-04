@@ -25,7 +25,9 @@ Connexion::Connexion(void)
 	_channels() {
 }
 
-Connexion::~Connexion(void) {}
+Connexion::~Connexion(void) {
+	leave_channels();
+}
 
 Connexion::Connexion(int fd)
 :	_socket(fd),
@@ -142,7 +144,6 @@ void	Connexion::write(void) {
 	// 	throw std::runtime_error("missing CRLF");
 	/* ************************************** */
 
-
 	Logger::send(_buffer_out);
 	if (::send(_socket, _buffer_out.c_str(), _buffer_out.size(), 0) == -1) {
 		// clear buffer if error is EAGAIN
@@ -188,13 +189,8 @@ void Connexion::read(void) {
 void Connexion::disconnect(void) {
 	Logger::info("connexion closed");
 
-	if (_registered == true)
-		Server::shared().unmap_connexion(*this);
-	else
-		Server::shared().remove_newcomer(*this);
+	Server::shared().unmap_connexion(*this);
 
-	// remove from all channels
-	leave_channels();
 }
 
 

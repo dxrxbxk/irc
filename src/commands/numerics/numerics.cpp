@@ -17,10 +17,17 @@
 
 #define CRLF "\r\n"
 
-RPL::ret_type	RPL::nickname_in_use(RPL::arg_type info, std::string& nick_used) {
+RPL::ret_type	RPL::nickname_in_use(arg_type info, std::string& nick_used) {
 	std::stringstream	buffer;
 	buffer << "433 " << info.nickname << " " << nick_used
 		<< " :Nickname in use" << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::need_more_params(arg_type info, std::string& cmd) {
+	std::stringstream	buffer;
+	buffer << "461 " << info.nickname << " " 
+		<< cmd << " :Need more params " << CRLF;
 	return buffer.str();
 }
 

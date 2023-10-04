@@ -32,7 +32,7 @@ namespace RPL {
 	ret_type	u_mod_unknown_flag(arg_type);
 	ret_type	no_nickname_given(arg_type);
 	ret_type	nickname_in_use(arg_type, std::string&);
-
+	ret_type	need_more_params(arg_type, std::string&);
 
 
 	enum code

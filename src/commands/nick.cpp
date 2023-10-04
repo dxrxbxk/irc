@@ -40,13 +40,11 @@ void Nick::execute(void) {
 		return ;
 	}
 
-	_conn.nickname(first);
 
-	if (_conn.registered()) {
-		_server.ch_nick(_conn.nickname(), first);
-	}
-
-	else { _server.accept_newcomer(_conn); }
+	if (_conn.registered())
+		_server.ch_nick(_conn, first);
+	else 
+		_conn.nickname(first);
 
 	return ;
 }

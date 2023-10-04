@@ -29,6 +29,7 @@ void	User::add_user(void) {
 
 void User::execute(void) {
 
+	PRINT("HELLO");
 	if (_msg.params_size() != 3 || not _msg.has_trailing()) {
 		// need reply numeric error
 		return; }
@@ -39,6 +40,8 @@ void User::execute(void) {
 	}
 
 	ClientInfo&	info = _conn.info();
+
+	_server.accept_newcomer(_conn);
 
 	_conn.login();
 	add_user();
