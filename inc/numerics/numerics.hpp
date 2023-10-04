@@ -25,11 +25,13 @@ namespace RPL {
 	typedef const ClientInfo&	arg_type;
 
 	/* ************************************************************************** */
-	ret_type	welcome(arg_type info);
-	ret_type	end_of_motd(arg_type info);
+	ret_type	welcome(arg_type);
+	ret_type	end_of_motd(arg_type);
 
 	/* ************************************************************************** */
-	ret_type	u_mod_unknown_flag(arg_type info);
+	ret_type	u_mod_unknown_flag(arg_type);
+	ret_type	no_nickname_given(arg_type);
+	ret_type	nickname_in_use(arg_type, std::string&);
 
 
 

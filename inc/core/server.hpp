@@ -54,8 +54,12 @@ class Server : public IOEvent {
 
 		// -- public methods ----------------------------------------------------
 
-		void unmap_connexion(const Connexion&);
+		void	unmap_connexion(const Connexion&);
+		void	ch_nick(const std::string&, const std::string&);
+		bool	nick_exist(const std::string&);
 
+		void	accept_newcomer(Connexion&);
+		void	remove_newcomer(const Connexion&);
 
 
 		// -- public accessors -------------------------------------------------
@@ -94,8 +98,9 @@ class Server : public IOEvent {
 
 		// -- private types ----------------------------------------------------
 
-		typedef std::map<int, Connexion>		conn_map;
-		typedef std::map<std::string, Channel>	channel_map;
+		typedef std::map<std::string, Connexion>	conn_map;
+		typedef std::map<std::string, Channel>		channel_map;
+		typedef std::map<int, Connexion>			newcomer_map;
 
 
 		// -- private members --------------------------------------------------
@@ -106,6 +111,7 @@ class Server : public IOEvent {
 		Poll			_poller;
 		conn_map		_conns;
 		channel_map 	_channels;
+		newcomer_map	_news;
 };
 
 #endif

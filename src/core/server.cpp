@@ -61,7 +61,6 @@ void Server::stop(void) {
 }
 
 
-
 void	Server::write(void) {}
 
 void	Server::read(void) {
@@ -77,8 +76,8 @@ void	Server::read(void) {
 
 	Logger::info("connexion accepted");
 
-	_conns[cfd] = Connexion(cfd);
-	_poller.add_event(_conns[cfd]);
+	_news[cfd] = Connexion(cfd);
+	_poller.add_event(_news[cfd]);
 }
 
 int Server::fd(void) const {
@@ -119,9 +118,33 @@ Channel& Server::channel(const std::string& name) {
 
 
 
+
+void	Server::ch_nick(const std::string& old_nick, const std::string& new_nick) {	
+	_conns[new_nick] = _conns.find(old_nick)->second;
+	_conns.erase(old_nick);
+}
+
+bool	Server::nick_exist(const std::string& nick) {
+	return _conns.count(nick);
+}
+
+
+void Server::accept_newcomer(Connexion& conn) {
+	_conns[conn.nickname()] = Connexion(conn);
+	_news.erase(conn.fd());
+}
+
+
+void Server::remove_newcomer(const Connexion& conn) {
+	_poller.del_event(conn);
+	_news.erase(conn.fd());
+}
+
 /* remove connexion */
 void Server::unmap_connexion(const Connexion& conn) {
-	_conns.erase(conn.fd());
+	_poller.del_event(conn);
+	_conns.erase(conn.nickname());
+	// warning: check if deconnexion appear on _conns or _news
 }
 
 

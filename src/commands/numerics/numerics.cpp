@@ -13,10 +13,16 @@
 #include "connexion.hpp"
 #include "server.hpp"
 #include "numerics.hpp"
+#include <sstream>
 
 #define CRLF "\r\n"
 
-
+RPL::ret_type	RPL::nickname_in_use(RPL::arg_type info, std::string& nick_used) {
+	std::stringstream	buffer;
+	buffer << "433 " << info.nickname << " " << nick_used
+		<< " :Nickname in use" << CRLF;
+	return buffer.str();
+}
 
 RPL::ret_type	RPL::welcome(arg_type info) {
 	std::stringstream	buffer;
@@ -28,6 +34,12 @@ RPL::ret_type	RPL::welcome(arg_type info) {
 RPL::ret_type	RPL::end_of_motd(arg_type info){
 	std::stringstream	buffer;
 	buffer << "376 " << info.nickname << " :End of MOTD" << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::no_nickname_given(arg_type info) {
+	std::stringstream	buffer;
+	buffer << "431 " << info.nickname << " :No nickname given" << CRLF;
 	return buffer.str();
 }
 

@@ -69,9 +69,8 @@ void Poll::run(void) {
 			if (event & EPOLLOUT)
 				io.write();
 
-			if (event & EPOLLRDHUP || event & EPOLLHUP) {
-				del_event(io); io.disconnect();
-			}
+			if (event & EPOLLRDHUP || event & EPOLLHUP)
+				io.disconnect();
 		}
 
 	}
@@ -83,7 +82,7 @@ IOEvent& Poll::data(epoll_event& event) {
 	return *static_cast<IOEvent*>(event.data.ptr);
 }
 
-void Poll::del_event(IOEvent& io) {
+void Poll::del_event(const IOEvent& io) {
 	if (::epoll_ctl(_instance, EPOLL_CTL_DEL, io.fd(), NULL) == -1)
 		throw std::runtime_error(handleSysError("epoll_ctl"));
 	_events.pop_back();

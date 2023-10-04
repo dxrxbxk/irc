@@ -39,7 +39,7 @@ class Poll {
 
 		void	add_event(IOEvent&);
 		void	mod_event(IOEvent&, int);
-		void	del_event(IOEvent&);
+		void	del_event(const IOEvent&);
 		void	run(void);
 		void	stop(void);
 

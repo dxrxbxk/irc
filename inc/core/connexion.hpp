@@ -98,6 +98,8 @@ class Connexion : public IOEvent {
 		void						realname(std::string&);
 
 
+		void						swap(Connexion&);
+
 	private:
 
 		// -- private members -------------------------------------------------

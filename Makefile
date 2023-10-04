@@ -57,6 +57,9 @@ override OBJDIR := $(BLDDIR)/object
 # dependency directory
 override DEPDIR := $(BLDDIR)/dependency
 
+# json directory
+override JSNDIR := $(BLDDIR)/json
+
 # current directory
 override ROOT := $(shell pwd)
 
@@ -73,6 +76,8 @@ override NAME := $(PROJECT)
 # hook script
 override HOOK := $(ROOT)/.git/hooks/pre-commit
 
+# compile command database
+override CMDDB := compile_commands.json
 
 
 # -- S O U R C E S ------------------------------------------------------------
@@ -92,9 +97,13 @@ override OBJ := $(patsubst $(SRCDIR)/%.cpp, $(OBJDIR)/%.o,    $(SRC))
 # pattern substitution for dependency files
 override DEP := $(patsubst $(OBJDIR)/%.o,   $(DEPDIR)/%.d,    $(OBJ))
 
+override JSN := $(patsubst $(SRCDIR)/%.cpp,   $(JSNDIR)/%.json, $(SRC))
+
+
 override HIR := $(sort $(dir $(SRC)))
 override OBJHIR := $(HIR:$(SRCDIR)/%=$(OBJDIR)/%)
 override DEPHIR := $(HIR:$(SRCDIR)/%=$(DEPDIR)/%)
+override JSNHIR := $(HIR:$(SRCDIR)/%=$(JSNDIR)/%)
 
 
 
@@ -113,7 +122,7 @@ override VALGRIND := $(shell which valgrind)
 override VFLAGS := valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes
 
 # compiler
-override CXX := $(shell which c++)
+override CXX := $(shell which clang++)
 
 # compiler standard
 override STD := -std=c++98
@@ -126,6 +135,9 @@ override CXXFLAGS := -Wall -Wextra -Werror -Wpedantic -Wno-unused -Wno-unused-va
 
 # dependency flags
 override DEPFLAGS = -MT $@ -MMD -MP -MF $(DEPDIR)/$*.d
+
+# compile command flag
+override CMPFLAG = -MJ $(JSNDIR)/$*.json
 
 # all include subdirs with -I prefix
 override INCLUDES := $(addprefix -I, $(HDRDIR))
@@ -144,7 +156,7 @@ override DEFINES := $(addprefix -D, $(DEF))
 
 # -- M A I N  T A R G E T S ---------------------------------------------------
 
-all: $(HOOK) obj $(NAME)
+all: $(HOOK) obj $(NAME) $(CMDDB)
 
 
 # -- E X E C U T A B L E  T A R G E T -------------------------------------------
@@ -162,19 +174,23 @@ obj:
 
 -include $(DEP)
 
-$(OBJDIR)/%.o : $(SRCDIR)/%.cpp Makefile | $(OBJHIR) $(DEPHIR)
+$(OBJDIR)/%.o : $(SRCDIR)/%.cpp Makefile | $(OBJHIR) $(DEPHIR) $(JSNHIR)
 	@echo "compiling -> \x1b[33m"$(<F)"\x1b[0m"
-	@$(CXX) $(STD) $(OPT) $(CXXFLAGS) $(DEFINES) $(DEPFLAGS) $(INCLUDES) -c $< -o $@
+	@$(CXX) $(STD) $(OPT) $(CXXFLAGS) $(DEFINES) $(CMPFLAG) $(DEPFLAGS) $(INCLUDES) -c $< -o $@
+
+$(CMDDB) : $(JSN)
+	@echo "[\n"$$(cat $(JSN) | sed '$$s/,\s*$$//')"\n]" | jq > $@
+
 
 # -- D I R E C T O R I E S  C R E A T I O N -------------------------------------
 
-$(OBJHIR) $(DEPHIR) :
+$(OBJHIR) $(DEPHIR) $(JSNHIR):
 	@$(MKDIR) $@
 
 # -- C L E A N I N G ------------------------------------------------------------
 
 clean:
-	@$(RM) $(BLDDIR)
+	@$(RM) $(BLDDIR) $(CMDDB)
 
 
 fclean: clean

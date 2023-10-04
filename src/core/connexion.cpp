@@ -187,7 +187,12 @@ void Connexion::read(void) {
 
 void Connexion::disconnect(void) {
 	Logger::info("connexion closed");
-	Server::shared().unmap_connexion(*this);
+
+	if (_registered == true)
+		Server::shared().unmap_connexion(*this);
+	else
+		Server::shared().remove_newcomer(*this);
+
 	// remove from all channels
 	leave_channels();
 }

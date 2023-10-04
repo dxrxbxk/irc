@@ -70,6 +70,10 @@ l_str&	Message::params(void) {
 	return _middle;
 }
 
+std::string&	Message::params_first(void) {
+	return _middle.front();
+}
+
 
 std::string&	Message::param(const std::size_t index) {
 	return _middle[index];

@@ -54,7 +54,7 @@ void Irc::init(struct addrinfo *hints) {
 }
 
 
-
+/*
 int Irc::create_socket(const std::string& port) {
 
 	const struct sockaddr_in addr = {
@@ -76,7 +76,7 @@ int Irc::create_socket(const std::string& port) {
 
 	return socket;
 }
-
+*/
 
 
 void Irc::getSocketInfo(const int fd) {

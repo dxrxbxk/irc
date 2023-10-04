@@ -40,6 +40,7 @@ class Message {
 		std::string&		prefix(void);
 		std::string&		param(std::size_t);
 		l_str&				params(void);
+		std::string&		params_first(void);
 		std::size_t			params_size(void) const;
 		std::string&		trailing(void);
 

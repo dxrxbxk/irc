@@ -11,8 +11,8 @@
 /* ************************************************************************** */
 
 #include "nick.hpp"
+#include "numerics.hpp"
 #include "server.hpp"
-# define NICKNAME 0
 
 #define HINT(MSG) std::cout << "\x1b[32m" << MSG << "\x1b[0m" << std::endl;
 
@@ -23,11 +23,32 @@ Nick::~Nick(void) {}
 
 
 void Nick::execute(void) {
-	if (_msg.params_size() != 1) {
-		// need reply numeric error
-		return; }
+	if (not _msg.has_params()) {
+		_conn.enqueue(RPL::no_nickname_given(_conn.info()));
+		return;
+	}
 
-	_conn.nickname(_msg.param(NICKNAME));
+	std::string& first = _msg.params_first();
+	if (_server.nick_exist(first)) {
+
+		_conn.enqueue(RPL::nickname_in_use(_conn.info(), first));
+
+		if (not _conn.registered())
+			_conn.disconnect();
+
+
+		return ;
+	}
+
+	_conn.nickname(first);
+
+	if (_conn.registered()) {
+		_server.ch_nick(_conn.nickname(), first);
+	}
+
+	else { _server.accept_newcomer(_conn); }
+
+	return ;
 }
 
 
