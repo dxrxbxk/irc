@@ -86,6 +86,7 @@ class Logger : public IOEvent {
 		/* log a line */
 		void log(const char*, const std::string&);
 
+
 		// -- private methods --------------------------------------------------
 
 		/* read stdin */
@@ -108,6 +109,8 @@ class Logger : public IOEvent {
 
 
 		// -- private accessors ------------------------------------------------
+
+		std::string background(void);
 
 		/* header height */
 		std::size_t header_height(void) const;

@@ -34,20 +34,20 @@
 #define C6 "\x1b[36m"
 #define RE "\x1b[0m"
 
+#include <stdint.h>
 
-
-static const std::string logo = \
-CRLF "\x1b[32m" \
+static const std::string logo2 = \
+CRLF \
 "  ██╗██████╗  ██████╗    ███████╗███████╗██████╗ ██╗   ██╗███████╗██████╗"  CRLF \
 "  ██║██╔══██╗██╔════╝    ██╔════╝██╔════╝██╔══██╗██║   ██║██╔════╝██╔══██╗" CRLF \
 "  ██║██████╔╝██║         ███████╗█████╗  ██████╔╝██║   ██║█████╗  ██████╔╝" CRLF \
 "  ██║██╔══██╗██║         ╚════██║██╔══╝  ██╔══██╗╚██╗ ██╔╝██╔══╝  ██╔══██╗" CRLF \
 "  ██║██║  ██║╚██████╗    ███████║███████╗██║  ██║ ╚████╔╝ ███████╗██║  ██║" CRLF \
 "  ╚═╝╚═╝  ╚═╝ ╚═════╝    ╚══════╝╚══════╝╚═╝  ╚═╝  ╚═══╝  ╚══════╝╚═╝  ╚═╝\x1b[0m" CRLF;
-static std::size_t logo_height = 7;
+static std::size_t logo_height2 = 7;
 
-static const std::string logo2 = \
-CRLF "\x1b[32m"\
+static const std::string logo = \
+CRLF \
 "   ██▓ ██▀███   ▄████▄       ██████ ▓█████  ██▀███   ██▒   █▓▓█████  ██▀███"   CRLF \
 "  ▓██▒▓██ ▒ ██▒▒██▀ ▀█     ▒██    ▒ ▓█   ▀ ▓██ ▒ ██▒▓██░   █▒▓█   ▀ ▓██ ▒ ██▒" CRLF \
 "  ▒██▒▓██ ░▄█ ▒▒▓█    ▄    ░ ▓██▄   ▒███   ▓██ ░▄█ ▒ ▓██  █▒░▒███   ▓██ ░▄█ ▒" CRLF \
@@ -58,7 +58,60 @@ CRLF "\x1b[32m"\
 "   ▒ ░  ░░   ░ ░           ░  ░  ░     ░     ░░   ░      ░░     ░     ░░   ░"  CRLF \
 "   ░     ░     ░ ░               ░     ░  ░   ░           ░     ░  ░   ░"      CRLF \
 "               ░                                         ░\x1b[0m"				CRLF;
-static std::size_t logo_height2 = 11;
+static std::size_t logo_height = 11;
+
+std::string color(uint8_t red, uint8_t green, uint8_t blue) {
+	// generate true color escape sequence
+	char buff[32];
+	std::snprintf(buff, sizeof(buff), "\x1b[38;2;%d;%d;%dm", red, green, blue);
+	return buff;
+}
+
+#include <cmath>
+
+std::string cycle(void) {
+	static float t = 0.0f;
+
+    // Facteur de mélange pour adoucir la saturation
+    float mixFactor = 0.5; // 0.0: aucune atténuation, 1.0: complètement gris
+
+    // Réduire cette valeur pour des transitions plus longues
+    float increment = 0.01;
+
+    uint8_t r_raw = static_cast<uint8_t>((sin(t + 0) + 1) * 127.5);
+    uint8_t g_raw = static_cast<uint8_t>((sin(t + 2) + 1) * 127.5);
+    uint8_t b_raw = static_cast<uint8_t>((sin(t + 4) + 1) * 127.5);
+
+    // Appliquer le facteur de mélange pour adoucir la saturation
+    uint8_t r = static_cast<uint8_t>(r_raw * (1 - mixFactor) + 127.5 * mixFactor);
+    uint8_t g = static_cast<uint8_t>(g_raw * (1 - mixFactor) + 127.5 * mixFactor);
+    uint8_t b = static_cast<uint8_t>(b_raw * (1 - mixFactor) + 127.5 * mixFactor);
+
+    t += increment;
+
+    return color(r, g, b);
+}
+
+std::string Logger::background(void) {
+
+	std::string buff(cycle());
+	buff.append(logo);
+
+	return buff;
+
+
+	for (std::size_t i = 0; i < _height; ++i) {
+		for (std::size_t j = 0; j < _width; ++j) {
+			buff.append(" ");
+		}
+		buff.append(CRLF);
+	}
+	buff.append("\x1b[0m");
+
+	return buff;
+}
+
+
 
 
 
@@ -476,6 +529,7 @@ void Logger::render_impl(void) {
 	/* clear screen + move home */
 	buff.append(CLEAR_SCREEN MOVE_HOME);
 
+
 	if (_height < header_height() + MIN_HEIGHT) {
 		buff.append("terminal too small");
 		std::cout.write(buff.c_str(), buff.size());
@@ -485,7 +539,8 @@ void Logger::render_impl(void) {
 
 
 
-	buff.append(logo);
+	buff.append(background());
+	// buff.append(logo);
 	buff.append(_separator);
 	buff.append(header());
 	buff.append(_separator);

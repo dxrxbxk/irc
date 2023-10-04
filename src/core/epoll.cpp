@@ -44,7 +44,7 @@ void Poll::run(void) {
 		Logger::render();
 
 		// wait for events
-		const int nfds = ::epoll_wait(_instance, _events.data(), _events.size(), -1);
+		const int nfds = ::epoll_wait(_instance, _events.data(), _events.size(), 20);
 
 		// check for errors
 		if (nfds < 0) {
