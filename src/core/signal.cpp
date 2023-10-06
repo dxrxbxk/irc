@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "signal.hpp"
+#include "server.hpp"
 
 
 // -- private constructors ----------------------------------------------------
@@ -72,8 +73,8 @@ void Signal::signal_ignore(void) {
 void Signal::read(void) {
 	char c;
 	if (::read(_pipe[0], &c, sizeof(c)) == -1)
-		ERROR(handleSysError("pipe read"));
-	throw std::runtime_error("Signal: Interrupted system call");
+		throw std::runtime_error(handleSysError("pipe read"));
+	Server::shared().stop();
 }
 
 int Signal::fd(void) const {

@@ -9,7 +9,7 @@ Privmsg::Privmsg(Connexion& conn, Message& msg)
 Privmsg::~Privmsg(void) {}
 
 
-void	 Privmsg::execute(void) {
+Command::ret_type	 Privmsg::execute(void) {
 
 	// if (_msg.params_size() != 1
 	// 	|| not _msg.has_trailing())
@@ -36,6 +36,7 @@ void	 Privmsg::execute(void) {
 	// 	User& user = _server.get_user(_msg.param(0));
 	// 	user.send(_msg);
 	// }
+		return 0;
 
 }
 

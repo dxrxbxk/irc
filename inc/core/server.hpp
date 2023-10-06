@@ -61,6 +61,9 @@ class Server : public IOEvent {
 		void	accept_newcomer(Connexion&);
 		void	remove_newcomer(const Connexion&);
 
+		void	broadcast(const std::string&, const Connexion&);
+		void	broadcast(const std::string& msg);
+
 
 		// -- public accessors -------------------------------------------------
 
@@ -85,7 +88,8 @@ class Server : public IOEvent {
 
 	private:
 
-		typedef std::map<std::string, Channel>::const_iterator const_iterator;
+		typedef std::map<std::string, Channel>::const_iterator channel_iterator;
+		typedef std::map<std::string, Connexion*>::const_iterator nick_iterator;
 
 
 		// -- private constructors ---------------------------------------------
@@ -109,8 +113,8 @@ class Server : public IOEvent {
 		ServerInfo		_info;
 		Shared_fd		_socket;
 		Poll			_poller;
-		conn_map		_conns;
 		channel_map 	_channels;
+		conn_map		_conns;
 		nick_map		_nicks;
 };
 

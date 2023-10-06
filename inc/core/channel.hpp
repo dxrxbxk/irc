@@ -33,10 +33,10 @@ class Channel {
 		Channel(const Channel&);
 		Channel& operator=(const Channel&);
 
-		void	change_admin(Connexion&);
-		void	add_user(Connexion&);
-		void	remove_user(Connexion&);
-		void	broadcast(const std::string&, const Connexion&);
+		void		change_admin(Connexion&);
+		void		add_user(Connexion&);
+		void		remove_user(Connexion&);
+		void		broadcast(const std::string&, const Connexion&);
 		std::size_t size(void) const;
 
 		enum mode {
@@ -47,6 +47,7 @@ class Channel {
 			USER_LIMIT,
 			NB_MODES
 		};
+
 	private:
 		typedef std::map<std::string, Connexion*>::const_iterator const_iterator;
 

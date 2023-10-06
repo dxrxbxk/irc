@@ -27,16 +27,14 @@ void	User::add_user(void) {
 	info.realname.  swap(_msg.trailing());
 }
 
-void User::execute(void) {
-
-	PRINT("HELLO");
+Command::ret_type User::execute(void) {
 	if (_msg.params_size() != 3 || not _msg.has_trailing()) {
 		// need reply numeric error
-		return; }
+		return -1; }
 
 	if (_conn.registered()) {
 		Logger::debug("User: already \x1b[32mregistered\x1b[0m");
-		return;
+		return -1;
 	}
 
 	ClientInfo&	info = _conn.info();
@@ -47,7 +45,7 @@ void User::execute(void) {
 	add_user();
 	_conn.enqueue(RPL::welcome(info));
 	_conn.enqueue(RPL::end_of_motd(info));
-	return;
+	return 0;
 }
 
 Command* User::create(Connexion& conn, Message& msg) {

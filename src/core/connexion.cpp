@@ -13,6 +13,8 @@
 #include "server.hpp"
 #include "connexion.hpp"
 #include "channel.hpp"
+#include "utils.hpp"
+#include <stdexcept>
 
 
 Connexion::Connexion(void)
@@ -22,7 +24,8 @@ Connexion::Connexion(void)
 	_buffer_out(),
 	_registered(false),
 	_wait_out(false),
-	_channels() {
+	_channels(),
+	_tracker(0) {
 }
 
 Connexion::~Connexion(void) {
@@ -36,7 +39,8 @@ Connexion::Connexion(int fd)
 	_buffer_out(),
 	_registered(false),
 	_wait_out(false),
-	_channels() {
+	_channels(),
+	_tracker(0) {
 }
 
 
@@ -47,7 +51,8 @@ Connexion::Connexion(const Connexion& other)
 	_buffer_out(other._buffer_out),
 	_registered(other._registered),
 	_wait_out(other._wait_out),
-	_channels(other._channels) {
+	_channels(other._channels),
+	_tracker(other._tracker) {
 }
 
 Connexion& Connexion::operator=(const Connexion &other) {
@@ -59,6 +64,7 @@ Connexion& Connexion::operator=(const Connexion &other) {
 		_registered = other._registered;
 		  _wait_out = other._wait_out;
 		  _channels = other._channels;
+		  _tracker  = other._tracker;
 	}
 	return *this;
 }
@@ -101,7 +107,13 @@ void Connexion::leave_channels(void) {
 	}
 }
 
+void	Connexion::tracker(int flag) {
+	_tracker |= flag;
+}
 
+int		Connexion::tracker(void) {
+	return _tracker;
+}
 
 void	Connexion::read_input(void) {
 	ssize_t		readed;
@@ -109,7 +121,7 @@ void	Connexion::read_input(void) {
 
 	readed = ::recv(_socket, buffer, BUFFER_SIZE, 0);
 	if (readed == -1)
-		ERROR(handleSysError("recv"));
+		throw::std::runtime_error(handleSysError("recv"));
 	else {
 		_buffer_in.append(buffer, readed);
 	}
@@ -124,7 +136,6 @@ l_str	Connexion::check_crlf(void) {
 	}
 	return l_msg;
 }
-
 
 // -- IOEvent methods ----------------------------------------------------------
 
@@ -155,8 +166,6 @@ void	Connexion::write(void) {
 }
 
 
-
-
 void Connexion::read(void) {
 
 	read_input();
@@ -175,13 +184,16 @@ void Connexion::read(void) {
 			Command* cmd = CommandFactory::create(*this, msg);
 
 			if (cmd == NULL)
-				Logger::info(msg.command() + " <- COMMAND NOT FOUND :(");
+				Logger::info(msg.command() + "command not found, fix your client");
 			else {
-				cmd->execute();
+				if (cmd->execute()) {
+					delete cmd;
+					return ;
+				}
 				delete cmd;
 			}
 		} catch (const std::exception& e) {
-			Logger::info("Parsing error: " + std::string(e.what()));
+			Logger::info("Error" + std::string(e.what()));
 		}
 	}
 }

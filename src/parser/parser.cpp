@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "parser.hpp"
+#include "utils.hpp"
 
 
 const char* state_debug[] = {
@@ -85,7 +86,7 @@ void	Parser::skip(void) {
 }
 
 void	Parser::pError(void) {
-	PRINT("error");
+	throw std::runtime_error(handleSysError(" :Parsing error"));
 }
 
 

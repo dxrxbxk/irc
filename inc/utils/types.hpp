@@ -17,6 +17,9 @@
 # include <string>
 # include <vector>
 
+# define PASS (1 << 0)
+# define REG (1 << 1)
+
 typedef std::vector<std::string>	l_str;
 typedef std::vector<std::string>	vec_str;
 

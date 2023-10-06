@@ -33,6 +33,9 @@ namespace RPL {
 	ret_type	no_nickname_given(arg_type);
 	ret_type	nickname_in_use(arg_type, std::string&);
 	ret_type	need_more_params(arg_type, std::string&);
+	ret_type	erroneus_nickname(arg_type, std::string&);
+	ret_type	already_registered(arg_type);
+	ret_type	passwd_mismatch(arg_type);
 
 
 	enum code

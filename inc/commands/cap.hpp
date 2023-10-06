@@ -11,7 +11,7 @@ class Cap : public Command {
 
 		~Cap(void);
 
-		void execute(void);
+		ret_type execute(void);
 
 		static Command* create(Connexion&, Message&);
 

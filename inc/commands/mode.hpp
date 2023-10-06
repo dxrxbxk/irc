@@ -23,7 +23,7 @@ class Mode : public Command {
 		Mode(Connexion&, Message&);
 		~Mode(void);
 
-		void execute(void);
+		ret_type execute(void);
 
 		static Command* create(Connexion&, Message&);
 

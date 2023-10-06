@@ -17,8 +17,8 @@ Server::Server(void)
 	_info(),
 	_socket(),
 	_poller(),
-	_conns(),
 	_channels(),
+	_conns(),
 	_nicks() {
 }
 
@@ -94,6 +94,20 @@ void Server::disconnect(void) {
 
 // -- channel methods ---------------------------------------------------------
 
+void	Server::broadcast(const std::string& msg) {
+	Logger::debug("server BROADCAST to users");
+	for (nick_iterator it = _nicks.begin(); it != _nicks.end(); ++it) {
+			it->second->enqueue(msg);
+	}
+}
+
+void	Server::broadcast(const std::string& msg, const Connexion& sender) {
+	Logger::debug("server BROADCAST to users");
+	for (nick_iterator it = _nicks.begin(); it != _nicks.end(); ++it) {
+		if (it->second != &sender)
+			it->second->enqueue(msg);
+	}
+}
 
 Channel&	Server::get_channel(const std::string& channel_name, Connexion &ref) {
 	std::size_t size = _channels.count(channel_name);

@@ -19,12 +19,13 @@ enum {
 class Command {
 
 	public:
+		typedef int ret_type;
 
 		Command(Connexion&, Message&);
 
 		virtual ~Command(void);
 
-		virtual void execute() = 0;
+		virtual ret_type execute() = 0;
 
 	protected:
 

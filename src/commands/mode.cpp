@@ -25,9 +25,10 @@ bool	Mode::valid_mode(char c) {
 	return (c == 'i' || c == 't' || c == 'k' || c == 'o' || c =='l');
 }
 
-void	Mode::execute(void) {
+Command::ret_type	Mode::execute(void) {
 	if (_msg.params_size() == 2)
 		_conn.enqueue(RPL::u_mod_unknown_flag(_conn.info()));
+	return 0;
 }
 
 Command* Mode::create(Connexion& conn, Message& msg) {

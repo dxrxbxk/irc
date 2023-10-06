@@ -14,12 +14,14 @@ Ping::Ping(Connexion& conn, Message& msg)
 
 Ping::~Ping() {}
 
-void Ping::execute(void) {
+Command::ret_type Ping::execute(void) {
 
 	if (_msg.params_size() < 1)
-		return;
+		return -1;
 
 	_conn.enqueue("PONG :" + _msg.param(0) + CRLF);
+
+	return 0;
 }
 
 Command* Ping::create(Connexion& conn, Message& msg) {

@@ -8,18 +8,20 @@ Cap::Cap(Connexion& conn, Message& msg)
 
 Cap::~Cap(void) {}
 
-void Cap::execute(void) {
+Command::ret_type Cap::execute(void) {
 
 	if (not _msg.has_params())
-		return;
+		return -1;
 
 
 	if (_msg.param(0) == "END")
-		return;
+		return 0;
 
 	else if (_msg.param(0) == "LS") {
 		_conn.enqueue("CAP * LS :" CRLF);
 	}
+	
+	return 0;
 }
 
 

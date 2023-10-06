@@ -54,6 +54,8 @@ class Connexion : public IOEvent {
 
 		void						login(void);
 		void						logout(void);
+		void						tracker(int);
+		int							tracker(void);
 		bool						registered(void) const;
 
 		// -- public channel methods ------------------------------------------
@@ -111,6 +113,7 @@ class Connexion : public IOEvent {
 		bool						_registered;
 		bool						_wait_out;
 		std::set<Channel*>			_channels;
+		int							_tracker;
 
 
 		// -- private enums ---------------------------------------------------

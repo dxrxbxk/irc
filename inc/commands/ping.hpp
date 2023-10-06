@@ -13,7 +13,7 @@ class Ping : public Command {
 
 		~Ping(void);
 
-		void execute(void);
+		ret_type execute(void);
 
 		static Command* create(Connexion&, Message&);
 

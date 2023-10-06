@@ -11,10 +11,10 @@ Join::Join(Connexion& conn, Message& msg)
 
 Join::~Join(void) {}
 
-void	Join::execute(void) {
+Command::ret_type	Join::execute(void) {
 
 	if (_msg.params_size() != 1) {
-		return ;
+		return -1;
 	}
 
 	if (_server.channel_exist(_msg.params_first())) {
@@ -26,6 +26,8 @@ void	Join::execute(void) {
 		Channel& channel = _server.create_channel(_msg.params_first(), _conn);
 		_conn.enter_channel(channel);
 	}
+	
+	return 0;
 
 }
 
