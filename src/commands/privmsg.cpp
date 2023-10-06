@@ -1,8 +1,6 @@
 #include "privmsg.hpp"
 #include "server.hpp"
 
-#define HINT(MSG) std::cout << "\x1b[32m" << MSG << "\x1b[0m" << std::endl;
-
 Privmsg::Privmsg(Connexion& conn, Message& msg)
 : Command(conn, msg) {}
 
@@ -29,6 +27,8 @@ Command::ret_type	 Privmsg::execute(void) {
 		msg.append(" ");
 		msg.append(_msg.trailing());
 		msg.append(CRLF);
+
+		Logger::debug(msg);
 
 		channel.broadcast(msg, _conn);
 	// }

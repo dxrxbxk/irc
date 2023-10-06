@@ -120,6 +120,9 @@ Channel&	Server::get_channel(const std::string& channel_name, Connexion &ref) {
 
 Channel& Server::create_channel(const std::string& name, Connexion& creator) {
 	// Channel& channel = _channels[name] = Channel(name, creator);
+
+	creator.enqueue(":" + creator.nickname() + " NICK " + "@" + creator.nickname() + CRLF);
+//	_server.ch_nick(_conn, first);
 	return _channels[name] = Channel(name, creator);
 }
 

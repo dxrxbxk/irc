@@ -195,29 +195,22 @@ void Connexion::read(void) {
 		} catch (const std::exception& e) {
 			Logger::info("Error" + std::string(e.what()));
 		}
+
 	}
 }
 
 void Connexion::disconnect(void) {
 	Logger::info("connexion closed");
-
 	Server::shared().unmap_connexion(*this);
-
 }
-
-
 
 void Connexion::enqueue(const std::string &msg) {
 	_buffer_out.append(msg);
 	if (not _wait_out) {
-		Server::shared().poller().mod_event(*this, EPOLLOUT | EPOLLIN);
+		Server::shared().poller().mod_event(*this, EPOLLOUT);
 		_wait_out = true;
 	}
 }
-
-
-
-
 
 // -- info accessors -----------------------------------------------------------
 

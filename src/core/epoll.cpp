@@ -65,11 +65,9 @@ void Poll::run(void) {
 
 			if (event & EPOLLIN)
 				io.read();
-
-			if (event & EPOLLOUT)
+			else if (event & EPOLLOUT)
 				io.write();
-
-			if (event & EPOLLRDHUP || event & EPOLLHUP)
+			else if (event & EPOLLRDHUP || event & EPOLLHUP)
 				io.disconnect();
 		}
 

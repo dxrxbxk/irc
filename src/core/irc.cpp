@@ -11,8 +11,11 @@
 /* ************************************************************************** */
 
 #include "irc.hpp"
+#include "server.hpp"
 #define BUFFER 1024
 #define BACKLOG 5
+
+#include "crypt.hpp"
 
 
 Irc::Irc(void) {}
@@ -22,11 +25,21 @@ Irc::~Irc(void) {}
 int Irc::start(const std::string& port, const std::string& password) {
 
 	try {
-		ServerInfo info = {"straboul", "127.0.0.1", port, password};
+		Signal::signal_ignore();
+
+
+		ServerInfo info("straboul", "127.0.0.1", port, "");
+#if defined CRYPT
+		std::string crypt_pass = encryptPassword(password, gensalt());
+		info.add_password(crypt_pass);
+#else
+		info.add_password(password);
+#endif
+
+		std::cout << info.password << std::endl;
 
 		Shared_fd sock = create("127.0.0.1", port);
 
-		Signal::signal_ignore();
 		Signal::signal_manager();
 
 		Server& server = Server::shared();
@@ -55,28 +68,28 @@ void Irc::init(struct addrinfo *hints) {
 
 
 /*
-int Irc::create_socket(const std::string& port) {
+   int Irc::create_socket(const std::string& port) {
 
-	const struct sockaddr_in addr = {
-		AF_INET, htons(utils::to_integer<unsigned short>
-		(port, "invalid port")), INADDR_ANY, {0},
-	};
+   const struct sockaddr_in addr = {
+   AF_INET, htons(utils::to_integer<unsigned short>
+   (port, "invalid port")), INADDR_ANY, {0},
+   };
 
-	const int socket = ::socket(AF_INET, SOCK_STREAM, 0);
+   const int socket = ::socket(AF_INET, SOCK_STREAM, 0);
 
-	if (socket == -1)
-		throw std::runtime_error(handleSysError("socket"));
+   if (socket == -1)
+   throw std::runtime_error(handleSysError("socket"));
 
 
-	if (::bind(socket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-		throw std::runtime_error(handleSysError("bind"));
+   if (::bind(socket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
+   throw std::runtime_error(handleSysError("bind"));
 
-	if (::listen(socket, SOMAXCONN) == -1)
-		throw std::runtime_error(handleSysError("listen"));
+   if (::listen(socket, SOMAXCONN) == -1)
+   throw std::runtime_error(handleSysError("listen"));
 
-	return socket;
-}
-*/
+   return socket;
+   }
+   */
 
 
 void Irc::getSocketInfo(const int fd) {

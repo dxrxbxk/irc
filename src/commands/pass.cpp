@@ -3,6 +3,7 @@
 #include "pass.hpp"
 #include "numerics.hpp"
 #include "server.hpp"
+#include "crypt.hpp"
 
 Pass::Pass(Connexion& conn, Message& msg)
 : Command(conn, msg) {}
@@ -23,10 +24,22 @@ Command::ret_type Pass::execute(void) {
 		return -1;
 	}
 
-	if (_msg.params_first() != Server::shared().password()) {
+#if defined CRYPT
+
+	static std::string salt = extractSalt(Server::shared().password());
+
+	if (encryptPassword(_msg.params_first(), salt.c_str()) != Server::shared().password()) {
+
 		_conn.enqueue(RPL::passwd_mismatch(_conn.info()));
 		return -1;
 	}
+#else
+	if (_msg.params_first() != Server::shared().password()) {
+
+		_conn.enqueue(RPL::passwd_mismatch(_conn.info()));
+		return -1;
+	}
+#endif
 
 	_conn.tracker(PASS);
 	return 0;

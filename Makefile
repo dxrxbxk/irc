@@ -146,7 +146,7 @@ DEF ?=
 
 override DEFINES := $(addprefix -D, $(DEF))
 
-
+override LIBS := -lcrypt
 
 
 # -- P H O N Y  T A R G E T S -------------------------------------------------
@@ -163,7 +163,7 @@ all: $(HOOK) obj $(NAME) $(CMDDB)
 
 $(NAME): $(OBJ)
 	@echo "  linking -> \x1b[34m"$@"\x1b[0m"
-	@$(CXX) $^ -o $@;
+	@$(CXX) $(LIBS) $^ -o $@;
 
 
 # -- C O M P I L A T I O N ------------------------------------------------------

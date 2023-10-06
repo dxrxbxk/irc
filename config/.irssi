@@ -13,7 +13,7 @@ settings = {
   core = {
     real_name = "real_richtofen";
     user_name = "user_richtofen";
-    nick = "didir";
+    nick = "tutur";
   };
   "fe-text" = { actlist_sort = "refnum"; };
 };

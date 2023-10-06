@@ -28,6 +28,16 @@ struct ServerInfo {
 	std::string addr;
 	std::string port;
 	std::string password;
+
+	ServerInfo() : name(), addr(), port(), password() {};
+
+	ServerInfo(const std::string& n, const std::string& ip, const std::string& p, const std::string& cp)
+        : name(n), addr(ip), port(p), password(cp) {}
+
+	void add_password(std::string &p) { password.swap(p); } 
+
+	void add_password(const std::string &p) { password = p; }
+
 };
 
 class Server : public IOEvent {

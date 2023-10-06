@@ -23,6 +23,9 @@ Command::ret_type	Join::execute(void) {
 		// channel.add_user(_conn);
 	}
 	else {
+//		std::string s = ":" + _conn.nickname() + " NICK " + "@" + _conn.nickname() + CRLF;
+//		::send(_conn.fd(), s.c_str(), s.size(), 0);
+		_conn.enqueue(":" + _conn.nickname() + " NICK " + "@" + _conn.nickname() + CRLF);
 		Channel& channel = _server.create_channel(_msg.params_first(), _conn);
 		_conn.enter_channel(channel);
 	}
