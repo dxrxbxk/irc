@@ -20,8 +20,7 @@ User::User(Connexion& conn, Message& msg)
 
 User::~User(void) {}
 
-void	User::add_user(void) {
-	ClientInfo&	info = _conn.info();
+void	User::add_user(ClientInfo& info) {
 	info.username.  swap(_msg.param(USERNAME));
 	info.hostname.  swap(_msg.param(HOSTNAME));
 	info.realname.  swap(_msg.trailing());
@@ -42,7 +41,7 @@ Command::ret_type User::execute(void) {
 	_server.accept_newcomer(_conn);
 
 	_conn.login();
-	add_user();
+	add_user(info);
 	_conn.enqueue(RPL::welcome(info));
 	_conn.enqueue(RPL::end_of_motd(info));
 	return 0;

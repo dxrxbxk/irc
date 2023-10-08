@@ -15,7 +15,7 @@ Command::ret_type	 Privmsg::execute(void) {
 
 
 	// if (_server.channel_exist(_msg.param(0))) {
-		Channel& channel = _server.get_channel(_msg.param(0), _conn);
+		Channel& channel = _server.get_channel(_msg.params_first(), _conn);
 		std::string msg(":");
 		msg.append(_conn.nickname());
 		msg.append("!");
@@ -23,12 +23,12 @@ Command::ret_type	 Privmsg::execute(void) {
 		msg.append("@");
 		msg.append(_conn.hostname());
 		msg.append(" PRIVMSG ");
-		msg.append(_msg.param(0));
+		msg.append(_msg.params_first());
 		msg.append(" ");
 		msg.append(_msg.trailing());
 		msg.append(CRLF);
 
-		Logger::debug(msg);
+//		Logger::debug(msg);
 
 		channel.broadcast(msg, _conn);
 	// }

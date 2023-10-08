@@ -183,25 +183,26 @@ void Connexion::read(void) {
 
 			Command* cmd = CommandFactory::create(*this, msg);
 
-			if (cmd == NULL)
+			if (cmd == NULL) {
 				Logger::info(msg.command() + "command not found, fix your client");
+			}
 			else {
-				if (cmd->execute()) {
-					delete cmd;
+				int ret = cmd->execute();
+				delete cmd;
+				if (ret == -1) {
+					disconnect();
 					return ;
 				}
-				delete cmd;
 			}
 		} catch (const std::exception& e) {
 			Logger::info("Error" + std::string(e.what()));
 		}
-
 	}
 }
 
 void Connexion::disconnect(void) {
 	Logger::info("connexion closed");
-	Server::shared().unmap_connexion(*this);
+	Server::shared().add_rm_list(*this);
 }
 
 void Connexion::enqueue(const std::string &msg) {
@@ -232,11 +233,6 @@ void Connexion::info(ClientInfo& info) {
 	_info.realname.swap(info.realname);
 	_info.nickname.swap(info.nickname);
 }
-
-
-
-
-
 
 std::string&	Connexion::nickname(void) {
 	return _info.nickname;

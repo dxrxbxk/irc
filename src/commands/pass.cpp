@@ -10,10 +10,7 @@ Pass::Pass(Connexion& conn, Message& msg)
 
 Pass::~Pass(void) {}
 
-
 Command::ret_type Pass::execute(void) {
-//	if (_msg.params_first().empty() && Server::shared().password().empty())
-//		return 0;
 	if (_conn.tracker() & PASS) {
 		_conn.enqueue(RPL::already_registered(_conn.info()));
 		return 0;

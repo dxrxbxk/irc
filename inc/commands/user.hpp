@@ -29,7 +29,7 @@ class User : public Command {
 		static Command* create(Connexion&, Message&);
 
 	private:
-		void		add_user(void);
+		void		add_user(ClientInfo& info);
 
 		enum	Index {
 			USERNAME,

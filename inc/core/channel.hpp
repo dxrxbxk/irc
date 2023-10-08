@@ -20,6 +20,18 @@
 # include "connexion.hpp"
 # include "logger.hpp"
 
+struct ModeInfo {
+	bool		inviteOnly;
+	bool		topicRestrictions;
+	std::string	channelKey;
+	bool		operatorPrivileges;
+	int			userLimit;
+
+	ModeInfo()
+	: inviteOnly(), topicRestrictions(), channelKey(), operatorPrivileges(), userLimit() {};
+
+	~ModeInfo() {};
+};
 
 class Channel {
 
@@ -33,30 +45,42 @@ class Channel {
 		Channel(const Channel&);
 		Channel& operator=(const Channel&);
 
-		void		change_admin(Connexion&);
-		void		add_user(Connexion&);
-		void		remove_user(Connexion&);
-		void		broadcast(const std::string&, const Connexion&);
-		std::size_t size(void) const;
+		// -- public accessors ---------------------------------------------
+		
+		void			change_admin(Connexion&);
+		void			add_user(Connexion&);
+		void			remove_user(Connexion&);
+		void			broadcast(const std::string&, const Connexion&);
+		std::size_t 	size(void) const;
 
-		enum mode {
-			INVITATION,
-			TOPIC,
-			KEY,
-			OPERATOR,
-			USER_LIMIT,
-			NB_MODES
-		};
+		bool			inviteOnly(void);
+		void			inviteOnly(bool option);
+
+		bool			topicRestrictions(void);
+		void			topicRestrictions(bool option);
+
+		std::string&	channelKey(void);
+		void			channelKey(std::string&);
+
+		bool			operatorPrivileges(void);
+		void			operatorPrivileges(bool option);
+
+		int				userLimit(void);
+		void			userLimit(int option);
+
+
+
 
 	private:
 		typedef std::map<std::string, Connexion*>::const_iterator const_iterator;
+		typedef std::vector<bool> vec_bool;
 
 		std::string							_name;
 		Connexion*							_admin;
 		std::string							_topic;
 		vec_str								_op_list;
 		std::map<std::string, Connexion*>	_users;
-		std::string							_modes[NB_MODES];
+		ModeInfo							_modes;
 };
 
 #endif

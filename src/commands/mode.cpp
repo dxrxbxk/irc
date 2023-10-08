@@ -20,12 +20,13 @@ Mode::Mode(Connexion& conn, Message& msg)
 
 Mode::~Mode(void) {}
 
-
 bool	Mode::valid_mode(char c) {
 	return (c == 'i' || c == 't' || c == 'k' || c == 'o' || c =='l');
 }
 
 Command::ret_type	Mode::execute(void) {
+	if (_msg.params_size() < 2)
+		_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
 	if (_msg.params_size() == 2)
 		_conn.enqueue(RPL::u_mod_unknown_flag(_conn.info()));
 	return 0;

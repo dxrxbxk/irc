@@ -4,8 +4,6 @@
 
 //443,475,473, 471
 
-#define HINT(MSG) std::cout << "\x1b[32m" << MSG << "\x1b[0m" << std::endl;
-
 Join::Join(Connexion& conn, Message& msg)
 : Command(conn, msg) {}
 
@@ -14,7 +12,7 @@ Join::~Join(void) {}
 Command::ret_type	Join::execute(void) {
 
 	if (_msg.params_size() != 1) {
-		return -1;
+		return 0;
 	}
 
 	if (_server.channel_exist(_msg.params_first())) {
@@ -23,9 +21,7 @@ Command::ret_type	Join::execute(void) {
 		// channel.add_user(_conn);
 	}
 	else {
-//		std::string s = ":" + _conn.nickname() + " NICK " + "@" + _conn.nickname() + CRLF;
-//		::send(_conn.fd(), s.c_str(), s.size(), 0);
-		_conn.enqueue(":" + _conn.nickname() + " NICK " + "@" + _conn.nickname() + CRLF);
+		_conn.enqueue("MODE " + _msg.params_first() + " +o " + _conn.nickname() + CRLF);
 		Channel& channel = _server.create_channel(_msg.params_first(), _conn);
 		_conn.enter_channel(channel);
 	}

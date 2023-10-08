@@ -25,11 +25,11 @@ std::string custom_inet_ntoa(struct in_addr addr) {
 }
 
 void setnonblocking(const int fd) {
-    int opts;
-    if ((opts = ::fcntl(fd, F_GETFL)) < 0)
-		throw std::runtime_error("GETFL failed");
-    opts = (opts | O_NONBLOCK);
-    if (::fcntl(fd, F_SETFL, opts) < 0)
+    //int opts;
+////    if ((opts = ::fcntl(fd, F_GETFL)) < 0)
+	//	throw std::runtime_error("GETFL failed");
+    //opts = (opts | O_NONBLOCK);
+    if (::fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
 		throw std::runtime_error("SETFL failed");
 }
 

@@ -60,6 +60,7 @@ Shared_fd::~Shared_fd(void) {
 	if (_fd != -1) {
 		if (--(*_count) == 0) {
 			delete _count;
+			std::cout << "closing fd : " << _fd << std::endl;
 			::close(_fd);
 		}
 	}

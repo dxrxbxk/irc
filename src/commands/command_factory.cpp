@@ -18,6 +18,7 @@ CommandFactory::map_t CommandFactory::init(void) {
 	cmap["PING"]    = &Ping::create;
 	cmap["PRIVMSG"] = &Privmsg::create;
 	cmap["PASS"]	= &Pass::create;
+	cmap["QUIT"]	= &Quit::create;
 	// add more commands here...
 
 	return cmap;

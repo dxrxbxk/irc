@@ -17,24 +17,27 @@ Channel::Channel(void)
 }
 
 Channel::Channel(const std::string& channel_name, Connexion& creator)
-: _name(channel_name), _admin(&creator), _topic(), _op_list(), _users(), _modes() {
-	// add_user(creator);
+: _name(channel_name),
+	_admin(&creator),
+	_topic(),
+	_op_list(),
+	_users(),
+	_modes()
+{
+		add_user(creator);
 }
 
 Channel::~Channel(void) {}
 
-Channel::Channel(const Channel& other)
-:	_name(other._name),
+// copy constructor
+Channel::Channel(const Channel& other) : _name(other._name),
 	_admin(other._admin),
 	_topic(other._topic),
 	_op_list(other._op_list),
 	_users(other._users),
-	_modes() {
-
-	for (std::size_t i = 0; i < NB_MODES; ++i)
-		_modes[i] = other._modes[i];
+	_modes(other._modes)
+{
 }
-
 
 Channel& Channel::operator=(const Channel& other) {
 	if (this != &other) {
@@ -43,13 +46,10 @@ Channel& Channel::operator=(const Channel& other) {
 		  _topic = other._topic;
 		_op_list = other._op_list;
 		  _users = other._users;
-
-		for (std::size_t i = 0; i < NB_MODES; ++i)
-			_modes[i] = other._modes[i];
+		  _modes = other._modes;
 	}
 	return *this;
 }
-
 
 void	Channel::change_admin(Connexion& old) {
 	_admin = &old;
@@ -75,4 +75,9 @@ void Channel::add_user(Connexion& user) {
 void	Channel::remove_user(Connexion& user) {
 	_users.erase(user.nickname());
 }
+
+bool	Channel::inviteOnly(void) {
+	return _modes.inviteOnly;
+}
+
 

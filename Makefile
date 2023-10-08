@@ -32,7 +32,6 @@ override SHELL := $(shell which zsh)
 # set make flags
 override MAKEFLAGS += --warn-undefined-variables --no-builtin-rules
 
-
 # -- O P E R A T I N G  S Y S T E M -------------------------------------------
 
 override THREAD    := $(shell nproc)
@@ -78,7 +77,6 @@ override HOOK := $(ROOT)/.git/hooks/pre-commit
 
 # compile command database
 override CMDDB := compile_commands.json
-
 
 # -- S O U R C E S ------------------------------------------------------------
 
@@ -128,7 +126,8 @@ override CXX := $(shell which clang++)
 override STD := -std=c++98
 
 # compiler optimization
-override OPT := -O0 -g3 -gdwarf-4
+override OPT := -O3
+#--g3 -gdwarf-4
 
 # compiler flags
 override CXXFLAGS := -Wall -Wextra -Werror -Wpedantic -Wno-unused -Wno-unused-variable -Wno-unused-parameter

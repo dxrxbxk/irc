@@ -11,6 +11,8 @@
 /* ************************************************************************** */
 
 #include "server.hpp"
+#include "utils.hpp"
+#define BUFFER_SIZE 1024
 
 Server::Server(void)
 :	_initialized(false),
@@ -19,7 +21,9 @@ Server::Server(void)
 	_poller(),
 	_channels(),
 	_conns(),
-	_nicks() {
+	_nicks(),
+	_rm_list()
+{
 }
 
 
@@ -29,7 +33,6 @@ Server::~Server(void) {}
 
 Server& Server::operator=(const Server&) { return *this; }
 
-
 // -- public static methods ----------------------------------------------------
 
 Server& Server::shared(void) {
@@ -38,11 +41,13 @@ Server& Server::shared(void) {
 }
 
 void Server::init(ServerInfo& info, const Shared_fd& socket) {
+	if (_initialized == true)
+		throw std::runtime_error("server already initialized");
 
 	_info = info;
 	_socket = socket;
 
-	Logger::set_server(*this);
+//	Logger::set_server(*this);
 	_poller.add_event(*this);
 
 	_poller.add_event(Logger::shared());
@@ -53,18 +58,22 @@ void Server::init(ServerInfo& info, const Shared_fd& socket) {
 }
 
 void Server::run(void) {
-	if (_initialized == true)
+	Logger::start();
+	while (_initialized == true)
+	{
+		// refresh logger print
+		Logger::render();
 		_poller.run();
+		remove_rm_list();
+	}
+	Logger::end();
 }
 
 void Server::stop(void) {
-	_poller.stop();
+	_initialized = false;
 }
 
-
-void	Server::write(void) {}
-
-void	Server::read(void) {
+void	Server::accept(void) {
 	int cfd;
 
 	Logger::info("new socket connexion");
@@ -81,6 +90,13 @@ void	Server::read(void) {
 	_poller.add_event(conn);
 }
 
+void	Server::write(void) {
+}
+
+void	Server::read(void) {
+	Server::accept();
+}
+
 int Server::fd(void) const {
 	return _socket;
 }
@@ -88,9 +104,6 @@ int Server::fd(void) const {
 void Server::disconnect(void) {
 	Logger::info("server disconnected");
 }
-
-
-
 
 // -- channel methods ---------------------------------------------------------
 
@@ -157,14 +170,6 @@ void Server::remove_newcomer(const Connexion& conn) {
 }
 */
 
-/* remove connexion */
-void Server::unmap_connexion(const Connexion& conn) {
-	_poller.del_event(conn);
-	_nicks.erase(conn.nickname());
-	_conns.erase(conn.fd());
-	// warning: check if deconnexion appear on _conns or _news
-}
-
 // -- public accessors --------------------------------------------------------
 
 std::size_t Server::get_nb_conns(void) const {
@@ -194,5 +199,22 @@ bool Server::has_password(void) const {
 Poll&	Server::poller(void) {
 	return _poller;
 }
+
+void Server::add_rm_list(Connexion& conn) {
+	_rm_list.push(&conn);
+}
+
+void Server::remove_rm_list(void) {
+	while (!_rm_list.empty())
+	{
+		Connexion& conn = *_rm_list.top();
+		_poller.del_event(conn);
+		_nicks.erase(conn.nickname());
+		_conns.erase(conn.fd());
+		_rm_list.pop();
+	}
+}
+
+
 
 

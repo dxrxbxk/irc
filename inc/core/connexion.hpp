@@ -28,6 +28,9 @@
 # include "command_factory.hpp"
 # include "numerics.hpp"
 
+# define PASS (1 << 0)
+# define REG (1 << 1)
+
 class Server;
 class Channel;
 
@@ -56,6 +59,7 @@ class Connexion : public IOEvent {
 		void						logout(void);
 		void						tracker(int);
 		int							tracker(void);
+		void						check_event(void);
 		bool						registered(void) const;
 
 		// -- public channel methods ------------------------------------------

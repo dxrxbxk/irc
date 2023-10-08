@@ -23,6 +23,10 @@ Signal::Signal(void)
 	// // create pipe
 	if (::pipe(_pipe) == -1)
 		throw std::runtime_error(handleSysError("pipe"));
+	else {
+		std::cout << "pipe read end: " << _pipe[0] << std::endl;
+		std::cout << "pipe write end: " << _pipe[1] << std::endl;
+	}
 }
 
 Signal::~Signal(void) {

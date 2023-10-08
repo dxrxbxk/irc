@@ -21,7 +21,8 @@ Poll::Poll(void)
 
 	if (_instance == -1)
 		throw std::runtime_error(handleSysError("epoll_create"));
-
+	else
+		std::cout << "epoll instance: " << _instance << std::endl;
 }
 
 Poll::~Poll(void) {
@@ -36,43 +37,36 @@ void Poll::stop(void) {
 
 void Poll::run(void) {
 
-	Logger::start();
+	// wait for events
+	const int nfds = ::epoll_wait(_instance, _events.data(), _events.size(), -1);
 
-	while (_running == true) {
-
-		// refresh logger print
-		Logger::render();
-
-		// wait for events
-		const int nfds = ::epoll_wait(_instance, _events.data(), _events.size(), -1);
-
-		// check for errors
-		if (nfds < 0) {
-			if (errno != EINTR)
-				throw std::runtime_error("epoll_wait");
-		}
-		else {
-			// resize vector if needed
-			if (static_cast<std::size_t>(nfds) > _events.size())
-				_events.resize(nfds);
-		}
-
-		// loop over events
-		for (int n = 0; n < nfds; ++n) {
-
-			const uint32_t event = _events[n].events;
-			IOEvent& io          = data(_events[n]);
-
-			if (event & EPOLLIN)
-				io.read();
-			else if (event & EPOLLOUT)
-				io.write();
-			else if (event & EPOLLRDHUP || event & EPOLLHUP)
-				io.disconnect();
-		}
-
+	// check for errors
+	if (nfds < 0) {
+		if (errno != EINTR)
+			throw std::runtime_error("epoll_wait");
 	}
-	Logger::end();
+	else {
+		// resize vector if needed
+		if (static_cast<std::size_t>(nfds) > _events.size())
+			_events.resize(nfds);
+	}
+
+	// loop over events
+	for (int n = 0; n < nfds; ++n) {
+
+		const uint32_t event = _events[n].events;
+		IOEvent& io          = data(_events[n]);
+
+		if (event & EPOLLRDHUP || event & EPOLLHUP) {
+			io.disconnect();
+		}
+		if (event & EPOLLIN) {
+			io.read();
+		}
+		if (event & EPOLLOUT) {
+			io.write();
+		}
+	}
 }
 
 
@@ -113,6 +107,3 @@ Poll::epoll_event Poll::new_event(IOEvent& io, const int flags) {
 	ev.data.ptr = &io;
 	return ev;
 }
-
-
-

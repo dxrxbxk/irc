@@ -14,6 +14,7 @@
 # include "mode.hpp"
 # include "privmsg.hpp"
 # include "pass.hpp"
+# include "quit.hpp"
 
 class Connexion;
 

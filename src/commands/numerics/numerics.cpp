@@ -32,19 +32,19 @@ RPL::ret_type	RPL::already_registered(arg_type info) {
 	return buffer.str();
 }
 
-RPL::ret_type	RPL::erroneus_nickname(arg_type info, std::string& nick) {
+RPL::ret_type	RPL::erroneus_nickname(arg_type info, const std::string& nick) {
 	std::stringstream	buffer;
 	buffer << "432 " << info.nickname << " " << nick << " :Erroneus nickname" << CRLF;
 	return buffer.str();
 }
 
-RPL::ret_type	RPL::nickname_in_use(arg_type info, std::string& nick) {
+RPL::ret_type	RPL::nickname_in_use(arg_type info, const std::string& nick) {
 	std::stringstream	buffer;
 	buffer << "433 " << nick << " :Nickname in use" << CRLF;
 	return buffer.str();
 }
 
-RPL::ret_type	RPL::need_more_params(arg_type info, std::string& cmd) {
+RPL::ret_type	RPL::need_more_params(arg_type info, const std::string& cmd) {
 	std::stringstream	buffer;
 	buffer << "461 " << info.nickname << " " 
 		<< cmd << " :Need more params" << CRLF;
