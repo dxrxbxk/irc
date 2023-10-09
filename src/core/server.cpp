@@ -26,7 +26,6 @@ Server::Server(void)
 {
 }
 
-
 Server::Server(const Server&) {}
 
 Server::~Server(void) {}
@@ -47,7 +46,7 @@ void Server::init(ServerInfo& info, const Shared_fd& socket) {
 	_info = info;
 	_socket = socket;
 
-//	Logger::set_server(*this);
+	Logger::set_server(*this);
 	_poller.add_event(*this);
 
 	_poller.add_event(Logger::shared());
@@ -106,7 +105,11 @@ void Server::disconnect(void) {
 }
 
 // -- channel methods ---------------------------------------------------------
-
+/*
+bool Server::in_channel(std::string& channel_name, std::string& user) {
+	return _channels[channel_name].in_channel(user);
+}
+*/
 void	Server::broadcast(const std::string& msg) {
 	Logger::debug("server BROADCAST to users");
 	for (nick_iterator it = _nicks.begin(); it != _nicks.end(); ++it) {
@@ -120,6 +123,10 @@ void	Server::broadcast(const std::string& msg, const Connexion& sender) {
 		if (it->second != &sender)
 			it->second->enqueue(msg);
 	}
+}
+
+Channel&	Server::channel(const std::string& channel_name) {
+	return _channels[channel_name];
 }
 
 Channel&	Server::get_channel(const std::string& channel_name, Connexion &ref) {
@@ -142,11 +149,6 @@ Channel& Server::create_channel(const std::string& name, Connexion& creator) {
 bool	Server::channel_exist(const std::string& name) const {
 	return _channels.count(name);
 }
-
-Channel& Server::channel(const std::string& name) {
-	return _channels[name];
-}
-
 
 void	Server::ch_nick(Connexion& conn, std::string& new_nick) {	
 	_nicks[new_nick] = &conn;

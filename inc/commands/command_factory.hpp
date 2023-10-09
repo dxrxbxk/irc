@@ -15,6 +15,7 @@
 # include "privmsg.hpp"
 # include "pass.hpp"
 # include "quit.hpp"
+# include "topic.hpp"
 
 class Connexion;
 

@@ -16,7 +16,6 @@
 #include "utils.hpp"
 #include <stdexcept>
 
-
 Connexion::Connexion(void)
 :	_socket(),
 	_info(),
@@ -43,7 +42,6 @@ Connexion::Connexion(int fd)
 	_tracker(0) {
 }
 
-
 Connexion::Connexion(const Connexion& other)
 :	_socket(other._socket),
 	_info(other._info),
@@ -69,10 +67,6 @@ Connexion& Connexion::operator=(const Connexion &other) {
 	return *this;
 }
 
-
-
-
-
 // -- connexion accessors ------------------------------------------------------
 
 void Connexion::login(void) {
@@ -91,6 +85,8 @@ bool Connexion::registered(void) const {
 // -- public channel methods ---------------------------------------------------
 
 void Connexion::enter_channel(Channel& channel) {
+	if (static_cast<int>(channel.size()) >= channel.limit())
+		throw std::runtime_error("channel is full");
 	channel.add_user(*this);
 	_channels.insert(&channel);
 }

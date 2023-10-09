@@ -17,6 +17,42 @@
 
 #define CRLF "\r\n"
 
+RPL::ret_type	RPL::user_not_in_channel(arg_type info, const std::string& nick, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "441 " << info.nickname << " " << nick << " " << channel << " :They aren't on that channel" << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::channel_is_full(arg_type info, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "471 " << info.nickname << " " << channel << " :Cannot join channel (+l)" << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::chano_privs_needed(arg_type info, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "482 " << info.nickname << " " << channel << " :You're not channel operator" << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::no_such_channel(arg_type info, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "403 " << info.nickname << " " << channel << " :No such channel" << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type RPL::not_on_channel(arg_type info, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "442 " << info.nickname << " " << channel << " :You're not on that channel" << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::no_such_nick(arg_type info, const std::string& nickname) {
+	std::stringstream	buffer;
+	buffer << "401 " << info.nickname << " " << nickname << " :No suck nick/channel" << CRLF;
+	return buffer.str();
+}
+
 RPL::ret_type	RPL::passwd_mismatch(arg_type info) {
 	std::stringstream	buffer;
 	if (not info.nickname.empty())
@@ -51,7 +87,13 @@ RPL::ret_type	RPL::need_more_params(arg_type info, const std::string& cmd) {
 	return buffer.str();
 }
 
-RPL::ret_type	RPL::welcome(arg_type info) {
+RPL::ret_type	RPL::motd_start(arg_type info) {
+	std::stringstream	buffer;
+	buffer << "375 " << info.nickname << " :- " << info.nickname << " Message of the day - " << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::motd(arg_type info) {
 	std::stringstream	buffer;
 	buffer << "001 " << info.nickname << " :Welcome to the IRC server "
 		<< info.nickname << "!" << info.username << "@" << info.hostname << CRLF;

@@ -42,7 +42,8 @@ Command::ret_type User::execute(void) {
 
 	_conn.login();
 	add_user(info);
-	_conn.enqueue(RPL::welcome(info));
+	_conn.enqueue(RPL::motd_start(info));
+	_conn.enqueue(RPL::motd(info));
 	_conn.enqueue(RPL::end_of_motd(info));
 	return 0;
 }

@@ -10,7 +10,6 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-
 #ifndef MODE_HPP
 # define MODE_HPP
 
@@ -29,7 +28,10 @@ class Mode : public Command {
 
 	private:
 
-		bool	valid_mode(char c);
+		bool		valid_mode(char c);
+
+		ret_type	handle_user(std::string&, std::string&, std::string&);
+		ret_type	handle_channel(std::string&, std::string&, std::string&);
 
 };
 

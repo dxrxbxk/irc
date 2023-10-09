@@ -104,14 +104,12 @@ class Server : public IOEvent {
 		typedef std::map<std::string, Channel>::const_iterator		channel_iterator;
 		typedef std::map<std::string, Connexion*>::const_iterator	nick_iterator;
 
-
 		// -- private constructors ---------------------------------------------
 
 		Server(void);
 		~Server(void);
 		Server(const Server&);
 		Server& operator=(const Server&);
-
 
 		// -- private types ----------------------------------------------------
 

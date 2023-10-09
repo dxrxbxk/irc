@@ -25,7 +25,8 @@ namespace RPL {
 	typedef const ClientInfo&	arg_type;
 
 	/* ************************************************************************** */
-	ret_type	welcome(arg_type);
+	ret_type	motd(arg_type);
+	ret_type	motd_start(arg_type);
 	ret_type	end_of_motd(arg_type);
 
 	/* ************************************************************************** */
@@ -36,6 +37,12 @@ namespace RPL {
 	ret_type	erroneus_nickname(arg_type, const std::string&);
 	ret_type	already_registered(arg_type);
 	ret_type	passwd_mismatch(arg_type);
+	ret_type	no_such_channel(arg_type, const std::string&);
+	ret_type	not_on_channel(arg_type, const std::string&);
+	ret_type	no_such_nick(arg_type, const std::string&);
+	ret_type	chano_privs_needed(arg_type, const std::string&);
+	ret_type	channel_is_full(arg_type, const std::string&);
+	ret_type	user_not_in_channel(arg_type, const std::string&, const std::string&);
 
 
 	enum code

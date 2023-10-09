@@ -31,6 +31,8 @@
 # define PASS (1 << 0)
 # define REG (1 << 1)
 
+# define CHAN_LIMIT 200
+
 class Server;
 class Channel;
 
@@ -67,8 +69,6 @@ class Connexion : public IOEvent {
 		void						enter_channel(Channel&);
 		void						leave_channel(Channel&);
 		void						leave_channels(void);
-
-
 
 
 		// -- public info accessors -------------------------------------------

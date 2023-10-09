@@ -18,7 +18,6 @@ Message::Message() : _middle() {
 Message::~Message() {
 }
 
-
 void	Message::addPrefix(std::string& prefix) {
 	_prefix.swap(prefix);
 }
@@ -74,12 +73,9 @@ std::string&	Message::params_first(void) {
 	return _middle.front();
 }
 
-
 std::string&	Message::param(const std::size_t index) {
 	return _middle[index];
 }
-
-
 
 std::string&	Message::trailing(void) {
 	return _trailing;
@@ -116,8 +112,6 @@ void Message::print(void) const {
 	if (not _trailing.empty()) {
 		msg.append("trailing [" + _trailing + "]");
 	}
-
-
 
 	Logger::info(msg);
 }

@@ -19,16 +19,22 @@
 
 # include "connexion.hpp"
 # include "logger.hpp"
+# define MAX_CHANNEL_USER 200
 
 struct ModeInfo {
-	bool		inviteOnly;
-	bool		topicRestrictions;
-	std::string	channelKey;
-	bool		operatorPrivileges;
-	int			userLimit;
+	bool			inviteOnly;
+	bool			topicRestrictions;
+	std::string		channelKey;
+	bool			operatorPrivileges;
+	int				userLimit;
 
 	ModeInfo()
-	: inviteOnly(), topicRestrictions(), channelKey(), operatorPrivileges(), userLimit() {};
+	:	inviteOnly(false),
+		topicRestrictions(false), 
+		channelKey(),
+		operatorPrivileges(),
+		userLimit(MAX_CHANNEL_USER)
+	{};
 
 	~ModeInfo() {};
 };
@@ -47,33 +53,43 @@ class Channel {
 
 		// -- public accessors ---------------------------------------------
 		
-		void			change_admin(Connexion&);
 		void			add_user(Connexion&);
 		void			remove_user(Connexion&);
+
+		void			change_admin(Connexion&);
+		bool			is_admin(Connexion&);
+
+		void			add_op(std::string&);
+		void			rm_op(std::string&);
+		bool			is_op(std::string&);
+
+		std::string&	name(void);
+		void			name(std::string&);
+
+		std::string&	topic(void);
+		void			topic(std::string&);
+		void			topic(const std::string&);
+		void			topic(bool);
+
+		void			limit(int);
+		int				limit(void);
+
+		void			key(std::string&);
+		void			key(const std::string&);
+		std::string&	key(void);
+		void			key(bool);
+
+		void			invite_only(bool);
+		bool			invite_only(void);
+
 		void			broadcast(const std::string&, const Connexion&);
+
+		bool			user_in(std::string& nickname) const ;
 		std::size_t 	size(void) const;
 
-		bool			inviteOnly(void);
-		void			inviteOnly(bool option);
-
-		bool			topicRestrictions(void);
-		void			topicRestrictions(bool option);
-
-		std::string&	channelKey(void);
-		void			channelKey(std::string&);
-
-		bool			operatorPrivileges(void);
-		void			operatorPrivileges(bool option);
-
-		int				userLimit(void);
-		void			userLimit(int option);
-
-
-
-
 	private:
-		typedef std::map<std::string, Connexion*>::const_iterator const_iterator;
-		typedef std::vector<bool> vec_bool;
+		typedef std::map<std::string, Connexion*>::const_iterator	const_iterator;
+		typedef std::vector<bool>									vec_bool;
 
 		std::string							_name;
 		Connexion*							_admin;

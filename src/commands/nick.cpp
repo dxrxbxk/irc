@@ -32,7 +32,6 @@ Command::ret_type Nick::execute(void) {
 		return 0;
 	}
 
-
 	if (_server.nick_exist(first)) {
 
 		_conn.enqueue(RPL::nickname_in_use(_conn.info(), first));

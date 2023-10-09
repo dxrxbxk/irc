@@ -13,7 +13,8 @@
 #include "channel.hpp"
 
 Channel::Channel(void)
-: _name(), _admin(), _topic(), _op_list(), _users(), _modes() {
+: _name(), _admin(), _topic(), _op_list(), _users(), _modes()
+{
 }
 
 Channel::Channel(const std::string& channel_name, Connexion& creator)
@@ -25,12 +26,13 @@ Channel::Channel(const std::string& channel_name, Connexion& creator)
 	_modes()
 {
 		add_user(creator);
+		add_op(creator.nickname());
 }
 
 Channel::~Channel(void) {}
 
-// copy constructor
-Channel::Channel(const Channel& other) : _name(other._name),
+Channel::Channel(const Channel& other)
+:	_name(other._name),
 	_admin(other._admin),
 	_topic(other._topic),
 	_op_list(other._op_list),
@@ -50,6 +52,66 @@ Channel& Channel::operator=(const Channel& other) {
 	}
 	return *this;
 }
+
+// -- public accessors modes --------------------------------------------------------
+
+std::string&	Channel::name(void) {
+	return _name;
+}
+
+void Channel::name(std::string& name) {
+	_name.swap(name);
+}
+
+void	Channel::topic(std::string& topic) {
+	_topic.swap(topic);
+}
+
+void	Channel::topic(const std::string& topic) {
+	_topic = topic;
+}
+
+std::string&	Channel::topic(void) {
+	return _topic;
+}
+
+void	Channel::topic(bool option) {
+	_modes.topicRestrictions = option;
+}
+
+void	Channel::limit(int limit) {
+	_modes.userLimit = limit;
+}
+
+int		Channel::limit(void) {
+	return _modes.userLimit;
+}
+
+void	Channel::key(std::string& key) {
+	_modes.channelKey.swap(key);
+}
+
+void	Channel::key(const std::string& key) {
+	_modes.channelKey = key;
+}
+
+std::string&	Channel::key(void) {
+	return _modes.channelKey;
+}
+
+void	Channel::key(bool option) {
+	_modes.channelKey = option;
+}
+
+void	Channel::invite_only(bool option) {
+	_modes.inviteOnly = option;
+}
+
+bool	Channel::invite_only(void) {
+	return _modes.inviteOnly;
+}
+
+// -- public methods ----------------------------------------------------------
 
 void	Channel::change_admin(Connexion& old) {
 	_admin = &old;
@@ -76,8 +138,31 @@ void	Channel::remove_user(Connexion& user) {
 	_users.erase(user.nickname());
 }
 
-bool	Channel::inviteOnly(void) {
-	return _modes.inviteOnly;
+bool	Channel::user_in(std::string& user) const {
+	return (_users.find(user) != _users.end());
 }
 
+bool	Channel::is_admin(Connexion& user) {
+	return (&user == _admin);
+}
 
+void	Channel::add_op(std::string& user) {
+	_op_list.push_back(user);
+}
+
+void	Channel::rm_op(std::string &op) {
+	for (vec_str::iterator it = _op_list.begin(); it != _op_list.end(); ++it) {
+		if (*it == op) {
+			_op_list.erase(it);
+			return ;
+		}
+	}
+}	
+
+bool	Channel::is_op(std::string& user) {
+	for (vec_str::iterator it = _op_list.begin(); it != _op_list.end(); ++it) {
+		if (*it == user)
+			return true;
+	}
+	return false;
+}

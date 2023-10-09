@@ -65,12 +65,12 @@ namespace utils {
 		return stream.str();
 	}
 
-	template <typename T, std::size_t N>
-	static T to_integer(const std::string& str, const char (&msg)[N]) {
+	template <typename T>
+	static T to_integer(const std::string& str) {
 		std::stringstream ss(str);
 		T integer;
 		if (not (ss >> integer) || not ss.eof())
-			throw std::runtime_error(msg);
+			throw std::runtime_error("overflow or underflow");
 		return integer;
 	}
 
