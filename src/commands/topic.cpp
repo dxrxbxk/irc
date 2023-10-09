@@ -1,7 +1,4 @@
-#include "topic.hpp"
-#include "numerics.hpp"
 #include "server.hpp"
-#include "channel.hpp"
 
 Topic::Topic(Connexion& conn, Message& msg)
 : Command(conn, msg) {}
@@ -9,12 +6,12 @@ Topic::Topic(Connexion& conn, Message& msg)
 Topic::~Topic(void) {}
 
 Command::ret_type	Topic::execute(void) {
+	Logger::info("Topic::execute");
 
 	if (not _msg.has_params()) {
 		_conn.enqueue(RPL::need_more_params(_conn.info(), "TOPIC"));
 		return 0;
 	}
-
 	const std::string& target = _msg.params(0);
 	Channel& channel = Server::shared().channel(target);
 
@@ -47,5 +44,5 @@ Command::ret_type	Topic::execute(void) {
 }
 
 Command* Topic::create(Connexion& conn, Message& msg) {
-	return new Mode(conn, msg);
+	return new Topic(conn, msg);
 }

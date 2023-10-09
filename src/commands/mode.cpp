@@ -76,16 +76,12 @@ Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode) {
 					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				case 'l':
-					try {
-						if (param.empty()) {
-							_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
-							break;
-						}
-						channel.limit(utils::to_integer<int>(param));
-						channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					} catch (const std::exception& e) {
-						Logger::info("Error" + std::string(e.what()));
+					if (param.empty()) {
+						_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
+						break;
 					}
+					channel.limit(std::atoi(param.c_str()));
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				default:
 					_conn.enqueue(RPL::unknown_mode(_conn.info(), mode[i + 1]));

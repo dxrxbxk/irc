@@ -14,6 +14,7 @@
 # define MODE_HPP
 
 #include "command.hpp"
+#include <cstdlib>
 
 class Mode : public Command {
 

@@ -84,7 +84,8 @@ bool	Channel::topic_resrict(void) {
 }
 
 void	Channel::limit(int limit) {
-	_modes.userLimit = limit;
+	if (limit > 0 && limit < MAX_USER_PER_CHAN)
+		_modes.userLimit = limit;
 }
 
 int		Channel::limit(void) {

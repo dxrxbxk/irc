@@ -20,7 +20,7 @@
 # include "connexion.hpp"
 # include "logger.hpp"
 
-# define MAX_CHANNEL_USER 10000
+# define MAX_USER_PER_CHAN 10000
 # define CHANNEL_KEY_SIZE 50
 # define CHANNEL_NAME_SIZE 200
 
@@ -36,7 +36,7 @@ struct ModeInfo {
 		topicRestrictions(false), 
 		channelKey(),
 		operatorPrivileges(),
-		userLimit(MAX_CHANNEL_USER)
+		userLimit(MAX_USER_PER_CHAN)
 	{};
 
 	~ModeInfo() {};

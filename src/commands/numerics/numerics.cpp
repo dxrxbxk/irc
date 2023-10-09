@@ -38,7 +38,7 @@ RPL::ret_type	RPL::welcome(arg_type info) {
 
 RPL::ret_type	RPL::topic(arg_type info, const std::string& channel, const std::string& topic) {
 	std::stringstream	buffer;
-	buffer << "332 " << info.nickname << " " << channel << " :" << topic << CRLF;
+	buffer << "332 " << info.nickname << " " << channel << " " << topic << CRLF;
 	return buffer.str();
 }
 
