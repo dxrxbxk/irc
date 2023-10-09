@@ -17,6 +17,37 @@
 
 #define CRLF "\r\n"
 
+RPL::ret_type	RPL::channel_mode_is(arg_type info, const std::string& channel, const std::string& mode) {
+	std::stringstream	buffer;
+	buffer << "324 " << info.nickname << " " << channel << " " << mode << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::unknown_mode(arg_type info, const char c) {
+	std::stringstream	buffer;
+	buffer << "472 " << info.nickname << " " << c << " :is unknown mode char to me" << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::welcome(arg_type info) {
+	std::stringstream	buffer;
+	buffer << "001 " << info.nickname << " :Welcome to the IRC server "
+		<< info.nickname << "!" << info.username << "@" << info.hostname << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::topic(arg_type info, const std::string& channel, const std::string& topic) {
+	std::stringstream	buffer;
+	buffer << "332 " << info.nickname << " " << channel << " :" << topic << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::no_topic(arg_type info, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "331 " << info.nickname << " " << channel << " :No topic is set" << CRLF;
+	return buffer.str();
+}
+
 RPL::ret_type	RPL::user_not_in_channel(arg_type info, const std::string& nick, const std::string& channel) {
 	std::stringstream	buffer;
 	buffer << "441 " << info.nickname << " " << nick << " " << channel << " :They aren't on that channel" << CRLF;
@@ -93,16 +124,15 @@ RPL::ret_type	RPL::motd_start(arg_type info) {
 	return buffer.str();
 }
 
-RPL::ret_type	RPL::motd(arg_type info) {
+RPL::ret_type	RPL::motd(arg_type info, const std::string& msg) {
 	std::stringstream	buffer;
-	buffer << "001 " << info.nickname << " :Welcome to the IRC server "
-		<< info.nickname << "!" << info.username << "@" << info.hostname << CRLF;
+	buffer << "372 " << info.nickname << " :- " << msg << CRLF;
 	return buffer.str();
 }
 
 RPL::ret_type	RPL::end_of_motd(arg_type info){
 	std::stringstream	buffer;
-	buffer << "376 " << info.nickname << " :End of MOTD" << CRLF;
+	buffer << "376 " << info.nickname << " :End of /MOTD command" << CRLF;
 	return buffer.str();
 }
 

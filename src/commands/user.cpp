@@ -13,16 +13,14 @@
 #include "user.hpp"
 #include "server.hpp"
 
-#define HINT(MSG) std::cout << "\x1b[32m" << MSG << "\x1b[0m" << std::endl;
-
 User::User(Connexion& conn, Message& msg)
 : Command(conn, msg) {}
 
 User::~User(void) {}
 
 void	User::add_user(ClientInfo& info) {
-	info.username.  swap(_msg.param(USERNAME));
-	info.hostname.  swap(_msg.param(HOSTNAME));
+	info.username.  swap(_msg.params(USERNAME));
+	info.hostname.  swap(_msg.params(HOSTNAME));
 	info.realname.  swap(_msg.trailing());
 }
 
@@ -42,8 +40,9 @@ Command::ret_type User::execute(void) {
 
 	_conn.login();
 	add_user(info);
+	_conn.enqueue(RPL::welcome(info));
 	_conn.enqueue(RPL::motd_start(info));
-	_conn.enqueue(RPL::motd(info));
+	_conn.enqueue(RPL::motd(info, _server.motd()));
 	_conn.enqueue(RPL::end_of_motd(info));
 	return 0;
 }

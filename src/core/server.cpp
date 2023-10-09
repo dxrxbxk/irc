@@ -22,7 +22,8 @@ Server::Server(void)
 	_channels(),
 	_conns(),
 	_nicks(),
-	_rm_list()
+	_rm_list(),
+	_motd(message_irc)
 {
 }
 
@@ -165,12 +166,9 @@ void Server::accept_newcomer(Connexion& conn) {
 	_nicks[conn.nickname()] = &conn;
 }
 
-/*
-void Server::remove_newcomer(const Connexion& conn) {
-	_poller.del_event(conn);
-	_news.erase(conn.fd());
+std::string& Server::motd(void) {
+	return _motd;
 }
-*/
 
 // -- public accessors --------------------------------------------------------
 

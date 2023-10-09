@@ -19,7 +19,10 @@
 
 # include "connexion.hpp"
 # include "logger.hpp"
-# define MAX_CHANNEL_USER 200
+
+# define MAX_CHANNEL_USER 10000
+# define CHANNEL_KEY_SIZE 50
+# define CHANNEL_NAME_SIZE 200
 
 struct ModeInfo {
 	bool			inviteOnly;
@@ -45,8 +48,8 @@ class Channel {
 
 		// -- public constructors ---------------------------------------------
 
-		Channel(void);
 		Channel(const std::string&, Connexion&);
+		Channel(void);
 		~Channel(void);
 		Channel(const Channel&);
 		Channel& operator=(const Channel&);
@@ -70,6 +73,7 @@ class Channel {
 		void			topic(std::string&);
 		void			topic(const std::string&);
 		void			topic(bool);
+		bool			topic_resrict(void);
 
 		void			limit(int);
 		int				limit(void);
@@ -83,6 +87,7 @@ class Channel {
 		bool			invite_only(void);
 
 		void			broadcast(const std::string&, const Connexion&);
+		void			broadcast(const std::string&);
 
 		bool			user_in(std::string& nickname) const ;
 		std::size_t 	size(void) const;

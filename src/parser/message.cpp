@@ -73,7 +73,7 @@ std::string&	Message::params_first(void) {
 	return _middle.front();
 }
 
-std::string&	Message::param(const std::size_t index) {
+std::string&	Message::params(const std::size_t index) {
 	return _middle[index];
 }
 

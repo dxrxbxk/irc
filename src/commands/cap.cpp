@@ -14,10 +14,10 @@ Command::ret_type Cap::execute(void) {
 		return -1;
 
 
-	if (_msg.param(0) == "END")
+	if (_msg.params(0) == "END")
 		return 0;
 
-	else if (_msg.param(0) == "LS") {
+	else if (_msg.params(0) == "LS") {
 		_conn.enqueue("CAP * LS :" CRLF);
 	}
 	

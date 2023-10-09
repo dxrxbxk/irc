@@ -25,12 +25,12 @@ bool	Mode::valid_mode(char c) {
 	return (c == 'i' || c == 't' || c == 'k' || c == 'o' || c =='l');
 }
 
-Command::ret_type	Mode::handle_user(std::string& target, std::string& mode, std::string& param) {
+Command::ret_type	Mode::handle_user() {
 	_conn.enqueue(RPL::u_mod_unknown_flag(_conn.info()));
 	return 0;
 }
 
-Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode, std::string& param) {
+Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode) {
 	if (not _server.channel_exist(target)) {
 			_conn.enqueue(RPL::no_such_channel(_conn.info(), target));
 			return 0;
@@ -46,66 +46,80 @@ Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode, s
 			_conn.enqueue(RPL::chano_privs_needed(_conn.info(), channel.name()));
 			return 0;
 	}
-
+//	param_type param = _msg.params(2);
+	std::size_t _index = 2;
 	for (std::size_t i = 0; i < mode.size(); i++) {
 		if (mode[i] == '+') {
-			if (not valid_mode(mode[i + 1])) {
-				_conn.enqueue(RPL::u_mod_unknown_flag(_conn.info()));
-				return 0;
-			}
+			std::string param = _msg.params(_index++);
 			switch (mode[i + 1]) {
 				case 'i':
 					channel.invite_only(true);
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				case 't':
 					channel.topic(true);
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				case 'k':
 					if (not param.empty()) {
 						channel.key(param);
 						channel.key(true);
 					}
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				case 'o':
 					if (not channel.user_in(param)) {
 						_conn.enqueue(RPL::user_not_in_channel(_conn.info(), param, channel.name()));
-						return 0;
+						break;
 					}
 					channel.add_op(param);
-					channel.broadcast("MODE " + channel.name() + " +o " + param, _conn);
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				case 'l':
 					try {
-						if (param.empty())
+						if (param.empty()) {
 							_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
+							break;
+						}
 						channel.limit(utils::to_integer<int>(param));
+						channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					} catch (const std::exception& e) {
 						Logger::info("Error" + std::string(e.what()));
 					}
 					break;
+				default:
+					_conn.enqueue(RPL::unknown_mode(_conn.info(), mode[i + 1]));
 			}
 		}
 		else if (mode[i] == '-') {
-			if (not valid_mode(mode[i + 1])) {
-				_conn.enqueue(RPL::u_mod_unknown_flag(_conn.info()));
-				return 0;
-			}
+			std::string param = _msg.params(_index++);
 			switch (mode[i + 1]) {
 				case 'i':
 					channel.invite_only(false);
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				case 't':
 					channel.topic(false);
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				case 'k':
 					channel.key('k');
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				case 'o':
+					if (not channel.user_in(param)) {
+						_conn.enqueue(RPL::user_not_in_channel(_conn.info(), param, channel.name()));
+						break;
+					}
 					channel.rm_op(param);
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
 				case 'l':
 					channel.limit(false);
+					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
 					break;
+				default:
+					_conn.enqueue(RPL::unknown_mode(_conn.info(), mode[i + 1]));
 			}
 		}
 	}
@@ -114,18 +128,16 @@ Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode, s
 
 Command::ret_type	Mode::execute(void) {
 	std::string& target = _msg.params_first();
-	std::string& mode = _msg.param(1);
-	std::string& param = _msg.param(2);
+	std::string& modes = _msg.params(1);
 
 	if (not _msg.has_params() || _msg.params_size() == 1) {
 		_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
 		return 0;
 	}
 	if (target[0] == '#' || target[0] == '&')
-		handle_channel(target, mode, param);
+		handle_channel(target, modes);
 	else
-		handle_user(target, mode, param);
-
+		handle_user();
 	return 0;
 }
 

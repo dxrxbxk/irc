@@ -38,7 +38,7 @@ class Message {
 		const std::string&	command(void) const;
 
 		std::string&		prefix(void);
-		std::string&		param(std::size_t);
+		std::string&		params(std::size_t);
 		l_str&				params(void);
 		std::string&		params_first(void);
 		std::size_t			params_size(void) const;

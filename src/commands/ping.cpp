@@ -19,7 +19,7 @@ Command::ret_type Ping::execute(void) {
 	if (_msg.params_size() < 1)
 		return -1;
 
-	_conn.enqueue("PONG :" + _msg.param(0) + CRLF);
+	_conn.enqueue("PONG :" + _msg.params(0) + CRLF);
 
 	return 0;
 }

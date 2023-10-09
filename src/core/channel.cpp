@@ -79,6 +79,10 @@ void	Channel::topic(bool option) {
 	_modes.topicRestrictions = option;
 }
 
+bool	Channel::topic_resrict(void) {
+	return _modes.topicRestrictions;
+}
+
 void	Channel::limit(int limit) {
 	_modes.userLimit = limit;
 }
@@ -123,6 +127,13 @@ void	Channel::broadcast(const std::string& msg, const Connexion& sender) {
 		if (it->second != &sender) {
 			it->second->enqueue(msg);
 		}
+	}
+}
+
+void	Channel::broadcast(const std::string& msg) {
+	Logger::debug("BROADCAST");
+	for (const_iterator it = _users.begin(); it != _users.end(); ++it) {
+		it->second->enqueue(msg);
 	}
 }
 

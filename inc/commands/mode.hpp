@@ -30,8 +30,8 @@ class Mode : public Command {
 
 		bool		valid_mode(char c);
 
-		ret_type	handle_user(std::string&, std::string&, std::string&);
-		ret_type	handle_channel(std::string&, std::string&, std::string&);
+		ret_type	handle_user(void);
+		ret_type	handle_channel(std::string&, std::string&);
 
 };
 

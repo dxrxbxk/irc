@@ -25,12 +25,17 @@ namespace RPL {
 	typedef const ClientInfo&	arg_type;
 
 	/* ************************************************************************** */
-	ret_type	motd(arg_type);
+	ret_type	welcome(arg_type);
+	ret_type	motd(arg_type, const std::string&);
 	ret_type	motd_start(arg_type);
 	ret_type	end_of_motd(arg_type);
+	ret_type	no_topic(arg_type, const std::string&);
+	ret_type	topic(arg_type, const std::string&, const std::string&);
+	ret_type	channel_mode_is(arg_type, const std::string&, const std::string&);
 
 	/* ************************************************************************** */
 	ret_type	u_mod_unknown_flag(arg_type);
+	ret_type	unknown_mode(arg_type, const char c);
 	ret_type	no_nickname_given(arg_type);
 	ret_type	nickname_in_use(arg_type, const std::string&);
 	ret_type	need_more_params(arg_type, const std::string&);
