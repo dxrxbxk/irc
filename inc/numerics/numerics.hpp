@@ -50,6 +50,7 @@ namespace RPL {
 	ret_type	channel_is_full(arg_type, const std::string&);
 	ret_type	user_not_in_channel(arg_type, const std::string&, const std::string&);
 	ret_type	user_on_channel(arg_type, const std::string&, const std::string&);
+	ret_type	no_text_to_send(arg_type);
 
 
 	enum code

@@ -21,6 +21,7 @@ const char* state_debug[] = {
 	"PARAMS",
 	"MIDDLE",
 	"TRAILING",
+	"DCC",
 	"COMMAND_END",
 	"ERROR",
 	"END"
@@ -33,6 +34,7 @@ const char* chartype_debug[] = {
 	"SP",
 	"OTHER",
 	"CTL",
+	"SOH",
 	"NUL",
 };
 
@@ -44,14 +46,13 @@ const char* action_debug[] = {
 	"ADD_COMMAND",
 	"ADD_MIDDLE",
 	"ADD_TRAILING",
+	"ADD_DCC_PARAM",
 	"P_ERROR"
 };
 
 void 	Parser::debug(void) {
 	Logger::info("current char: " + std::string(1, *msg) + " chartype: " + chartype_debug[c_table[static_cast<uint8_t>(*msg)]] + " state: " + state_debug[tr.state] + " action: " + action_debug[tr.action]);
 }
-
-
 
 void	Parser::increment(void) { ++i; }
 
@@ -82,13 +83,18 @@ void	Parser::addTrailing(void) {
 	request.addTrailing(trailing);
 }
 
+void	Parser::addDccParam(void) {
+	std::string	param(msg - i, i);
+	i = 0;
+	request.addDccParam(param);
+}
+
 void	Parser::skip(void) {
 }
 
 void	Parser::pError(void) {
-	throw std::runtime_error(handleSysError(" :Parsing error"));
+	throw std::runtime_error(" :Parsing error");
 }
-
 
 void debug_raw(const char* msg) {
 
@@ -116,7 +122,7 @@ void	Parser::run(void) {
 	// Logger::log("parsing request: " + std::string(msg));
 
 	while (tr.state != ERROR && tr.state != END) {
-		// debug();
+	//	 debug();
 		e_chartype type = c_table[static_cast<uint8_t>(*msg)];
 		tr = t_table[tr.state][type];
 		(this->*a_table[tr.action])();
@@ -132,6 +138,7 @@ Parser::action_p	Parser::a_table[Parser::A_SIZE] = {
 	&Parser::addCommand,
 	&Parser::addMiddle,
 	&Parser::addTrailing,
+	&Parser::addDccParam,
 	&Parser::pError,
 };
 
@@ -144,6 +151,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 		{ ERROR, P_ERROR }, /* SP */
 		{ COMMAND, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* SOH */
 		{ ERROR, P_ERROR }, /* NUL */
 
 	},
@@ -155,6 +163,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 		{ COMMAND, ADD_PREFIX }, /* SP */
 		{ PREFIX, INCREMENT}, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* SOH */
 		{ ERROR, P_ERROR }, /* NUL */
 
 	},
@@ -166,6 +175,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 		{ PARAMS, ADD_COMMAND }, /* SP */
 		{ COMMAND, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* SOH */
 		{ ERROR, P_ERROR }, /* NUL */
 
 	},
@@ -177,6 +187,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 		{ ERROR, P_ERROR }, /* SP */
 		{ MIDDLE, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* SOH */
 		{ ERROR, P_ERROR }, /* NUL */
 
 	},
@@ -188,6 +199,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 		{ PARAMS, ADD_MIDDLE }, /* SP */
 		{ MIDDLE, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* SOH */
 		{ ERROR, P_ERROR }, /* NUL */
 
 	},
@@ -199,8 +211,20 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 		{ TRAILING, INCREMENT }, /* SP */
 		{ TRAILING, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
+		{ DCC, RESET }, /* SOH */
 		{ ERROR, P_ERROR }, /* NUL */
 
+	},
+	/* DCC */
+	{
+		{ DCC, INCREMENT }, /* COLON */
+		{ ERROR, P_ERROR }, /* LF */
+		{ ERROR, P_ERROR}, /* CR */
+		{ DCC, ADD_DCC_PARAM }, /* SP */
+		{ DCC, INCREMENT }, /* OTHER */
+		{ ERROR, P_ERROR }, /* CTL */
+		{ TRAILING, RESET }, /* SOH */
+		{ ERROR, P_ERROR }, /* NUL */
 	},
 	/* COMMAND_END */
 	{
@@ -210,6 +234,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 		{ ERROR, P_ERROR }, /* SP */
 		{ ERROR, P_ERROR }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
+		{ ERROR, P_ERROR }, /* SOH */
 		{ ERROR, P_ERROR }, /* NUL */
 	},
 };
@@ -228,7 +253,7 @@ Parser::Parser(const std::string& ref, Message& req)
 
 const Parser::e_chartype	Parser::c_table[128] = {
 	//0-31
-    NUL, CTL, CTL, CTL, CTL, CTL, CTL, CTL,
+    NUL, SOH, CTL, CTL, CTL, CTL, CTL, CTL,
     CTL, CTL, LF, CTL, CTL, CR, CTL, CTL,
     CTL, CTL, CTL, CTL, CTL, CTL, CTL, CTL,
     CTL, CTL, CTL, CTL, CTL, CTL, CTL, CTL,

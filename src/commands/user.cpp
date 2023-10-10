@@ -26,24 +26,30 @@ void	User::add_user(ClientInfo& info) {
 
 Command::ret_type User::execute(void) {
 	if (_msg.params_size() != 3 || not _msg.has_trailing()) {
-		// need reply numeric error
-		return -1; }
+		return 0;
+	}
 
 	if (_conn.registered()) {
-		Logger::debug("User: already \x1b[32mregistered\x1b[0m");
-		return -1;
+		_conn.enqueue(RPL::already_registered(_conn.info()));
+		return 0;
 	}
 
 	ClientInfo&	info = _conn.info();
 
 	_server.accept_newcomer(_conn);
 
-	_conn.login();
 	add_user(info);
+	_conn.tracker(USER);
+	if (_conn.can_register() && not _conn.registered()) {
+		_conn.login();
+	}
+
+	/*
 	_conn.enqueue(RPL::welcome(info));
 	_conn.enqueue(RPL::motd_start(info));
 	_conn.enqueue(RPL::motd(info, _server.motd()));
 	_conn.enqueue(RPL::end_of_motd(info));
+	*/
 	return 0;
 }
 

@@ -71,6 +71,15 @@ Connexion& Connexion::operator=(const Connexion &other) {
 
 void Connexion::login(void) {
 	_registered = true;
+	ClientInfo&	info = this->info();
+	enqueue(RPL::welcome(info));
+	enqueue(RPL::motd_start(info));
+	enqueue(RPL::motd(info, Server::shared().motd()));
+	enqueue(RPL::end_of_motd(info));
+}
+
+bool	Connexion::can_register(void) {
+	return (_tracker & NICK && _tracker & USER && _tracker & PASS);
 }
 
 void Connexion::logout(void) {
@@ -188,7 +197,7 @@ void Connexion::read(void) {
 			Command* cmd = CommandFactory::create(*this, msg);
 
 			if (cmd == NULL) {
-				Logger::info(msg.command() + "command not found, fix your client");
+				Logger::info(msg.command() + " command not found");
 			}
 			else {
 				int ret = cmd->execute();

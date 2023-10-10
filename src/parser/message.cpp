@@ -35,6 +35,11 @@ void	Message::addTrailing(std::string& trailing) {
 	_trailing.swap(trailing);
 }
 
+void	Message::addDccParam(std::string& param) {
+	_dcc.push_back("");
+	_dcc.back().swap(param);
+}
+
 
 bool	Message::has_command(void) const {
 	return !_command.empty();
@@ -107,6 +112,15 @@ void Message::print(void) const {
 		msg.append("middle ");
 		for (std::size_t i = 0; i < _middle.size(); i++)
 			msg.append("[" + _middle[i] + "] ");
+	}
+
+	if (not _dcc.empty()) {
+
+		if (not _prefix.empty() or not _command.empty() or not _middle.empty())
+			msg.append(" ");
+		msg.append("dcc ");
+		for(list_str::const_iterator it = _dcc.begin(); it != _dcc.end(); ++it)
+			msg.append("[" + *it + "] ");
 	}
 
 	if (not _trailing.empty()) {

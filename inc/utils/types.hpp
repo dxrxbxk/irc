@@ -19,6 +19,7 @@
 
 typedef std::vector<std::string>	l_str;
 typedef std::vector<std::string>	vec_str;
+typedef std::list<std::string>		list_str;
 
 #endif
 

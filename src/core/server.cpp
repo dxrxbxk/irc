@@ -77,8 +77,8 @@ void Server::run(void) {
 		// refresh logger print
 		Logger::render();
 		_poller.run();
-		Logger::info(utils::to_string(_channels.size()) + " channels");
-		print_channels();
+//		Logger::info(utils::to_string(_channels.size()) + " channels");
+//		print_channels();
 		remove_rm_list();
 		rm_channels();
 	}

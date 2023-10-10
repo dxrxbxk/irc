@@ -26,6 +26,7 @@ class Message {
 		void	addCommand(std::string& command);
 		void	addMiddle(std::string& middle);
 		void	addTrailing(std::string& trailing);
+		void	addDccParam(std::string& param);
 
 		void	print(void) const;
 
@@ -44,13 +45,24 @@ class Message {
 		std::size_t			params_size(void) const;
 		std::string&		trailing(void);
 
+		struct Dcc {
+			std::string		nickname;
+			std::string		ip;
+			std::string		port;
+		//	std::string		filename;
+			list_str		filenames;
+			std::string		size;
+			std::string		token;
+		};
+
 	private:
 
 		std::string	_prefix;
 		std::string	_command;
 
-		l_str		_middle;
+		vec_str		_middle;
 		std::string	_trailing;
+		list_str	_dcc;
 };
 
 #endif

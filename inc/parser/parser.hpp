@@ -44,6 +44,7 @@ class Parser {
 			PARAMS,
 			MIDDLE,
 			TRAILING,
+			DCC,
 			COMMAND_END,
 			ERROR,
 			END,
@@ -58,6 +59,7 @@ class Parser {
 			ADD_COMMAND,
 			ADD_MIDDLE,
 			ADD_TRAILING,
+			ADD_DCC_PARAM,
 			P_ERROR,
 			A_SIZE
 		};
@@ -69,6 +71,7 @@ class Parser {
 			SP,
 			OTHER,
 			CTL,
+			SOH,
 			NUL,
 			CT_SIZE
 		};
@@ -87,6 +90,7 @@ class Parser {
 		void					addCommand(void);
 		void					addMiddle(void);
 		void					addTrailing(void);
+		void					addDccParam(void);
 		void					pError(void);
 		void 					debug(void);
 		void					addValue(void);

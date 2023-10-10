@@ -17,6 +17,12 @@
 
 #define CRLF "\r\n"
 
+RPL::ret_type	RPL::no_text_to_send(arg_type info) {
+	std::stringstream	buffer;
+	buffer << "412 " << info.nickname << " :No text to send" << CRLF;
+	return buffer.str();
+}
+
 RPL::ret_type	RPL::inviting(arg_type info, const std::string& nick, const std::string& channel) {
 	std::stringstream	buffer;
 	buffer << "341 " << info.nickname << " " << nick << " " << channel << CRLF;
@@ -119,7 +125,7 @@ RPL::ret_type	RPL::erroneus_nickname(arg_type info, const std::string& nick) {
 
 RPL::ret_type	RPL::nickname_in_use(arg_type info, const std::string& nick) {
 	std::stringstream	buffer;
-	buffer << "433 " << nick << " :Nickname in use" << CRLF;
+	buffer << "433 " << nick << " " << nick << " :Nickname in use" << CRLF;
 	return buffer.str();
 }
 

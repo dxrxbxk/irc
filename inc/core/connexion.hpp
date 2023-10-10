@@ -29,7 +29,8 @@
 # include "numerics.hpp"
 
 # define PASS (1 << 0)
-# define REG (1 << 1)
+# define NICK (1 << 1)
+# define USER (1 << 2)
 
 # define CHAN_LIMIT 200
 
@@ -63,6 +64,7 @@ class Connexion : public IOEvent {
 		int							tracker(void);
 		void						check_event(void);
 		bool						registered(void) const;
+		bool						can_register(void);
 
 		// -- public channel methods ------------------------------------------
 
