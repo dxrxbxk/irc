@@ -15,7 +15,7 @@ Command::ret_type	 Privmsg::execute(void) {
 
 
 	// if (_server.channel_exist(_msg.param(0))) {
-		Channel& channel = _server.get_channel(_msg.params_first(), _conn);
+		Channel& channel = _server.get_channel(_msg.params_first());
 		std::string msg(":");
 		msg.append(_conn.nickname());
 		msg.append("!");

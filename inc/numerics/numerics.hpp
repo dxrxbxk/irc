@@ -32,6 +32,7 @@ namespace RPL {
 	ret_type	no_topic(arg_type, const std::string&);
 	ret_type	topic(arg_type, const std::string&, const std::string&);
 	ret_type	channel_mode_is(arg_type, const std::string&, const std::string&);
+	ret_type	inviting(arg_type, const std::string&, const std::string&);
 
 	/* ************************************************************************** */
 	ret_type	u_mod_unknown_flag(arg_type);
@@ -48,6 +49,7 @@ namespace RPL {
 	ret_type	chano_privs_needed(arg_type, const std::string&);
 	ret_type	channel_is_full(arg_type, const std::string&);
 	ret_type	user_not_in_channel(arg_type, const std::string&, const std::string&);
+	ret_type	user_on_channel(arg_type, const std::string&, const std::string&);
 
 
 	enum code

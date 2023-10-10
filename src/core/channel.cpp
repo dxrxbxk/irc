@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "channel.hpp"
+#include "server.hpp"
 
 Channel::Channel(void)
 : _name(), _admin(), _topic(), _op_list(), _users(), _modes()
@@ -29,7 +30,11 @@ Channel::Channel(const std::string& channel_name, Connexion& creator)
 		add_op(creator.nickname());
 }
 
-Channel::~Channel(void) {}
+Channel::~Channel(void) {
+	for (const_iterator it = _users.begin(); it != _users.end(); ++it) {
+		it->second->leave_channel(*this);
+	}
+}
 
 Channel::Channel(const Channel& other)
 :	_name(other._name),
@@ -147,22 +152,44 @@ void Channel::add_user(Connexion& user) {
 }
 
 void	Channel::remove_user(Connexion& user) {
+	user.leave_channel(*this);
 	_users.erase(user.nickname());
+
+	if (is_op(user.nickname())) {
+		rm_op(user.nickname());
+		if (op_size() == 0 && size() > 0) {
+			add_op(_users.begin()->first);
+			this->broadcast(":" + _users.begin()->first + " MODE " + _name + " +o " + _users.begin()->first + CRLF);
+		}
+	}
+	if (this->size() == 0) {
+		Server::shared().add_rm_channel(*this);
+	}
 }
 
-bool	Channel::user_in(std::string& user) const {
+bool	Channel::user_in(const std::string& user) const {
 	return (_users.find(user) != _users.end());
+}
+
+void	Channel::print_users(void) const {
+	for (const_iterator it = _users.begin(); it != _users.end(); ++it) {
+		std::cout << it->first << std::endl;
+	}
 }
 
 bool	Channel::is_admin(Connexion& user) {
 	return (&user == _admin);
 }
 
-void	Channel::add_op(std::string& user) {
+void	Channel::add_op(const std::string& user) {
 	_op_list.push_back(user);
 }
 
-void	Channel::rm_op(std::string &op) {
+std::size_t	Channel::op_size(void) const {
+	return _op_list.size();
+}
+
+void	Channel::rm_op(const std::string &op) {
 	for (vec_str::iterator it = _op_list.begin(); it != _op_list.end(); ++it) {
 		if (*it == op) {
 			_op_list.erase(it);
@@ -171,7 +198,7 @@ void	Channel::rm_op(std::string &op) {
 	}
 }	
 
-bool	Channel::is_op(std::string& user) {
+bool	Channel::is_op(const std::string& user) {
 	for (vec_str::iterator it = _op_list.begin(); it != _op_list.end(); ++it) {
 		if (*it == user)
 			return true;

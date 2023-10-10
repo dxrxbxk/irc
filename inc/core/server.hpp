@@ -65,6 +65,7 @@ class Server : public IOEvent {
 
 		// -- public methods ----------------------------------------------------
 
+		Connexion&		get_conn(const std::string&);
 		void	ch_nick(Connexion&, std::string&);
 		bool	nick_exist(const std::string&);
 
@@ -87,16 +88,22 @@ class Server : public IOEvent {
 
 		bool 				has_password(void) const;
 
-		Channel&	get_channel(const std::string&, Connexion &ref);
-		Channel&	channel(const std::string&);
-		bool		channel_exist(const std::string&) const;
-		Channel&	create_channel(const std::string&, Connexion&);
+		Channel&			get_channel(const std::string&);
+		Channel&			channel(const std::string&);
+		bool				channel_exist(const std::string&) const;
+		Channel&			create_channel(const std::string&, Connexion&);
+		void				remove_channel(const std::string&);
+		void				print_channels(void) const;
 
-		void	 add_rm_list(Connexion&);
-		void	 remove_rm_list(void);
+		void				add_rm_list(Connexion&);
+		void				remove_rm_list(void);
 
-		void			motd(const std::string&);
-		std::string&	motd(void);
+		void				add_rm_channel(Channel&);
+		void				rm_channels(void);
+
+		void				motd(const std::string&);
+		std::string&		motd(void);
+
 
 		// -- public static methods --------------------------------------------
 
@@ -104,6 +111,10 @@ class Server : public IOEvent {
 
 
 	private:
+
+		// -- private methods --------------------------------------------------
+		void				read_input(void);
+		l_str				check_crlf(void);
 
 		typedef std::map<std::string, Channel>::const_iterator		channel_iterator;
 		typedef std::map<std::string, Connexion*>::const_iterator	nick_iterator;
@@ -121,6 +132,7 @@ class Server : public IOEvent {
 		typedef std::map<std::string, Channel>		channel_map;
 		typedef std::map<std::string, Connexion*>	nick_map;
 		typedef std::stack<Connexion*>				rm_list;
+		typedef std::stack<Channel*>				rm_channel;
 
 
 		// -- private members --------------------------------------------------
@@ -133,7 +145,11 @@ class Server : public IOEvent {
 		conn_map		_conns;
 		nick_map		_nicks;
 		rm_list			_rm_list;
+		rm_channel		_rm_channels;
 		std::string		_motd;
+
+		std::string		_buffer_in;
+		std::string		_buffer_out;
 
 };
 static const char* message_irc = 
@@ -143,7 +159,7 @@ static const char* message_irc =
 "[%] Server Staff =-\r\n"
 " \r\n"
 ".::. Administrator....:\r\n"
-"                        Maxis\r\n"
+"                        Terry Davis\r\n"
 "\r\n"
 ".::. Operators........:\r\n"
 "                        diroyer\r\n"
@@ -162,6 +178,6 @@ static const char* message_irc =
 "\"REMEMBER IRC IS A PRIVILEGE, NOT A RIGHT\"\r\n"
 "-------------------------------------------------------------------\r\n"
 " \r\n"
-"Thank you for using Backrooms.net, we hope you enjoy the stay with us.";
+"Thank you for using BackRooms.42.net, we hope you enjoy the stay with us.";
 
 #endif

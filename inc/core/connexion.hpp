@@ -124,7 +124,6 @@ class Connexion : public IOEvent {
 
 		enum { BUFFER_SIZE = 1024 };
 
-
 		// -- private methods -------------------------------------------------
 
 		void						read_input(void);

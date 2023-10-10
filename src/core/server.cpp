@@ -48,7 +48,7 @@ void Server::init(ServerInfo& info, const Shared_fd& socket) {
 	_socket = socket;
 
 	Logger::set_server(*this);
-	_poller.add_event(*this);
+	_poller.add_event(*this, _socket);
 
 	_poller.add_event(Logger::shared());
 	_poller.add_event(Signal::shared());
@@ -57,6 +57,19 @@ void Server::init(ServerInfo& info, const Shared_fd& socket) {
 
 }
 
+// print channel and users in it with _channels and _nicks
+void Server::print_channels(void) const {
+	channel_iterator it = _channels.begin();
+	while (it != _channels.end()) {
+		std::cout << "channel: " << it->first << std::endl;
+		it->second.print_users();
+		++it;
+	}
+}
+
+
+
+
 void Server::run(void) {
 	Logger::start();
 	while (_initialized == true)
@@ -64,7 +77,10 @@ void Server::run(void) {
 		// refresh logger print
 		Logger::render();
 		_poller.run();
+		Logger::info(utils::to_string(_channels.size()) + " channels");
+		print_channels();
 		remove_rm_list();
+		rm_channels();
 	}
 	Logger::end();
 }
@@ -90,11 +106,34 @@ void	Server::accept(void) {
 	_poller.add_event(conn);
 }
 
-void	Server::write(void) {
+
+l_str	Server::check_crlf(void) {
+	std::string::size_type	pos;
+	l_str					l_msg;
+	while ((pos = _buffer_in.find("\r\n")) != std::string::npos) {
+		l_msg.push_back(_buffer_in.substr(0, pos + 2));
+		_buffer_in.erase(0, pos + 2);
+	}
+	return l_msg;
 }
 
-void	Server::read(void) {
-	Server::accept();
+void	Server::read_input(void) {
+	ssize_t		readed;
+	char		buffer[BUFFER_SIZE];
+
+	readed = ::recv(_socket, buffer, BUFFER_SIZE, 0);
+	if (readed == -1)
+		throw::std::runtime_error(handleSysError("recv"));
+	else {
+		_buffer_in.append(buffer, readed);
+	}
+}
+
+void Server::read(void) {
+	accept();
+}
+
+void	Server::write(void) {
 }
 
 int Server::fd(void) const {
@@ -130,11 +169,7 @@ Channel&	Server::channel(const std::string& channel_name) {
 	return _channels[channel_name];
 }
 
-Channel&	Server::get_channel(const std::string& channel_name, Connexion &ref) {
-	std::size_t size = _channels.count(channel_name);
-	if (not _channels.count(channel_name)) {
-		_channels[channel_name] = Channel(channel_name, ref);
-	}
+Channel&	Server::get_channel(const std::string& channel_name) {
 	return _channels[channel_name];
 }
 
@@ -151,6 +186,10 @@ bool	Server::channel_exist(const std::string& name) const {
 	return _channels.count(name);
 }
 
+void	Server::remove_channel(const std::string& name) {
+	_channels.erase(name);
+}
+
 void	Server::ch_nick(Connexion& conn, std::string& new_nick) {	
 	_nicks[new_nick] = &conn;
 	_nicks.erase(conn.nickname());
@@ -161,6 +200,9 @@ bool	Server::nick_exist(const std::string& nick) {
 	return _nicks.count(nick);
 }
 
+Connexion& Server::get_conn(const std::string& nick) {
+	return *_nicks[nick];
+}
 
 void Server::accept_newcomer(Connexion& conn) {
 	_nicks[conn.nickname()] = &conn;
@@ -198,6 +240,19 @@ bool Server::has_password(void) const {
 
 Poll&	Server::poller(void) {
 	return _poller;
+}
+
+void Server::add_rm_channel(Channel& channel) {
+	_rm_channels.push(&channel);
+}
+
+void Server::rm_channels(void) {
+	while (!_rm_channels.empty())
+	{
+		Channel& channel = *_rm_channels.top();
+		_channels.erase(channel.name());
+		_rm_channels.pop();
+	}
 }
 
 void Server::add_rm_list(Connexion& conn) {

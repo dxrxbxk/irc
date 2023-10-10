@@ -20,6 +20,7 @@ CommandFactory::map_t CommandFactory::init(void) {
 	cmap["PASS"]    = &Pass::create;
 	cmap["QUIT"]    = &Quit::create;
 	cmap["TOPIC"]   = &Topic::create;
+	cmap["KICK"]    = &Kick::create;
 	// add more commands here...
 
 	return cmap;

@@ -92,14 +92,22 @@ void Connexion::enter_channel(Channel& channel) {
 }
 
 void Connexion::leave_channel(Channel& channel) {
-	channel.remove_user(*this);
+//	channel.remove_user(*this);
 	_channels.erase(&channel);
+	Logger::info("channel size: " + utils::to_string(channel.size()));
+	if (channel.size() == 0) {
+		Server::shared().remove_channel(channel.name());
+	}
 }
 
 void Connexion::leave_channels(void) {
+	std::set<Channel*>::iterator tmp;
+
 	for (std::set<Channel*>::iterator it = _channels.begin();
-			it != _channels.end(); ++it) {
-		(*it)->remove_user(*this);
+			it != _channels.end();) {
+		tmp = it;
+		++it;
+		(*tmp)->remove_user(*this);
 	}
 }
 

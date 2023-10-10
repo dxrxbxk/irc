@@ -13,6 +13,7 @@
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
+#include <cstddef>
 # include <vector>
 # include <string>
 # include <map>
@@ -58,13 +59,16 @@ class Channel {
 		
 		void			add_user(Connexion&);
 		void			remove_user(Connexion&);
+		void			print_users(void) const;
+
 
 		void			change_admin(Connexion&);
 		bool			is_admin(Connexion&);
 
-		void			add_op(std::string&);
-		void			rm_op(std::string&);
-		bool			is_op(std::string&);
+		void			add_op(const std::string&);
+		void			rm_op(const std::string&);
+		bool			is_op(const std::string&);
+		std::size_t		op_size(void) const;
 
 		std::string&	name(void);
 		void			name(std::string&);
@@ -89,12 +93,11 @@ class Channel {
 		void			broadcast(const std::string&, const Connexion&);
 		void			broadcast(const std::string&);
 
-		bool			user_in(std::string& nickname) const ;
+		bool			user_in(const std::string& nickname) const ;
 		std::size_t 	size(void) const;
 
 	private:
 		typedef std::map<std::string, Connexion*>::const_iterator	const_iterator;
-		typedef std::vector<bool>									vec_bool;
 
 		std::string							_name;
 		Connexion*							_admin;

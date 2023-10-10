@@ -12,7 +12,6 @@
 
 #include "mode.hpp"
 #include "server.hpp"
-#include "channel.hpp"
 #include "utils.hpp"
 #include <cstddef>
 

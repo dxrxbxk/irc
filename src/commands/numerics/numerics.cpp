@@ -17,6 +17,18 @@
 
 #define CRLF "\r\n"
 
+RPL::ret_type	RPL::inviting(arg_type info, const std::string& nick, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "341 " << info.nickname << " " << nick << " " << channel << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::user_on_channel(arg_type info, const std::string& channel, const std::string& user) {
+	std::stringstream	buffer;
+	buffer << "353 " << info.nickname << " = " << channel << " :" << user << CRLF;
+	return buffer.str();
+}
+
 RPL::ret_type	RPL::channel_mode_is(arg_type info, const std::string& channel, const std::string& mode) {
 	std::stringstream	buffer;
 	buffer << "324 " << info.nickname << " " << channel << " " << mode << CRLF;

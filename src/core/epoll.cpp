@@ -15,7 +15,7 @@
 
 
 Poll::Poll(void)
-: _instance(::epoll_create(1)), _events() , _running(true) {
+: _instance(::epoll_create(1)), _events() , _running(true), _listen_fd(-1) {
 
 	_events.reserve(DEFAULT_EVENTS);
 
@@ -60,10 +60,10 @@ void Poll::run(void) {
 		if (event & EPOLLRDHUP || event & EPOLLHUP) {
 			io.disconnect();
 		}
-		if (event & EPOLLIN) {
+		else if (event & EPOLLIN) {
 			io.read();
 		}
-		if (event & EPOLLOUT) {
+		else if (event & EPOLLOUT) {
 			io.write();
 		}
 	}
@@ -80,6 +80,19 @@ void Poll::del_event(const IOEvent& io) {
 	_events.pop_back();
 }
 
+
+void Poll::add_event(IOEvent& io, int listen_fd) {
+
+	setnonblocking(io.fd());
+
+	_listen_fd = listen_fd;
+
+	epoll_event ev = new_event(io, EPOLLIN);
+
+	if (::epoll_ctl(_instance, EPOLL_CTL_ADD, io.fd(), &ev) == -1)
+		throw std::runtime_error(handleSysError("epoll_ctl add"));
+	_events.resize(_events.size() + 1);
+}
 
 void Poll::add_event(IOEvent& io) {
 

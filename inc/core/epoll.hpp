@@ -37,6 +37,7 @@ class Poll {
 		Poll(void);
 		~Poll(void);
 
+		void	add_event(IOEvent&, int);
 		void	add_event(IOEvent&);
 		void	mod_event(IOEvent&, int);
 		void	del_event(const IOEvent&);
@@ -55,6 +56,7 @@ class Poll {
 		int									_instance;
 		vector_event 						_events;
 		bool								_running;
+		int									_listen_fd;
 
 		IOEvent&							data(epoll_event &ref);
 		epoll_event							new_event(IOEvent& ref, const int flags);
