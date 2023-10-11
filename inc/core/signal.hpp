@@ -23,9 +23,7 @@
 
 class Signal : public IOEvent {
 
-
 	public:
-
 		// -- public IOEvent interface ----------------------------------------
 
 		int			fd(void) const;
@@ -40,6 +38,8 @@ class Signal : public IOEvent {
 
 		static void signal_manager(void);
 		static void signal_ignore(void);
+		static void signal_default(void);
+		static void	signal_nopipe_manager(void);
 
 	private:
 
@@ -52,10 +52,10 @@ class Signal : public IOEvent {
 
 		int _pipe[2];
 
-
 		// -- private static methods ------------------------------------------
 
 		static void signal_handler(int);
+		static void signal_no_pipe(int);
 
 };
 

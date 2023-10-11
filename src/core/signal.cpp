@@ -48,8 +48,21 @@ void Signal::signal_handler(int) {
 	::write(shared()._pipe[1], &c, sizeof(c));
 }
 
+void	Signal::signal_no_pipe(int) {
+	// do nothing
+}
 
 // -- public static methods ---------------------------------------------------
+
+void	Signal::signal_nopipe_manager(void) {
+	// record signal handler
+	if (::signal(SIGINT,  signal_no_pipe) == SIG_ERR
+	 || ::signal(SIGABRT, signal_no_pipe) == SIG_ERR
+	 || ::signal(SIGQUIT, signal_no_pipe) == SIG_ERR
+	 || ::signal(SIGTERM, signal_no_pipe) == SIG_ERR
+	 || ::signal(SIGTSTP, signal_no_pipe) == SIG_ERR)
+		throw std::runtime_error(handleSysError("signal"));
+}
 
 void Signal::signal_manager(void) {
 	// record signal handler
@@ -68,6 +81,16 @@ void Signal::signal_ignore(void) {
 	 || ::signal(SIGQUIT, SIG_IGN) == SIG_ERR
 	 || ::signal(SIGTERM, SIG_IGN) == SIG_ERR
 	 || ::signal(SIGTSTP, SIG_IGN) == SIG_ERR)
+		throw std::runtime_error(handleSysError("signal"));
+}
+
+void	Signal::signal_default(void) {
+	// default signals
+	if (::signal(SIGINT,  SIG_DFL) == SIG_ERR
+	 || ::signal(SIGABRT, SIG_DFL) == SIG_ERR
+	 || ::signal(SIGQUIT, SIG_DFL) == SIG_ERR
+	 || ::signal(SIGTERM, SIG_DFL) == SIG_ERR
+	 || ::signal(SIGTSTP, SIG_DFL) == SIG_ERR)
 		throw std::runtime_error(handleSysError("signal"));
 }
 

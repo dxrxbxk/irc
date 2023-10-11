@@ -20,6 +20,7 @@
 
 # include "connexion.hpp"
 # include "logger.hpp"
+#include "types.hpp"
 
 # define MAX_USER_PER_CHAN 10000
 # define CHANNEL_KEY_SIZE 50
@@ -90,6 +91,10 @@ class Channel {
 		void			invite_only(bool);
 		bool			invite_only(void);
 
+		void			invite(const std::string&);
+		bool			is_invited(const std::string&);
+		void			rm_invite(const std::string&);
+
 		void			broadcast(const std::string&, const Connexion&);
 		void			broadcast(const std::string&);
 
@@ -105,6 +110,7 @@ class Channel {
 		vec_str								_op_list;
 		std::map<std::string, Connexion*>	_users;
 		ModeInfo							_modes;
+		list_str							_invite_list;
 };
 
 #endif

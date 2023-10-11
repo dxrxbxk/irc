@@ -51,6 +51,7 @@ Command::ret_type	 Privmsg::execute(void) {
 	}
 
 	if (_msg.params_first()[0] == '#') {
+		Logger::debug("PRIVMSG: channel" + _msg.params_first());
 		if ( not _server.channel_exist(_msg.params_first())) {
 			_conn.enqueue(RPL::no_such_channel(_conn.info(), _msg.params_first()));
 			return 0;

@@ -17,6 +17,12 @@
 
 #define CRLF "\r\n"
 
+RPL::ret_type	RPL::invite_only_chan(arg_type info, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "473 " << info.nickname << " " << channel << " :Cannot join channel (+i)" << CRLF;
+	return buffer.str();
+}
+
 RPL::ret_type	RPL::no_text_to_send(arg_type info) {
 	std::stringstream	buffer;
 	buffer << "412 " << info.nickname << " :No text to send" << CRLF;

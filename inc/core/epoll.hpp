@@ -43,6 +43,7 @@ class Poll {
 		void	del_event(const IOEvent&);
 		void	run(void);
 		void	stop(void);
+		void	check(const int);
 
 
 	private:

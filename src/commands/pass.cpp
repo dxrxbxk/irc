@@ -1,5 +1,3 @@
-
-
 #include "pass.hpp"
 #include "numerics.hpp"
 #include "server.hpp"
@@ -22,7 +20,6 @@ Command::ret_type Pass::execute(void) {
 	}
 
 #if defined CRYPT
-
 	static std::string salt = extractSalt(Server::shared().password());
 
 	if (encryptPassword(_msg.params_first(), salt.c_str()) != Server::shared().password()) {

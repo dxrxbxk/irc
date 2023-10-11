@@ -14,6 +14,7 @@
 #include "numerics.hpp"
 #include "server.hpp"
 #include "utils.hpp"
+#define GUEST_LIMIT 999
 
 Nick::Nick(Connexion& conn, Message& msg)
 : Command(conn, msg) {}
@@ -45,7 +46,7 @@ Command::ret_type Nick::execute(void) {
 			_conn.tracker(NICK);
 			_conn.nickname("Guest" + utils::to_string(nb_guest));
 			nb_guest++;
-			if (nb_guest > 999)
+			if (nb_guest > GUEST_LIMIT)
 				return -1;
 			return 0;
 		}

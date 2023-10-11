@@ -48,10 +48,14 @@ void Server::init(ServerInfo& info, const Shared_fd& socket) {
 	_socket = socket;
 
 	Logger::set_server(*this);
-	_poller.add_event(*this, _socket);
+
+	_poller.add_event(*this);
 
 	_poller.add_event(Logger::shared());
+
+#if defined PIPE
 	_poller.add_event(Signal::shared());
+#endif
 
 	_initialized = true;
 
@@ -66,9 +70,6 @@ void Server::print_channels(void) const {
 		++it;
 	}
 }
-
-
-
 
 void Server::run(void) {
 	Logger::start();
@@ -98,7 +99,8 @@ void	Server::accept(void) {
 
 	if (cfd == -1) {
 		ERROR(handleSysError("accept"));
-		return; }
+		return;
+	}
 
 	Logger::info("connexion accepted");
 
@@ -115,18 +117,6 @@ l_str	Server::check_crlf(void) {
 		_buffer_in.erase(0, pos + 2);
 	}
 	return l_msg;
-}
-
-void	Server::read_input(void) {
-	ssize_t		readed;
-	char		buffer[BUFFER_SIZE];
-
-	readed = ::recv(_socket, buffer, BUFFER_SIZE, 0);
-	if (readed == -1)
-		throw::std::runtime_error(handleSysError("recv"));
-	else {
-		_buffer_in.append(buffer, readed);
-	}
 }
 
 void Server::read(void) {

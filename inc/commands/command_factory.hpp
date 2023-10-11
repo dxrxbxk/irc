@@ -17,6 +17,7 @@
 # include "quit.hpp"
 # include "topic.hpp"
 # include "kick.hpp"
+# include "invite.hpp"
 
 class Connexion;
 

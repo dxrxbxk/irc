@@ -90,7 +90,6 @@ bool Connexion::registered(void) const {
 	return _registered;
 }
 
-
 // -- public channel methods ---------------------------------------------------
 
 void Connexion::enter_channel(Channel& channel) {
@@ -152,11 +151,9 @@ l_str	Connexion::check_crlf(void) {
 
 // -- IOEvent methods ----------------------------------------------------------
 
-
 int		Connexion::fd(void) const {
 	return _socket;
 }
-
 
 void	Connexion::write(void) {
 

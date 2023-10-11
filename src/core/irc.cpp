@@ -17,7 +17,6 @@
 
 #include "crypt.hpp"
 
-
 Irc::Irc(void) {}
 
 Irc::~Irc(void) {}
@@ -26,7 +25,6 @@ int Irc::start(const std::string& port, const std::string& password) {
 
 	try {
 		Signal::signal_ignore();
-
 
 		ServerInfo info("straboul", "127.0.0.1", port, "");
 #if defined CRYPT
@@ -40,8 +38,11 @@ int Irc::start(const std::string& port, const std::string& password) {
 
 		Shared_fd sock = create("127.0.0.1", port);
 
+#if defined PIPE
 		Signal::signal_manager();
-
+#else
+		Signal::signal_nopipe_manager();
+#endif
 		Server& server = Server::shared();
 
 		server.init(info, sock);
@@ -66,7 +67,6 @@ void Irc::init(struct addrinfo *hints) {
 	hints->ai_next = NULL;
 }
 
-
 /*
    int Irc::create_socket(const std::string& port) {
 
@@ -90,7 +90,6 @@ void Irc::init(struct addrinfo *hints) {
    return socket;
    }
    */
-
 
 void Irc::getSocketInfo(const int fd) {
 	struct sockaddr_in peer;

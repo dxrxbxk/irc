@@ -24,7 +24,8 @@ Channel::Channel(const std::string& channel_name, Connexion& creator)
 	_topic(),
 	_op_list(),
 	_users(),
-	_modes()
+	_modes(),
+	_invite_list()
 {
 		add_user(creator);
 		add_op(creator.nickname());
@@ -42,7 +43,8 @@ Channel::Channel(const Channel& other)
 	_topic(other._topic),
 	_op_list(other._op_list),
 	_users(other._users),
-	_modes(other._modes)
+	_modes(other._modes),
+	_invite_list(other._invite_list)
 {
 }
 
@@ -54,6 +56,7 @@ Channel& Channel::operator=(const Channel& other) {
 		_op_list = other._op_list;
 		  _users = other._users;
 		  _modes = other._modes;
+	_invite_list = other._invite_list;
 	}
 	return *this;
 }
@@ -164,6 +167,27 @@ void	Channel::remove_user(Connexion& user) {
 	}
 	if (this->size() == 0) {
 		Server::shared().add_rm_channel(*this);
+	}
+}
+
+void	Channel::invite(const std::string &user) {
+	_invite_list.push_back(user);
+}
+
+bool	Channel::is_invited(const std::string &user) {
+	for (list_str::iterator it = _invite_list.begin(); it != _invite_list.end(); ++it) {
+		if (*it == user)
+			return true;
+	}
+	return false;
+}
+
+void	Channel::rm_invite(const std::string &user) {
+	for (list_str::iterator it = _invite_list.begin(); it != _invite_list.end(); ++it) {
+		if (*it == user) {
+			_invite_list.erase(it);
+			return ;
+		}
 	}
 }
 
