@@ -101,6 +101,7 @@ void Signal::read(void) {
 	char c;
 	if (::read(_pipe[0], &c, sizeof(c)) == -1)
 		throw std::runtime_error(handleSysError("pipe read"));
+	std::cout << "Signal received..." << std::endl;
 	Server::shared().stop();
 }
 

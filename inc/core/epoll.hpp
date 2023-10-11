@@ -43,7 +43,6 @@ class Poll {
 		void	del_event(const IOEvent&);
 		void	run(void);
 		void	stop(void);
-		void	check(const int);
 
 
 	private:
@@ -57,10 +56,10 @@ class Poll {
 		int									_instance;
 		vector_event 						_events;
 		bool								_running;
-		int									_listen_fd;
 
 		IOEvent&							data(epoll_event &ref);
 		epoll_event							new_event(IOEvent& ref, const int flags);
+		int									check(const int);
 };
 
 #endif

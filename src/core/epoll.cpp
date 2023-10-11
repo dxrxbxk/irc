@@ -16,7 +16,7 @@
 
 
 Poll::Poll(void)
-: _instance(::epoll_create(1)), _events() , _running(true), _listen_fd(-1) {
+: _instance(::epoll_create(1)), _events() , _running(true) {
 
 	_events.reserve(DEFAULT_EVENTS);
 
@@ -36,16 +36,25 @@ void Poll::stop(void) {
 	_running = false;
 }
 
-void	Poll::check(const int nfds) {
+int		Poll::check(const int nfds) {
 #if defined PIPE
 	if (nfds < 0) {
 		if (errno != EINTR)
-			throw std::runtime_error(handleSysError("epoll_wait"));
+			return -1;
+	}
+	else {
+		if (static_cast<size_type>(nfds) == _events.size())
+			_events.resize(nfds);
 	}
 #else
 	if (nfds < 0)
-		throw std::runtime_error(handleSysError("epoll_wait"));
+		return -1;
+	else {
+		if (static_cast<size_type>(nfds) == _events.size())
+			_events.resize(nfds);
+	}
 #endif
+	return 0;
 }
 
 void Poll::run(void) {
@@ -53,12 +62,8 @@ void Poll::run(void) {
 	// wait for events
 	const int nfds = ::epoll_wait(_instance, _events.data(), _events.size(), -1);
 
-	check(nfds);
-
-	// resize vector if needed
-	if (static_cast<std::size_t>(nfds) > _events.size())
-		_events.resize(nfds);
-
+	if (check(nfds) == -1)
+		throw std::runtime_error(handleSysError("epoll_wait"));
 	// loop over events
 	for (int n = 0; n < nfds; ++n) {
 
