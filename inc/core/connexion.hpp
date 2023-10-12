@@ -42,6 +42,7 @@ struct ClientInfo {
 	std::string	hostname;
 	std::string	realname;
 	std::string	nickname;
+
 };
 
 class Connexion : public IOEvent {
@@ -104,6 +105,8 @@ class Connexion : public IOEvent {
 		const std::string&			realname(void) const;
 		void						realname(const std::string&);
 		void						realname(std::string&);
+
+		const std::string			fullname(void);
 
 
 		void						swap(Connexion&);

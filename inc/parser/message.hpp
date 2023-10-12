@@ -16,6 +16,7 @@
 # include "types.hpp"
 # include "logger.hpp"
 # include <iostream>
+#include <string>
 
 class Message {
 	public:
@@ -35,6 +36,7 @@ class Message {
 		bool	has_middle(void) const;
 		bool	has_params(void) const;
 		bool	has_trailing(void) const;
+		bool	has_dcc(void) const;
 
 		const std::string&	command(void) const;
 
@@ -44,6 +46,7 @@ class Message {
 		std::string&		params_first(void);
 		std::size_t			params_size(void) const;
 		std::string&		trailing(void);
+		std::string			full_dcc(void) const;
 
 		struct Dcc {
 			std::string		nickname;
@@ -62,7 +65,7 @@ class Message {
 
 		vec_str		_middle;
 		std::string	_trailing;
-		list_str	_dcc;
+		vec_str		_dcc;
 };
 
 #endif

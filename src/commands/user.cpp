@@ -36,20 +36,12 @@ Command::ret_type User::execute(void) {
 
 	ClientInfo&	info = _conn.info();
 
-	_server.accept_newcomer(_conn);
-
 	add_user(info);
 	_conn.tracker(USER);
 	if (_conn.can_register() && not _conn.registered()) {
 		_conn.login();
 	}
 
-	/*
-	_conn.enqueue(RPL::welcome(info));
-	_conn.enqueue(RPL::motd_start(info));
-	_conn.enqueue(RPL::motd(info, _server.motd()));
-	_conn.enqueue(RPL::end_of_motd(info));
-	*/
 	return 0;
 }
 

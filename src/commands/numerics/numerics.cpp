@@ -17,6 +17,12 @@
 
 #define CRLF "\r\n"
 
+RPL::ret_type	RPL::no_recipient(arg_type info, const std::string& cmd) {
+	std::stringstream	buffer;
+	buffer << "411 " << info.nickname << " :No recipient given (" << cmd << ")" << CRLF;
+	return buffer.str();
+}
+
 RPL::ret_type	RPL::invite_only_chan(arg_type info, const std::string& channel) {
 	std::stringstream	buffer;
 	buffer << "473 " << info.nickname << " " << channel << " :Cannot join channel (+i)" << CRLF;
@@ -137,8 +143,7 @@ RPL::ret_type	RPL::nickname_in_use(arg_type info, const std::string& nick) {
 
 RPL::ret_type	RPL::need_more_params(arg_type info, const std::string& cmd) {
 	std::stringstream	buffer;
-	buffer << "461 " << info.nickname << " " 
-		<< cmd << " :Need more params" << CRLF;
+	buffer << "461 " << info.nickname << " " << cmd << " :Not enough parameters" << CRLF;
 	return buffer.str();
 }
 

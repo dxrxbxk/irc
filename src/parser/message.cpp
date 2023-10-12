@@ -61,6 +61,10 @@ bool	Message::has_trailing(void) const {
 	return !_trailing.empty();
 }
 
+bool	Message::has_dcc(void) const {
+	return !_dcc.empty();
+}
+
 
 const std::string& Message::command(void) const {
 	return _command;
@@ -86,10 +90,22 @@ std::string&	Message::trailing(void) {
 	return _trailing;
 }
 
+std::string	Message::full_dcc(void) const {
+	std::string entire_dcc = ":" ;
+	//append start of header
+	entire_dcc += '\x01';
+	for (std::size_t i = 0; i < _dcc.size(); i++) {
+		entire_dcc.append(_dcc[i]);
+		if (i < _dcc.size() - 1)
+			entire_dcc.append(" ");
+	}
+	entire_dcc += '\x01';
+	return entire_dcc;
+}
+
 std::size_t		Message::params_size(void) const {
 	return _middle.size();
 }
-
 
 // debug
 void Message::print(void) const {
@@ -119,8 +135,8 @@ void Message::print(void) const {
 		if (not _prefix.empty() or not _command.empty() or not _middle.empty())
 			msg.append(" ");
 		msg.append("dcc ");
-		for(list_str::const_iterator it = _dcc.begin(); it != _dcc.end(); ++it)
-			msg.append("[" + *it + "] ");
+		for (std::size_t i = 0; i < _dcc.size(); i++)
+			msg.append("[" + _dcc[i] + "] ");
 	}
 
 	if (not _trailing.empty()) {

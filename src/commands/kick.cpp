@@ -39,7 +39,7 @@ Command::ret_type	Kick::execute(void) {
 	Connexion& user = _server.get_conn(nickname);
 	channel.broadcast(":" + _conn.nickname() + " KICK "
 			+ channel_name + " " + nickname + " " + ":yeeeet" + CRLF);
-	channel.remove_user(user);
+	channel.rm_user_and_channel(user);
 	return 0;
 }
 

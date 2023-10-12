@@ -17,8 +17,6 @@ class Quit : public Command {
 
 	private:
 
-		bool	valid_mode(char c);
-
 };
 
 #endif

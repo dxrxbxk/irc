@@ -18,6 +18,7 @@
 # include "topic.hpp"
 # include "kick.hpp"
 # include "invite.hpp"
+# include "part.hpp"
 
 class Connexion;
 

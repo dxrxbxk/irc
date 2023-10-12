@@ -60,6 +60,7 @@ class Channel {
 		
 		void			add_user(Connexion&);
 		void			remove_user(Connexion&);
+		void			rm_user_and_channel(Connexion&);
 		void			print_users(void) const;
 
 

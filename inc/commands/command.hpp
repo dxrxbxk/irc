@@ -27,11 +27,13 @@ class Command {
 
 		virtual ret_type execute() = 0;
 
+
 	protected:
 
 		Message& _msg;
 		Connexion& _conn;
 		Server& _server;
+		const std::string	gen_reply(const std::string& text);
 };
 
 #endif

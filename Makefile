@@ -196,7 +196,6 @@ fclean: clean
 	@$(RM) $(NAME)
 
 
-
 # -- R E C O M P I L E --------------------------------------------------------
 
 re: fclean all
@@ -211,23 +210,3 @@ logger:
 
 $(HOOK):
 	ln -s $(ROOT)/config/pre-commit $@
-
-
-
-
-
-
-#invite.hpp
-#join.hpp
-#kick.hpp
-#mode.hpp
-#nick.hpp
-#part.hpp
-#pass.hpp
-#ping.hpp
-#pong.hpp
-#privmsg.hpp
-#quit.hpp
-#topic.hpp
-#user.hpp
-#who.hpp

@@ -22,6 +22,7 @@ CommandFactory::map_t CommandFactory::init(void) {
 	cmap["TOPIC"]   = &Topic::create;
 	cmap["KICK"]    = &Kick::create;
 	cmap["INVITE"]  = &Invite::create;
+	cmap["PART"]    = &Part::create;
 	// add more commands here...
 
 	return cmap;

@@ -71,12 +71,15 @@ void Poll::run(void) {
 		IOEvent& io          = data(_events[n]);
 
 		if (event & EPOLLRDHUP || event & EPOLLHUP) {
+			Logger::info("epoll HUP");
 			io.disconnect();
 		}
 		else if (event & EPOLLIN) {
+			Logger::info("epoll IN");
 			io.read();
 		}
 		else if (event & EPOLLOUT) {
+			Logger::info("epoll OUT");
 			io.write();
 		}
 	}

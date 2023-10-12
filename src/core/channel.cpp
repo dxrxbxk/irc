@@ -131,7 +131,7 @@ void	Channel::change_admin(Connexion& old) {
 }
 
 void	Channel::broadcast(const std::string& msg, const Connexion& sender) {
-	Logger::debug("BROADCAST");
+	Logger::debug("BROADCAST" + msg);
 	for (const_iterator it = _users.begin(); it != _users.end(); ++it) {
 		if (it->second != &sender) {
 			it->second->enqueue(msg);
@@ -140,7 +140,7 @@ void	Channel::broadcast(const std::string& msg, const Connexion& sender) {
 }
 
 void	Channel::broadcast(const std::string& msg) {
-	Logger::debug("BROADCAST");
+	Logger::debug("BROADCAST" + msg);
 	for (const_iterator it = _users.begin(); it != _users.end(); ++it) {
 		it->second->enqueue(msg);
 	}
@@ -154,10 +154,18 @@ void Channel::add_user(Connexion& user) {
 	_users[user.nickname()] = &user;
 }
 
+void	Channel::rm_user_and_channel(Connexion& user) {
+	user.leave_channel(*this);
+	_users.erase(user.nickname());
+	if (this->size() == 0) {
+		Server::shared().add_rm_channel(*this);
+	}
+}
+
 void	Channel::remove_user(Connexion& user) {
 	user.leave_channel(*this);
 	_users.erase(user.nickname());
-
+/*
 	if (is_op(user.nickname())) {
 		rm_op(user.nickname());
 		if (op_size() == 0 && size() > 0) {
@@ -165,9 +173,7 @@ void	Channel::remove_user(Connexion& user) {
 			this->broadcast(":" + _users.begin()->first + " MODE " + _name + " +o " + _users.begin()->first + CRLF);
 		}
 	}
-	if (this->size() == 0) {
-		Server::shared().add_rm_channel(*this);
-	}
+	*/
 }
 
 void	Channel::invite(const std::string &user) {

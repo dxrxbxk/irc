@@ -10,6 +10,7 @@ Quit::Quit(Connexion& conn, Message& msg)
 Quit::~Quit(void) {}
 
 Command::ret_type	Quit::execute(void) {
+//	_server.remove_newcomer(_conn);
 	return -1;
 }
 

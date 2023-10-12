@@ -80,8 +80,8 @@ void Server::run(void) {
 		_poller.run();
 //		Logger::info(utils::to_string(_channels.size()) + " channels");
 //		print_channels();
-		remove_rm_list();
 		rm_channels();
+		remove_rm_list();
 	}
 	Logger::end();
 }
@@ -198,6 +198,10 @@ void Server::accept_newcomer(Connexion& conn) {
 	_nicks[conn.nickname()] = &conn;
 }
 
+void	Server::remove_newcomer(const Connexion& conn) {
+	_nicks.erase(conn.nickname());
+}
+
 std::string& Server::motd(void) {
 	return _motd;
 }
@@ -232,18 +236,6 @@ Poll&	Server::poller(void) {
 	return _poller;
 }
 
-void Server::add_rm_channel(Channel& channel) {
-	_rm_channels.push(&channel);
-}
-
-void Server::rm_channels(void) {
-	while (!_rm_channels.empty())
-	{
-		Channel& channel = *_rm_channels.top();
-		_channels.erase(channel.name());
-		_rm_channels.pop();
-	}
-}
 
 void Server::add_rm_list(Connexion& conn) {
 	_rm_list.push(&conn);
@@ -260,6 +252,17 @@ void Server::remove_rm_list(void) {
 	}
 }
 
+void Server::add_rm_channel(Channel& channel) {
+	_rm_channels.push(&channel);
+}
 
+void Server::rm_channels(void) {
+	while (!_rm_channels.empty())
+	{
+		Channel& channel = *_rm_channels.top();
+		_channels.erase(channel.name());
+		_rm_channels.pop();
+	}
+}
 
 

@@ -42,6 +42,7 @@ const char* action_debug[] = {
 	"SKIP",
 	"INCREMENT",
 	"RESET",
+	"RESET_AND_INCR",
 	"ADD_PREFIX",
 	"ADD_COMMAND",
 	"ADD_MIDDLE",
@@ -57,7 +58,6 @@ void 	Parser::debug(void) {
 void	Parser::increment(void) { ++i; }
 
 void	Parser::reset(void) { i = 0; }
-
 
 void	Parser::addPrefix(void) {
 	std::string	prefix(msg - i, i);
@@ -223,7 +223,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 		{ DCC, ADD_DCC_PARAM }, /* SP */
 		{ DCC, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
-		{ TRAILING, RESET }, /* SOH */
+		{ TRAILING, ADD_DCC_PARAM }, /* SOH */
 		{ ERROR, P_ERROR }, /* NUL */
 	},
 	/* COMMAND_END */
@@ -273,6 +273,3 @@ const Parser::e_chartype	Parser::c_table[128] = {
     OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER,
     OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, OTHER, CTL
 };
-
-
-

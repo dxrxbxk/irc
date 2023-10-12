@@ -52,7 +52,7 @@ namespace RPL {
 	ret_type	user_on_channel(arg_type, const std::string&, const std::string&);
 	ret_type	no_text_to_send(arg_type);
 	ret_type	invite_only_chan(arg_type, const std::string&);
-
+	ret_type	no_recipient(arg_type, const std::string&);
 
 	enum code
 	{

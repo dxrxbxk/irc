@@ -29,6 +29,7 @@ Connexion::Connexion(void)
 
 Connexion::~Connexion(void) {
 	leave_channels();
+
 }
 
 Connexion::Connexion(int fd)
@@ -69,6 +70,10 @@ Connexion& Connexion::operator=(const Connexion &other) {
 
 // -- connexion accessors ------------------------------------------------------
 
+const std::string Connexion::fullname(void) {
+		return (nickname() + "!" + username() + "@" + hostname());
+}
+
 void Connexion::login(void) {
 	_registered = true;
 	ClientInfo&	info = this->info();
@@ -102,10 +107,10 @@ void Connexion::enter_channel(Channel& channel) {
 void Connexion::leave_channel(Channel& channel) {
 //	channel.remove_user(*this);
 	_channels.erase(&channel);
-	Logger::info("channel size: " + utils::to_string(channel.size()));
-	if (channel.size() == 0) {
-		Server::shared().remove_channel(channel.name());
-	}
+	//Logger::info("channel size: " + utils::to_string(channel.size()));
+//	if (channel.size() == 0) {
+//		Server::shared().remove_channel(channel.name());
+//	}
 }
 
 void Connexion::leave_channels(void) {
@@ -200,8 +205,8 @@ void Connexion::read(void) {
 				int ret = cmd->execute();
 				delete cmd;
 				if (ret == -1) {
-					disconnect();
-					return ;
+				//	disconnect();
+//					return ;
 				}
 			}
 		} catch (const std::exception& e) {
