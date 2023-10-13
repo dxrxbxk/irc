@@ -149,9 +149,10 @@ void	Bot::del_event(void) {
 }
 
 void	Bot::run(void) {
+	enqueue("PASS caca\r\n");
 	enqueue("NICK " + nickname() + "\r\n");
 	enqueue("USER " + username() + " 0 * :" + hostname() + "\r\n");
-	enqueue("JOIN #test\r\n");
+	enqueue(":" + fullname() + " JOIN #qwe\r\n");
 	while (1) {
 		poller();
 	}

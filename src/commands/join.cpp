@@ -14,6 +14,8 @@ Command::ret_type	Join::execute(void) {
 		return 0;
 	}
 
+	Logger::debug("JOIN: " + _conn.fullname());
+
 	if (_server.channel_exist(_msg.params_first())) {
 		Channel& channel = _server.channel(_msg.params_first());
 		if (channel.invite_only() && not channel.is_invited(_conn.nickname())) {
@@ -21,12 +23,18 @@ Command::ret_type	Join::execute(void) {
 			return 0;
 		}
 		_conn.enter_channel(channel);
+		channel.broadcast(":" + _conn.fullname() + " JOIN " + _msg.params_first() + CRLF);
+		if (not channel.topic().empty())
+			channel.broadcast(RPL::topic(_conn.info(), channel.name(), channel.topic()));
 		// channel.add_user(_conn);
 	}
 	else {
 		_conn.enqueue("MODE " + _msg.params_first() + " +o " + _conn.nickname() + CRLF);
 		Channel& channel = _server.create_channel(_msg.params_first(), _conn);
 		_conn.enter_channel(channel);
+		_conn.enqueue(":" + _conn.fullname() + " JOIN " + _msg.params_first() + CRLF);
+		if (not channel.topic().empty())
+		    _conn.enqueue(RPL::topic(_conn.info(), channel.name(), channel.topic()));
 	}
 	
 	return 0;

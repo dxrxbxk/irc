@@ -1,4 +1,5 @@
 #include "part.hpp"
+#include "numerics.hpp"
 #include "server.hpp"
 
 Part::Part(Connexion& c, Message& m) : Command(c, m) {}
@@ -24,7 +25,8 @@ Command::ret_type	Part::execute(void)
 	}
 
 //	channel.broadcast(":" + _conn.nickname() + " PART " + param + CRLF, _conn);
-	channel.broadcast(gen_reply(param));
+	channel.broadcast(gen_reply(""));
+	_conn.enqueue(RPL::not_on_channel(_conn.info(), channel.name()));
 //	_conn.enqueue(":" + _conn.nickname() + " PART " + param + CRLF);
 	channel.rm_user_and_channel(_conn);
 	return 0;

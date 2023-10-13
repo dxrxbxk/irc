@@ -63,6 +63,10 @@ Privmsg::Privmsg(Connexion& conn, Message& msg)
 			}
 			Channel& channel = _server.get_channel(_msg.params_first());
 			Logger::debug("PRIVMSG: trailing");
+			if (not	channel.user_in(_conn.nickname())) {
+				_conn.enqueue(RPL::not_on_channel(_conn.info(), _msg.params_first()));
+				return 0;
+			}
 			channel.broadcast(gen_reply(_msg.trailing()), _conn);
 		}
 		else {

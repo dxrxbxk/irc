@@ -19,9 +19,9 @@ User::User(Connexion& conn, Message& msg)
 User::~User(void) {}
 
 void	User::add_user(ClientInfo& info) {
-	info.username.  swap(_msg.params(USERNAME));
-	info.hostname.  swap(_msg.params(HOSTNAME));
-	info.realname.  swap(_msg.trailing());
+	info.username.swap(_msg.params(USERNAME));
+	info.hostname.swap(_msg.params(HOSTNAME));
+	info.realname.swap(_msg.trailing());
 }
 
 Command::ret_type User::execute(void) {
@@ -41,6 +41,7 @@ Command::ret_type User::execute(void) {
 	ClientInfo&	info = _conn.info();
 
 	add_user(info);
+	Logger::debug("USER: " + _conn.fullname());
 	_conn.tracker(USER);
 	if (_conn.can_register() && not _conn.registered()) {
 		_conn.login();
