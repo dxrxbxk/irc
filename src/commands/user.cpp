@@ -25,6 +25,10 @@ void	User::add_user(ClientInfo& info) {
 }
 
 Command::ret_type User::execute(void) {
+	if (!(_conn.tracker() & PASS)) {
+	//	_conn.enqueue(RPL::passwd_mismatch(_conn.info()));
+		return -1;
+	}
 	if (_msg.params_size() != 3 || not _msg.has_trailing()) {
 		return 0;
 	}

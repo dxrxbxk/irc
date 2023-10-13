@@ -9,7 +9,7 @@ Pass::Pass(Connexion& conn, Message& msg)
 Pass::~Pass(void) {}
 
 Command::ret_type Pass::execute(void) {
-	if (_conn.tracker() & PASS) {
+	if (_conn.registered()) {
 		_conn.enqueue(RPL::already_registered(_conn.info()));
 		return 0;
 	}

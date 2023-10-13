@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "server.hpp"
+#include "types.hpp"
 #include "utils.hpp"
 #define BUFFER_SIZE 1024
 
@@ -106,6 +107,9 @@ void	Server::accept(void) {
 
 	Connexion& conn = _conns[cfd] = Connexion(cfd);
 	_poller.add_event(conn);
+
+	if (not has_password())
+		conn.tracker(PASS);
 }
 
 
@@ -167,7 +171,7 @@ Channel&	Server::get_channel(const std::string& channel_name) {
 Channel& Server::create_channel(const std::string& name, Connexion& creator) {
 	// Channel& channel = _channels[name] = Channel(name, creator);
 
-	creator.enqueue(":" + creator.nickname() + " NICK " + "@" + creator.nickname() + CRLF);
+	//creator.enqueue(":" + creator.nickname() + " MODE " + "+o" + creator.nickname() + CRLF);
 //	_server.ch_nick(_conn, first);
 	return _channels[name] = Channel(name, creator);
 }
@@ -202,8 +206,16 @@ void	Server::remove_newcomer(const Connexion& conn) {
 	_nicks.erase(conn.nickname());
 }
 
-std::string& Server::motd(void) {
-	return _motd;
+vec_str		Server::motd(void) {
+	std::string::size_type	pos;
+	vec_str					l_msg;
+	std::string				motd = _motd;
+
+	while ((pos = motd.find("\r\n")) != std::string::npos) {
+		l_msg.push_back(motd.substr(0, pos + 2));
+		motd.erase(0, pos + 2);
+	}
+	return l_msg;
 }
 
 // -- public accessors --------------------------------------------------------

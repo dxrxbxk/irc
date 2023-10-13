@@ -11,6 +11,7 @@ Quit::~Quit(void) {}
 
 Command::ret_type	Quit::execute(void) {
 //	_server.remove_newcomer(_conn);
+	_server.add_rm_list(_conn);
 	return -1;
 }
 

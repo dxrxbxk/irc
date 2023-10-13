@@ -92,7 +92,7 @@ RPL::ret_type	RPL::channel_is_full(arg_type info, const std::string& channel) {
 
 RPL::ret_type	RPL::chano_privs_needed(arg_type info, const std::string& channel) {
 	std::stringstream	buffer;
-	buffer << "482 " << info.nickname << " " << channel << " :You're not channel operator" << CRLF;
+	buffer << "482 " << channel << " :You're not channel operator" << CRLF;
 	return buffer.str();
 }
 

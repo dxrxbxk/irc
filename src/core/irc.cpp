@@ -26,7 +26,7 @@ int Irc::start(const std::string& port, const std::string& password) {
 	try {
 		Signal::signal_ignore();
 
-		ServerInfo info("straboul", "127.0.0.1", port, "");
+		ServerInfo info("straboul", "0.0.0.0", port, "");
 #if defined CRYPT
 		std::string crypt_pass = encryptPassword(password, gensalt());
 		info.add_password(crypt_pass);
@@ -36,7 +36,7 @@ int Irc::start(const std::string& port, const std::string& password) {
 
 		std::cout << info.password << std::endl;
 
-		Shared_fd sock = create("127.0.0.1", port);
+		Shared_fd sock = create("0.0.0.0", port);
 
 #if defined PIPE
 		Signal::signal_manager();

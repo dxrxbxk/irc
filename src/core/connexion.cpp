@@ -79,7 +79,12 @@ void Connexion::login(void) {
 	ClientInfo&	info = this->info();
 	enqueue(RPL::welcome(info));
 	enqueue(RPL::motd_start(info));
-	enqueue(RPL::motd(info, Server::shared().motd()));
+
+	vec_str motd = Server::shared().motd();
+	for (vec_str::const_iterator it = motd.begin(); it != motd.end(); ++it) {
+		enqueue(RPL::motd(info, *it));
+	}
+
 	enqueue(RPL::end_of_motd(info));
 }
 
@@ -202,12 +207,8 @@ void Connexion::read(void) {
 				Logger::info(msg.command() + " command not found");
 			}
 			else {
-				int ret = cmd->execute();
+				cmd->execute();
 				delete cmd;
-				if (ret == -1) {
-				//	disconnect();
-//					return ;
-				}
 			}
 		} catch (const std::exception& e) {
 			Logger::info("Error" + std::string(e.what()));

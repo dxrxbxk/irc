@@ -27,7 +27,7 @@ Command::ret_type Nick::execute(void) {
 
 		Logger::debug(first);
 	if (!(_conn.tracker() & PASS)) { //hein ?
-		_conn.enqueue(RPL::passwd_mismatch(_conn.info()));
+//		_conn.enqueue(RPL::passwd_mismatch(_conn.info()));
 		return -1;
 	}
 
@@ -65,7 +65,6 @@ Command::ret_type Nick::execute(void) {
 		_conn.nickname(first);
 		_conn.tracker(NICK);
 		_server.accept_newcomer(_conn);
-		Logger::debug(first);
 		_conn.enqueue(":" + _conn.nickname() + " NICK " + _conn.nickname() + CRLF);
 
 		if (_conn.can_register() && not _conn.registered()) {

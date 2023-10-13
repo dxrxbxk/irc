@@ -42,7 +42,6 @@ struct ClientInfo {
 	std::string	hostname;
 	std::string	realname;
 	std::string	nickname;
-
 };
 
 class Connexion : public IOEvent {

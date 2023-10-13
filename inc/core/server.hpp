@@ -102,7 +102,7 @@ class Server : public IOEvent {
 		void				rm_channels(void);
 
 		void				motd(const std::string&);
-		std::string&		motd(void);
+		vec_str				motd(void);
 
 
 		// -- public static methods --------------------------------------------
