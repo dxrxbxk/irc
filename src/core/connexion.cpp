@@ -110,12 +110,7 @@ void Connexion::enter_channel(Channel& channel) {
 }
 
 void Connexion::leave_channel(Channel& channel) {
-//	channel.remove_user(*this);
 	_channels.erase(&channel);
-	//Logger::info("channel size: " + utils::to_string(channel.size()));
-//	if (channel.size() == 0) {
-//		Server::shared().remove_channel(channel.name());
-//	}
 }
 
 void Connexion::leave_channels(void) {
@@ -166,25 +161,14 @@ int		Connexion::fd(void) const {
 }
 
 void	Connexion::write(void) {
-
-	/* temporary CRLF check during development */
-	// if (_buffer_out.size() < 2)
-	// 	throw std::runtime_error("invalid message");
-	// if (_buffer_out[_buffer_out.size() - 2] != '\r'
-	// and _buffer_out[_buffer_out.size() - 1] != '\n')
-	// 	throw std::runtime_error("missing CRLF");
-	/* ************************************** */
-
-	Logger::send(_buffer_out);
+//	Logger::send(_buffer_out);
 	if (::send(_socket, _buffer_out.c_str(), _buffer_out.size(), 0) == -1) {
-		// clear buffer if error is EAGAIN
-		// EAGAIN means that the socket is not ready for writing
+		throw std::runtime_error(handleSysError("send"));
 	}
 	_buffer_out.clear();
 	Server::shared().poller().mod_event(*this, EPOLLIN);
 	_wait_out = false;
 }
-
 
 void Connexion::read(void) {
 
@@ -197,8 +181,8 @@ void Connexion::read(void) {
 		Logger::recv(*i);
 
 		try {
-			// parse raw message
 			Message msg = Parser::parse(*i);
+			
 			msg.print();
 
 			Command* cmd = CommandFactory::create(*this, msg);
@@ -266,8 +250,6 @@ void Connexion::nickname(std::string& nickname) {
 	_info.nickname.swap(nickname);
 }
 
-
-
 std::string&	Connexion::username(void) {
 	return _info.username;
 }
@@ -283,8 +265,6 @@ void Connexion::username(const std::string& username) {
 void Connexion::username(std::string& username) {
 	_info.username.swap(username);
 }
-
-
 
 std::string&	Connexion::hostname(void) {
 	return _info.hostname;

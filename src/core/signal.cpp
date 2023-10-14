@@ -13,7 +13,6 @@
 #include "signal.hpp"
 #include "server.hpp"
 
-
 // -- private constructors ----------------------------------------------------
 
 Signal::Signal(void)
@@ -93,7 +92,6 @@ void	Signal::signal_default(void) {
 	 || ::signal(SIGTSTP, SIG_DFL) == SIG_ERR)
 		throw std::runtime_error(handleSysError("signal"));
 }
-
 
 // -- public IOEvent interface ------------------------------------------------
 

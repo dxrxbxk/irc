@@ -1,10 +1,21 @@
 #include "bot.hpp"
 #include "utils.hpp"
 
-//cree un bot qui se connecte au serveur irc et qui rejoint le channel #test
+Bot::Bot(const std::string &addr, const std::string &port, const std::string &pass) :
+	_sfd(-1),
+	_epoll_fd(-1),
+	_buffer_in(),
+	_buffer_out(),
+	_wait_out(false),  
+	_nickname("bot"),
+	_username("Mikey"), 
+	_hostname("bot.42.fr"),
+	_servername("irc.42.fr"),
+	_running(false),
+	_pass(pass)
 
-Bot::Bot() : _nickname("bot"), _username("Mikey"), _hostname("bot.42.fr") {
-	create_socket("localhost", "8080");
+{
+	create_socket(addr.c_str(), port.c_str());
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1) {
 		throw std::runtime_error(handleSysError("epoll_create"));
@@ -114,18 +125,31 @@ void Bot::write(void) {
 
 }
 
+void	Bot::ddos(const std::string& msg) {
+	if (::send(_sfd, msg.c_str(), msg.size(), 0) == -1) {
+		throw std::runtime_error(handleSysError("send"));
+	}
+}
+
 int Bot::fd(void) const {
 	return _sfd;
 }
 
+void	Bot::stop(void) {
+	_running = false;
+}
+
 void Bot::disconnect(void) {
+	std::cout << "disconnect" << std::endl;
 	close(_sfd);
+	close(_epoll_fd);
+	stop();
 }
 
 void	Bot::add_event(void) {
 	struct epoll_event ev;
 	memset(&ev, 0, sizeof(struct epoll_event));
-	ev.events = EPOLLIN | EPOLLERR | EPOLLHUP | EPOLLOUT;
+	ev.events = EPOLLOUT | EPOLL_ERRORS;
 	ev.data.fd = _sfd;
 	if (epoll_ctl(_epoll_fd, EPOLL_CTL_ADD, _sfd, &ev) == -1) {
 		throw std::runtime_error(handleSysError("epoll_ctl: add"));
@@ -135,7 +159,7 @@ void	Bot::add_event(void) {
 void	Bot::mod_event(int flag) {
 	struct epoll_event ev;
 	memset(&ev, 0, sizeof(struct epoll_event));
-	ev.events = flag | EPOLLERR | EPOLLHUP;
+	ev.events = flag | EPOLL_ERRORS;
 	ev.data.fd = _sfd;
 	if (epoll_ctl(_epoll_fd, EPOLL_CTL_MOD, _sfd, &ev) == -1) {
 		throw std::runtime_error(handleSysError("epoll_ctl: mod"));
@@ -148,17 +172,21 @@ void	Bot::del_event(void) {
 	}
 }
 
-void	Bot::run(void) {
-	enqueue("PASS caca\r\n");
+void	Bot::login(void) {
+	enqueue("PASS " + _pass + "\r\n");
 	enqueue("NICK " + nickname() + "\r\n");
 	enqueue("USER " + username() + " 0 * :" + hostname() + "\r\n");
-	enqueue(":" + fullname() + " JOIN #qwe\r\n");
-	while (1) {
+}
+
+void	Bot::run(void) {
+	login();
+	_running = true;
+	while (_running) {
 		poller();
 	}
 }
 
-#define MAX_EVENTS 10
+#define MAX_EVENTS 100
 
 void	Bot::poller(void) {
 	struct epoll_event ev[MAX_EVENTS];
@@ -171,18 +199,20 @@ void	Bot::poller(void) {
 
 	for (int i = 0; i < nfds; ++i) {
 
-		if (ev[i].events & EPOLLERR || ev[i].events & EPOLLHUP) {
+		if (ev[i].events & EPOLL_ERRORS) {
+			ERROR("epoll error");
 			disconnect();
 		}
 		else if (ev[i].events & EPOLLIN) {
+			PRINT("EPOLLIN");
 			read();
 		}
 		else if (ev[i].events & EPOLLOUT) {
+			PRINT("EPOLLOUT");
 			write();
 		}
 	}
 }
-
 
 void	Bot::create_socket(const char *host, const char *port)
 {
@@ -221,5 +251,3 @@ void	Bot::create_socket(const char *host, const char *port)
 	}
 	_sfd = sfd;
 }
-
-

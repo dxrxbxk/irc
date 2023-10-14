@@ -116,6 +116,7 @@ void	Server::accept(void) {
 l_str	Server::check_crlf(void) {
 	std::string::size_type	pos;
 	l_str					l_msg;
+
 	while ((pos = _buffer_in.find("\r\n")) != std::string::npos) {
 		l_msg.push_back(_buffer_in.substr(0, pos + 2));
 		_buffer_in.erase(0, pos + 2);
@@ -138,12 +139,6 @@ void Server::disconnect(void) {
 	Logger::info("server disconnected");
 }
 
-// -- channel methods ---------------------------------------------------------
-/*
-bool Server::in_channel(std::string& channel_name, std::string& user) {
-	return _channels[channel_name].in_channel(user);
-}
-*/
 void	Server::broadcast(const std::string& msg) {
 	Logger::debug("server BROADCAST to users");
 	for (nick_iterator it = _nicks.begin(); it != _nicks.end(); ++it) {
@@ -167,12 +162,7 @@ Channel&	Server::get_channel(const std::string& channel_name) {
 	return _channels[channel_name];
 }
 
-
 Channel& Server::create_channel(const std::string& name, Connexion& creator) {
-	// Channel& channel = _channels[name] = Channel(name, creator);
-
-	//creator.enqueue(":" + creator.nickname() + " MODE " + "+o" + creator.nickname() + CRLF);
-//	_server.ch_nick(_conn, first);
 	return _channels[name] = Channel(name, creator);
 }
 
@@ -248,7 +238,6 @@ Poll&	Server::poller(void) {
 	return _poller;
 }
 
-
 void Server::add_rm_list(Connexion& conn) {
 	_rm_list.push(&conn);
 }
@@ -276,5 +265,3 @@ void Server::rm_channels(void) {
 		_rm_channels.pop();
 	}
 }
-
-

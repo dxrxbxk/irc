@@ -18,6 +18,8 @@ class Pass : public Command {
 
 	private:
 
+		int		check_password(const std::string&);
+
 };
 
 #endif

@@ -1,7 +1,7 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   app.hpp                                            :+:      :+:    :+:   */
+/*   irc.hpp                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
@@ -39,7 +39,6 @@
 # include "sharedfd.hpp"
 # include "server.hpp"
 
-
 class Irc {
 	public:
 		Irc(void);
@@ -53,6 +52,8 @@ class Irc {
 		static int	create(const std::string&, const std::string&);
 		static int	create_socket(const std::string&);
 		static void getSocketInfo(const int);
+		static void	check_pipe(void);
+		static void	check_crypt(ServerInfo&, const std::string&);
 
 };
 

@@ -59,12 +59,11 @@ int		Poll::check(const int nfds) {
 
 void Poll::run(void) {
 
-	// wait for events
 	const int nfds = ::epoll_wait(_instance, _events.data(), _events.size(), -1);
 
 	if (check(nfds) == -1)
 		throw std::runtime_error(handleSysError("epoll_wait"));
-	// loop over events
+
 	for (int n = 0; n < nfds; ++n) {
 
 		const uint32_t event = _events[n].events;
@@ -84,7 +83,6 @@ void Poll::run(void) {
 		}
 	}
 }
-
 
 IOEvent& Poll::data(epoll_event& event) {
 	return *static_cast<IOEvent*>(event.data.ptr);

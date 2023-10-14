@@ -8,17 +8,7 @@ Pass::Pass(Connexion& conn, Message& msg)
 
 Pass::~Pass(void) {}
 
-Command::ret_type Pass::execute(void) {
-	if (_conn.registered()) {
-		_conn.enqueue(RPL::already_registered(_conn.info()));
-		return 0;
-	}
-
-	if (not _msg.has_params()) {
-		_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.params_first()));
-		return -1;
-	}
-
+int		Pass::check_password(const std::string& password) {
 #if defined CRYPT
 	static std::string salt = extractSalt(Server::shared().password());
 
@@ -34,6 +24,23 @@ Command::ret_type Pass::execute(void) {
 		return -1;
 	}
 #endif
+	return 0;
+}
+
+Command::ret_type Pass::execute(void) {
+	if (_conn.registered()) {
+		_conn.enqueue(RPL::already_registered(_conn.info()));
+		return 0;
+	}
+
+	if (not _msg.has_params()) {
+		_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.params_first()));
+		return -1;
+	}
+
+	if (check_password(_msg.params_first()) == -1) {
+		_server.add_rm_list(_conn);
+	}
 
 	_conn.tracker(PASS);
 	return 0;

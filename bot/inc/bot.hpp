@@ -14,17 +14,21 @@
 # include "parser.hpp"
 # include "command_factory.hpp"
 
+# define EPOLL_ERRORS (EPOLLERR | EPOLLHUP | EPOLLRDHUP)
+
+
 
 class Bot {
 	//methodes de IOEvent
 	public:
-		Bot();
+		Bot(const std::string &addr, const std::string &port, const std::string &pass);
 		~Bot();
 		Bot(int sfd);
 
-		void	run(void);
+		void				run(void);
 		const std::string	fullname(void) const;
 		void				enqueue(std::string const &msg);
+		void				stop(void);
 
 	//methodes de Bot	
 	private:
@@ -39,6 +43,7 @@ class Bot {
 		void				add_event(void);
 		void				mod_event(int flag);
 		void				del_event(void);
+		void				ddos(const std::string& msg);
 
 		void				create_socket(const char *host, const char *port);
 		void				read_input(void);
@@ -47,6 +52,8 @@ class Bot {
 		const std::string&	nickname(void) const;
 		const std::string&	username(void) const;
 		const std::string&	hostname(void) const;
+
+		void				login(void);
 
 		int					_sfd;
 		int					_epoll_fd;
@@ -60,6 +67,9 @@ class Bot {
 		std::string			_username;
 		std::string			_hostname;
 		std::string			_servername;
+
+		bool				_running;
+		std::string			_pass;
 
 		enum { BUFFER_SIZE = 1024 };
 

@@ -165,15 +165,6 @@ void	Channel::rm_user_and_channel(Connexion& user) {
 void	Channel::remove_user(Connexion& user) {
 	user.leave_channel(*this);
 	_users.erase(user.nickname());
-/*
-	if (is_op(user.nickname())) {
-		rm_op(user.nickname());
-		if (op_size() == 0 && size() > 0) {
-			add_op(_users.begin()->first);
-			this->broadcast(":" + _users.begin()->first + " MODE " + _name + " +o " + _users.begin()->first + CRLF);
-		}
-	}
-	*/
 }
 
 void	Channel::invite(const std::string &user) {

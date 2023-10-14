@@ -12,41 +12,53 @@
 
 #include "irc.hpp"
 #include "server.hpp"
-#define BUFFER 1024
-#define BACKLOG 5
 
-#include "crypt.hpp"
+#define BACKLOG 50
 
 Irc::Irc(void) {}
 
 Irc::~Irc(void) {}
 
-int Irc::start(const std::string& port, const std::string& password) {
+void	Irc::check_pipe(void) {
+#if defined PIPE
+		Signal::signal_manager();
+#else
+		Signal::signal_nopipe_manager();
+#endif
+}
 
-	try {
-		Signal::signal_ignore();
-
-		ServerInfo info("straboul", "0.0.0.0", port, "");
+void	Irc::check_crypt(ServerInfo& info, const std::string& password) {
 #if defined CRYPT
 		std::string crypt_pass = encryptPassword(password, gensalt());
 		info.add_password(crypt_pass);
 #else
 		info.add_password(password);
 #endif
+}
 
-		std::cout << info.password << std::endl;
+int Irc::start(const std::string& port, const std::string& password) {
 
-		Shared_fd sock = create("0.0.0.0", port);
+	try {
+		Signal::signal_ignore();
 
-#if defined PIPE
-		Signal::signal_manager();
-#else
-		Signal::signal_nopipe_manager();
-#endif
+		std::string	address = "debian";
+
+		ServerInfo info("Backrooms", address, port, "");
+
+		check_crypt(info, password);
+
+		Logger::info("Starting server, password: " + info.password + "\n");
+
+		Shared_fd sock = create(address, port);
+
 		Server& server = Server::shared();
 
 		server.init(info, sock);
+
+		check_pipe();
+
 		server.run();
+
 		return EXIT_SUCCESS;
 
 	} catch (const std::exception &e) {
@@ -58,38 +70,14 @@ int Irc::start(const std::string& port, const std::string& password) {
 
 void Irc::init(struct addrinfo *hints) {
 	memset(hints, 0, sizeof(struct addrinfo));
-	hints->ai_family = AF_INET;
-	hints->ai_socktype = SOCK_STREAM;
+	hints->ai_family = AF_UNSPEC;
+	hints->ai_socktype = SOCK_STREAM; /* Stream socket */
 	hints->ai_flags = AI_PASSIVE;
 	hints->ai_protocol = 0; /* Any protocol */
 	hints->ai_canonname = NULL;
 	hints->ai_addr = NULL;
 	hints->ai_next = NULL;
 }
-
-/*
-   int Irc::create_socket(const std::string& port) {
-
-   const struct sockaddr_in addr = {
-   AF_INET, htons(utils::to_integer<unsigned short>
-   (port, "invalid port")), INADDR_ANY, {0},
-   };
-
-   const int socket = ::socket(AF_INET, SOCK_STREAM, 0);
-
-   if (socket == -1)
-   throw std::runtime_error(handleSysError("socket"));
-
-
-   if (::bind(socket, (struct sockaddr *)&addr, sizeof(addr)) == -1)
-   throw std::runtime_error(handleSysError("bind"));
-
-   if (::listen(socket, SOMAXCONN) == -1)
-   throw std::runtime_error(handleSysError("listen"));
-
-   return socket;
-   }
-   */
 
 void Irc::getSocketInfo(const int fd) {
 	struct sockaddr_in peer;
@@ -99,6 +87,7 @@ void Irc::getSocketInfo(const int fd) {
 	memset(&peer, 0, sizeof(struct sockaddr));
 	if (getsockname(fd, (struct sockaddr *)&peer, &addrlen) == -1)
 		throw std::runtime_error(handleSysError("getsockname"));
+
 	std::cout << "IP address: " << custom_inet_ntoa(peer.sin_addr) << std::endl;
 	std::cout << "Port: " << ntohs(peer.sin_port) << std::endl;
 }
@@ -114,7 +103,9 @@ int		Irc::create(const std::string& node, const std::string& service) {
 	std::cout << "Creating an endpoint for communication" << std::endl;
 
 	init(&hints);
+
 	ret_gai = getaddrinfo(node.c_str(), service.c_str(), &hints, &result);
+
 	if (ret_gai != 0) {
 		throw std::runtime_error(handleGaiError(ret_gai));
 	}
@@ -141,6 +132,7 @@ int		Irc::create(const std::string& node, const std::string& service) {
 		throw std::runtime_error(handleSysError("bind"));
 	else
 		getSocketInfo(sfd);
+
 	if (listen(sfd, BACKLOG) == -1)
 		throw std::runtime_error(handleSysError("listen"));
 
