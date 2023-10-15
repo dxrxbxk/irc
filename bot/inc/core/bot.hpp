@@ -55,6 +55,8 @@ class Bot {
 		const std::string&	username(void) const;
 		const std::string&	hostname(void) const;
 
+		void				handle_numerics(Message& msg);
+
 		void				login(void);
 
 		int					_sfd;

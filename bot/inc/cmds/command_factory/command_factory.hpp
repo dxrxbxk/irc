@@ -12,6 +12,7 @@
 # include "join.hpp"
 # include "part.hpp"
 # include "joke.hpp"
+# include "invite.hpp"
 
 class Bot;
 

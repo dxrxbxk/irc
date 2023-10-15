@@ -38,15 +38,15 @@ Invite::Invite(Connexion& c, Message& m) : Command(c, m) {}
 Invite::~Invite(void) {}
 
 Command::ret_type	Invite::execute(void) {
-	std::string nickname = _msg.params(0);
-	std::string channel_name = _msg.params(1);
-	Logger::debug("channel name : " + channel_name);
-	Logger::debug("nickname : " + nickname);
+	//Logger::debug("channel name : " + channel_name);
+	//Logger::debug("nickname : " + nickname);
 
 	if (_msg.params_size() < 2) {
 		_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
 		return 0;
 	}
+	std::string nickname = _msg.params(0);
+	std::string channel_name = _msg.params(1);
 	Channel& channel = _server.channel(channel_name);
 
 	if (not _server.nick_exist(nickname)) {

@@ -72,6 +72,11 @@ bool	is_numerics(const std::string& str) {
 	return true;
 }
 
+void	Bot::handle_numerics(Message& msg) {
+	if (msg.command() == "341")
+		msg.trailing().push_back("invite");
+}
+
 
 void Bot::read(void) {
 	read_input();
@@ -88,8 +93,10 @@ void Bot::read(void) {
 
 			msg.print();
 
-			if (not is_numerics(msg.command())) {
-				Command* cmd = CommandFactory::create(*this, msg);
+			handle_numerics(msg);
+
+//			if (not is_numerics(msg.command())) {
+			Command* cmd = CommandFactory::create(*this, msg);
 
 			if (cmd == NULL) {
 				//Logger::info(msg.command() + " command not found");
@@ -99,7 +106,7 @@ void Bot::read(void) {
 				cmd->execute();
 				delete cmd;
 			}
-			}
+//			}
 		} catch (const std::exception& e) {
 			ERROR(e.what());
 		}

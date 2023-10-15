@@ -12,6 +12,7 @@ CommandFactory::map_t CommandFactory::init(void) {
 
 	cmap["hello"]     = &Hello::create;
 	cmap["join"]      = &Join::create;
+	cmap["invite"]    = &Invite::create;
 	cmap["joke"]      = &Joke::create;
 	cmap["leave"]     = &Part::create;
 	return cmap;
