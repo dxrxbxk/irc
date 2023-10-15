@@ -11,6 +11,7 @@
 /* ************************************************************************** */
 
 #include "message.hpp"
+#include <string>
 
 Message::Message() {
 }
@@ -32,7 +33,8 @@ void	Message::addMiddle(std::string& middle) {
 }
 
 void	Message::addTrailing(std::string& trailing) {
-	_trailing.swap(trailing);
+	_trailing.push_back("");
+	_trailing.back().swap(trailing);
 }
 
 void	Message::addDccParam(std::string& param) {
@@ -91,8 +93,16 @@ std::string&	Message::params(const std::size_t index) {
 	return _middle[index];
 }
 
-std::string&	Message::trailing(void) {
+vec_str&	Message::trailing(void) {
 	return _trailing;
+}
+
+std::string&	Message::trailing_first(void) {
+	return _trailing.front();
+}
+
+std::size_t	Message::trailing_size(void) const {
+	return _trailing.size();
 }
 
 std::string	Message::full_dcc(void) const {
@@ -145,7 +155,12 @@ void Message::print(void) const {
 	}
 
 	if (not _trailing.empty()) {
-		msg.append("trailing [" + _trailing + "]");
+
+		if (not _prefix.empty() or not _command.empty() or not _middle.empty())
+			msg.append(" ");
+		msg.append("trailing ");
+		for (std::size_t i = 0; i < _trailing.size(); i++)
+			msg.append("[" + _trailing[i] + "] ");
 	}
 	PRINT(msg);
 }

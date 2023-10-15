@@ -6,7 +6,12 @@
 
 # include "message.hpp"
 # include "command.hpp"
+# include "utils.hpp"
+
 # include "hello.hpp"
+# include "join.hpp"
+# include "part.hpp"
+# include "joke.hpp"
 
 class Bot;
 

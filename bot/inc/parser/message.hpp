@@ -48,7 +48,9 @@ class Message {
 		l_str&				params(void);
 		std::string&		params_first(void);
 		std::size_t			params_size(void) const;
-		std::string&		trailing(void);
+		vec_str&			trailing(void);
+		std::size_t			trailing_size(void) const;
+		std::string&		trailing_first(void);
 		std::string			full_dcc(void) const;
 
 		std::string			nickname(void) const;
@@ -69,7 +71,8 @@ class Message {
 		std::string	_command;
 
 		vec_str		_middle;
-		std::string	_trailing;
+//		std::string	_trailing;
+		vec_str		_trailing;
 		vec_str		_dcc;
 };
 

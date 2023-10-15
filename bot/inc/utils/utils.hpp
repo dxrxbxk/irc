@@ -23,6 +23,8 @@
 # include <sys/socket.h>
 # include <unistd.h>
 # include <fcntl.h>
+# include <time.h>
+# include <stdlib.h>
 
 //void				readSignalPipe(void);
 
@@ -31,6 +33,7 @@ std::string			handleSysError(const std::string& syscall);
 
 std::string			custom_inet_ntoa(struct in_addr addr);
 std::string			intToString(int num);
+int					myrand(void);
 
 
 void setnonblocking(const int);

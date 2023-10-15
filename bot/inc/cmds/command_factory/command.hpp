@@ -29,7 +29,7 @@ class Command {
 
 		Message& _msg;
 		Bot&	_conn;
-		const std::string	gen_reply(const std::string& text);
+		const std::string	chan_reply(const std::string& text);
 };
 
 #endif

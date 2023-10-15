@@ -82,6 +82,9 @@ void	Parser::addMiddle(void) {
 void	Parser::addTrailing(void) {
 	std::string	trailing(msg - i, i);
 	i = 0;
+	//to lower trailing
+	for (std::string::iterator it = trailing.begin(); it != trailing.end(); ++it)
+		*it = std::tolower(*it);
 	request.addTrailing(trailing);
 }
 
@@ -183,7 +186,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 	},
 	/* PARAMS */
 	{
-		{ TRAILING, INCREMENT }, /* COLON */
+		{ TRAILING, SKIP }, /* COLON */
 		{ ERROR, P_ERROR }, /* LF */
 		{ ERROR, P_ERROR }, /* CR */
 		{ ERROR, P_ERROR }, /* SP */
@@ -210,7 +213,7 @@ Parser::transition		Parser::t_table[Parser::S_SIZE][Parser::CT_SIZE] = {
 		{ TRAILING, INCREMENT }, /* COLON */
 		{ ERROR, P_ERROR }, /* LF */
 		{ COMMAND_END, ADD_TRAILING }, /* CR */
-		{ TRAILING, INCREMENT }, /* SP */
+		{ TRAILING, ADD_TRAILING }, /* SP */
 		{ TRAILING, INCREMENT }, /* OTHER */
 		{ ERROR, P_ERROR }, /* CTL */
 		{ DCC, RESET }, /* SOH */

@@ -7,10 +7,17 @@ Hello::Hello(Bot& conn, Message& msg)
 Hello::~Hello() {}
 
 Command::ret_type Hello::execute(void) {
+	std::string rand_answer[5] = {
+		"Hello :D",
+		"Hi :D",
+		"Hey :D",
+		"Hi there :D",
+		"Hello there :D"
+	};
 
-//	PRINT("yoooo");
-	_conn.enqueue(gen_reply(":hello"));
-
+	if (_msg.params_first()[0] == '#') {
+		_conn.enqueue(chan_reply(rand_answer[myrand() % 5]));
+	}
 	return 0;
 }
 

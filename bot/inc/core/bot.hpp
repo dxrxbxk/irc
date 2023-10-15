@@ -13,8 +13,10 @@
 # include <vector>
 # include "parser.hpp"
 # include "command_factory.hpp"
+# include "signal.hpp"
 
 # define ADDR "127.0.0.1"
+# define MAX_EVENTS 100
 
 # define EPOLL_ERRORS (EPOLLERR | EPOLLHUP | EPOLLRDHUP)
 

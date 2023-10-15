@@ -6,7 +6,7 @@ Bot::Bot(const std::string &port, const std::string &pass) :
 	_epoll_fd(-1),
 	_buffer_in(),
 	_buffer_out(),
-	_wait_out(false),  
+	_wait_out(true),  
 	_nickname("bot"),
 	_username("Mikey"), 
 	_hostname("bot.42.fr"),
@@ -22,7 +22,7 @@ Bot::Bot(const std::string &port, const std::string &pass) :
 	add_event();
 }
 
-Bot::~Bot() {}
+Bot::~Bot() { } 
 
 /*------------------------ name accessors ----------------------*/
 
@@ -93,7 +93,7 @@ void Bot::read(void) {
 
 			if (cmd == NULL) {
 				//Logger::info(msg.command() + " command not found");
-				ERROR(msg.trailing() + " command not found");
+				ERROR("command not found");
 			}
 			else {
 				cmd->execute();
@@ -143,6 +143,7 @@ void Bot::disconnect(void) {
 	std::cout << "disconnect" << std::endl;
 	close(_sfd);
 	close(_epoll_fd);
+	del_event();
 	stop();
 }
 
@@ -179,17 +180,21 @@ void	Bot::login(void) {
 }
 
 void	Bot::run(void) {
-	login();
-	_running = true;
-	while (_running) {
-		poller();
+	try {
+		login();
+		_running = true;
+		while (_running) {
+			poller();
+		}
+	} catch (const std::exception& e) {
+		ERROR(e.what());
 	}
 }
 
-#define MAX_EVENTS 100
-
 void	Bot::poller(void) {
 	struct epoll_event ev[MAX_EVENTS];
+
+	Signal::signal_nopipe_manager();
 
 	int nfds = epoll_wait(_epoll_fd, ev, 1, -1);
 

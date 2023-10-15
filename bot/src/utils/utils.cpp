@@ -23,6 +23,15 @@ std::string custom_inet_ntoa(struct in_addr addr) {
     return ip_str;
 }
 
+int		myrand(void) {
+	static bool first = true;
+	if (first) {
+		srand(time(NULL));
+		first = false;
+	}
+	return (rand());
+}
+
 void setnonblocking(const int fd) {
     if (::fcntl(fd, F_SETFL, O_NONBLOCK) < 0)
 		throw std::runtime_error("SETFL failed");
