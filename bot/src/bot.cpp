@@ -1,7 +1,7 @@
 #include "bot.hpp"
 #include "utils.hpp"
 
-Bot::Bot(const std::string &addr, const std::string &port, const std::string &pass) :
+Bot::Bot(const std::string &port, const std::string &pass) :
 	_sfd(-1),
 	_epoll_fd(-1),
 	_buffer_in(),
@@ -13,9 +13,8 @@ Bot::Bot(const std::string &addr, const std::string &port, const std::string &pa
 	_servername("irc.42.fr"),
 	_running(false),
 	_pass(pass)
-
 {
-	create_socket(addr.c_str(), port.c_str());
+	create_socket("localhost", port.c_str());
 	_epoll_fd = epoll_create(1);
 	if (_epoll_fd == -1) {
 		throw std::runtime_error(handleSysError("epoll_create"));
@@ -81,13 +80,14 @@ void Bot::read(void) {
 
 	for (vec_str::const_iterator i = l_msg.begin(); i != l_msg.end(); ++i) {
 
-		PRINT("message recu: " << *i);
+//		PRINT("message recu: " << *i);
 
 		try {
 			// parse raw message
 			Message msg = Parser::parse(*i);
+
 			msg.print();
-			
+
 			if (not is_numerics(msg.command())) {
 				Command* cmd = CommandFactory::create(*this, msg);
 
@@ -200,15 +200,12 @@ void	Bot::poller(void) {
 	for (int i = 0; i < nfds; ++i) {
 
 		if (ev[i].events & EPOLL_ERRORS) {
-			ERROR("epoll error");
 			disconnect();
 		}
 		else if (ev[i].events & EPOLLIN) {
-			PRINT("EPOLLIN");
 			read();
 		}
 		else if (ev[i].events & EPOLLOUT) {
-			PRINT("EPOLLOUT");
 			write();
 		}
 	}

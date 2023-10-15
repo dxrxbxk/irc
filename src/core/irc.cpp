@@ -41,7 +41,7 @@ int Irc::start(const std::string& port, const std::string& password) {
 	try {
 		Signal::signal_ignore();
 
-		std::string	address = "debian";
+		std::string	address = "127.0.0.1";
 
 		ServerInfo info("Backrooms", address, port, "");
 

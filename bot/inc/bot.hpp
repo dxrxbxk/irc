@@ -14,14 +14,14 @@
 # include "parser.hpp"
 # include "command_factory.hpp"
 
+# define ADDR "127.0.0.1"
+
 # define EPOLL_ERRORS (EPOLLERR | EPOLLHUP | EPOLLRDHUP)
-
-
 
 class Bot {
 	//methodes de IOEvent
 	public:
-		Bot(const std::string &addr, const std::string &port, const std::string &pass);
+		Bot(const std::string &port, const std::string &pass);
 		~Bot();
 		Bot(int sfd);
 

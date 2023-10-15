@@ -2,10 +2,15 @@
 
 int	main(int ac, char **av) {
 	if (ac != 3) {
-		std::cerr << "Usage: ./bot <server> <password>" << std::endl;
+		std::cerr << "Usage: ./bot <port> <password>" << std::endl;
 		return 1;
 	}
-	Bot bot(*av + 1, *av + 2, *av + 3);
-	bot.run();
+	try {
+		Bot bot(av[1], av[2]);
+		bot.run();
+	} catch (const std::exception &e) {
+		std::cerr << e.what() << std::endl;
+		return 1;
+	}
 	return 0;
 }
