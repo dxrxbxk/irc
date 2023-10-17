@@ -97,7 +97,7 @@ class Parser {
 		static void				*a_firstline[3];
 		static action_p			a_table[A_SIZE];
 		static transition		t_table[S_SIZE][CT_SIZE];
-		static const e_chartype	c_table[128];
+		static const e_chartype	c_table[256];
 };
 
 #endif
