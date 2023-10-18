@@ -45,11 +45,11 @@ Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode) {
 			_conn.enqueue(RPL::chano_privs_needed(_conn.info(), channel.name()));
 			return 0;
 	}
-//	param_type param = _msg.params(2);
-	std::size_t _index = 2;
+
+	std::string &param = _msg.params(2);
+
 	for (std::size_t i = 0; i < mode.size(); i++) {
 		if (mode[i] == '+') {
-			std::string param = _msg.params(_index++);
 			switch (mode[i + 1]) {
 				case 'i':
 					channel.invite_only(true);
@@ -87,7 +87,6 @@ Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode) {
 			}
 		}
 		else if (mode[i] == '-') {
-			std::string param = _msg.params(_index++);
 			switch (mode[i + 1]) {
 				case 'i':
 					channel.invite_only(false);
@@ -122,13 +121,15 @@ Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode) {
 }
 
 Command::ret_type	Mode::execute(void) {
-	std::string& target = _msg.params_first();
-	std::string& modes = _msg.params(1);
 
 	if (not _msg.has_params() || _msg.params_size() == 1) {
 		_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
 		return 0;
 	}
+
+	std::string& target = _msg.params_first();
+	std::string& modes = _msg.params(1);
+
 	if (target[0] == '#' || target[0] == '&')
 		handle_channel(target, modes);
 	else
