@@ -22,6 +22,12 @@ Command::ret_type	Join::execute(void) {
 			_conn.enqueue(RPL::invite_only_chan(_conn.info(), _msg.params_first()));
 			return 0;
 		}
+		else if (not channel.invite_only() && channel.has_key()) {
+			if (_msg.params_size() < 2 || _msg.params(1) != channel.key()) {
+				_conn.enqueue(RPL::bad_channel_key(_conn.info(), _msg.params_first()));
+				return 0;
+			}
+		}
 		_conn.enter_channel(channel);
 		channel.broadcast(":" + _conn.fullname() + " JOIN " + _msg.params_first() + CRLF);
 		if (not channel.topic().empty())

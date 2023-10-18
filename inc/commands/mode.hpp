@@ -16,6 +16,8 @@
 #include "command.hpp"
 #include <cstdlib>
 
+class Channel;
+
 class Mode : public Command {
 
 	public:
@@ -33,6 +35,9 @@ class Mode : public Command {
 
 		ret_type	handle_user(void);
 		ret_type	handle_channel(std::string&, std::string&);
+
+		void		add_mode(const char* mode, Channel&);
+		void		remove_mode(const char* mode, Channel&);
 
 };
 

@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   channel.cpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/02 00:43:43 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 04:00:54 by diroyer          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #include "channel.hpp"
 #include "server.hpp"
 
@@ -100,6 +88,10 @@ int		Channel::limit(void) {
 	return _modes.userLimit;
 }
 
+bool	Channel::has_key(void) {
+	return not _modes.channelKey.empty();
+}
+
 void	Channel::key(std::string& key) {
 	_modes.channelKey.swap(key);
 }
@@ -110,10 +102,6 @@ void	Channel::key(const std::string& key) {
 
 std::string&	Channel::key(void) {
 	return _modes.channelKey;
-}
-
-void	Channel::key(bool option) {
-	_modes.channelKey = option;
 }
 
 void	Channel::invite_only(bool option) {

@@ -53,6 +53,8 @@ namespace RPL {
 	ret_type	no_text_to_send(arg_type);
 	ret_type	invite_only_chan(arg_type, const std::string&);
 	ret_type	no_recipient(arg_type, const std::string&);
+	ret_type	key_set(arg_type, const std::string&);
+	ret_type	bad_channel_key(arg_type, const std::string&);
 
 	enum code
 	{

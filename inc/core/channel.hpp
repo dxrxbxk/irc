@@ -1,15 +1,3 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   channel.hpp                                        :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: diroyer <diroyer@student.42.fr>            +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2023/10/02 00:44:14 by diroyer           #+#    #+#             */
-/*   Updated: 2023/10/02 03:57:14 by diroyer          ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef CHANNEL_HPP
 # define CHANNEL_HPP
 
@@ -87,7 +75,8 @@ class Channel {
 		void			key(std::string&);
 		void			key(const std::string&);
 		std::string&	key(void);
-		void			key(bool);
+		//void			key(bool);
+		bool			has_key(void);
 
 		void			invite_only(bool);
 		bool			invite_only(void);

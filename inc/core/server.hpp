@@ -152,32 +152,4 @@ class Server : public IOEvent {
 		std::string		_buffer_out;
 
 };
-static const char* message_irc = 
-"This server has been sponsored by 935\r\n"
-" \r\n"
-"-------------------------------------------------------------------\r\n"
-"[%] Server Staff =-\r\n"
-" \r\n"
-".::. Administrator....:\r\n"
-"                        Terry Davis\r\n"
-"\r\n"
-".::. Operators........:\r\n"
-"                        diroyer\r\n"
-"                        tutur\r\n"
-"                        momadani\r\n"
-" \r\n"
-"-------------------------------------------------------------------\r\n"
-"[%] Server Policies =-\r\n"
-" \r\n"
-"a. No spamming or advertising allowed, if found you will be banned from this server/network.\r\n"
-"b. No malicious bots, including flood and nick/channel chasers.\r\n"
-"c. No channel filler bots/clients.\r\n"
-"   # A channel filler is a client or bot which is connected just to fill a channel and make it look bigger.\r\n"
-"d. Operator impersonation will not be tolerated and cause you to be banned from this server/network.\r\n"
-" \r\n"
-"\"REMEMBER IRC IS A PRIVILEGE, NOT A RIGHT\"\r\n"
-"-------------------------------------------------------------------\r\n"
-" \r\n"
-"Thank you for using BackRooms.42.net, we hope you enjoy the stay with us.";
-
 #endif

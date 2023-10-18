@@ -17,6 +17,18 @@
 
 #define CRLF "\r\n"
 
+RPL::ret_type	RPL::bad_channel_key(arg_type info, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "475 " << info.nickname << " " << channel << " :Cannot join channel (+k)" << CRLF;
+	return buffer.str();
+}
+
+RPL::ret_type	RPL::key_set(arg_type info, const std::string& channel) {
+	std::stringstream	buffer;
+	buffer << "467 " << info.nickname << " " << channel << " :Channel key already set" << CRLF;
+	return buffer.str();
+}
+
 RPL::ret_type	RPL::no_recipient(arg_type info, const std::string& cmd) {
 	std::stringstream	buffer;
 	buffer << "411 " << info.nickname << " :No recipient given (" << cmd << ")" << CRLF;
@@ -91,6 +103,7 @@ RPL::ret_type	RPL::channel_is_full(arg_type info, const std::string& channel) {
 }
 
 RPL::ret_type	RPL::chano_privs_needed(arg_type info, const std::string& channel) {
+	(void)info;
 	std::stringstream	buffer;
 	buffer << "482 " << channel << " :You're not channel operator" << CRLF;
 	return buffer.str();
@@ -136,6 +149,7 @@ RPL::ret_type	RPL::erroneus_nickname(arg_type info, const std::string& nick) {
 }
 
 RPL::ret_type	RPL::nickname_in_use(arg_type info, const std::string& nick) {
+	(void)info;
 	std::stringstream	buffer;
 	buffer << "433 " << nick << " " << nick << " :Nickname in use" << CRLF;
 	return buffer.str();

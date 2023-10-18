@@ -12,13 +12,13 @@ int		Pass::check_password(const std::string& password) {
 #if defined CRYPT
 	static std::string salt = extractSalt(Server::shared().password());
 
-	if (encryptPassword(_msg.params_first(), salt.c_str()) != Server::shared().password()) {
+	if (encryptPassword(password, salt.c_str()) != Server::shared().password()) {
 
 		_conn.enqueue(RPL::passwd_mismatch(_conn.info()));
 		return -1;
 	}
 #else
-	if (_msg.params_first() != Server::shared().password()) {
+	if (password != Server::shared().password()) {
 
 		_conn.enqueue(RPL::passwd_mismatch(_conn.info()));
 		return -1;

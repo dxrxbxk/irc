@@ -29,6 +29,103 @@ Command::ret_type	Mode::handle_user() {
 	return 0;
 }
 
+void	Mode::add_mode(const char* mode, Channel &channel) {
+	std::string added_mode;
+	std::string param = "";
+	std::size_t i = 2;
+	const std::size_t p_len = _msg.params_size();
+	while (*mode) {
+		if (i < p_len)
+			param = _msg.params(i);
+		switch (*mode) {
+			case 'i':
+				channel.invite_only(true);
+				added_mode += *mode;
+				break;
+			case 't':
+				channel.topic(true);
+				added_mode += *mode;
+				break;
+			case 'k':
+				if (param.empty()) {
+					_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
+					break;
+				}
+				if (not channel.key().empty())
+					_conn.enqueue(RPL::key_set(_conn.info(), channel.name()));
+				channel.key(param);
+				added_mode += *mode;
+				i < p_len ? i++ : i;
+				break;
+			case 'o':
+				if (param.empty()) {
+					_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
+					break;
+				}
+				else if (not channel.user_in(param)) {
+					_conn.enqueue(RPL::user_not_in_channel(_conn.info(), param, channel.name()));
+					break;
+				}
+				channel.add_op(param);
+				added_mode += *mode;
+				i < p_len ? i++ : i;
+				break;
+			case 'l':
+				if (param.empty()) {
+					_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
+					break;
+				}
+				channel.limit(std::atoi(param.c_str()));
+				added_mode += *mode;
+				i < p_len ? i++ : i;
+				break;
+			default:
+				_conn.enqueue(RPL::unknown_mode(_conn.info(), *mode));
+		}
+		mode++;
+	}
+	if (not added_mode.empty())
+		channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), "+" + added_mode));
+}
+
+void	Mode::remove_mode(const char* mode, Channel& channel) {
+	std::string added_mode;
+	std::string param = "";
+	std::size_t i = 2;
+	const std::size_t p_len = _msg.params_size();
+	while (*mode) {
+		if (i < p_len)
+			param = _msg.params(i);
+		switch (*mode) {
+			case 'i':
+				channel.invite_only(false);
+				break;
+			case 't':
+				channel.topic(false);
+				break;
+			case 'k':
+				channel.key("");
+				break;
+			case 'o':
+				if (not channel.user_in(param)) {
+					_conn.enqueue(RPL::user_not_in_channel(_conn.info(), param, channel.name()));
+					break;
+				}
+				i < p_len ? i++ : i;
+				channel.rm_op(param);
+				break;
+			case 'l':
+				channel.limit(false);
+				break;
+			default:
+				_conn.enqueue(RPL::unknown_mode(_conn.info(), *mode));
+		}
+		mode++;
+	}
+	if (not added_mode.empty())
+		channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), "-" + added_mode));
+}
+
 Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode) {
 	if (not _server.channel_exist(target)) {
 			_conn.enqueue(RPL::no_such_channel(_conn.info(), target));
@@ -46,75 +143,14 @@ Command::ret_type	Mode::handle_channel(std::string& target, std::string& mode) {
 			return 0;
 	}
 
-	std::string &param = _msg.params(2);
-
 	for (std::size_t i = 0; i < mode.size(); i++) {
 		if (mode[i] == '+') {
-			switch (mode[i + 1]) {
-				case 'i':
-					channel.invite_only(true);
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				case 't':
-					channel.topic(true);
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				case 'k':
-					if (not param.empty()) {
-						channel.key(param);
-						channel.key(true);
-					}
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				case 'o':
-					if (not channel.user_in(param)) {
-						_conn.enqueue(RPL::user_not_in_channel(_conn.info(), param, channel.name()));
-						break;
-					}
-					channel.add_op(param);
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				case 'l':
-					if (param.empty()) {
-						_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
-						break;
-					}
-					channel.limit(std::atoi(param.c_str()));
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				default:
-					_conn.enqueue(RPL::unknown_mode(_conn.info(), mode[i + 1]));
-			}
+			add_mode(mode.c_str() + i, channel);
+			return 0;
 		}
 		else if (mode[i] == '-') {
-			switch (mode[i + 1]) {
-				case 'i':
-					channel.invite_only(false);
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				case 't':
-					channel.topic(false);
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				case 'k':
-					channel.key('k');
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				case 'o':
-					if (not channel.user_in(param)) {
-						_conn.enqueue(RPL::user_not_in_channel(_conn.info(), param, channel.name()));
-						break;
-					}
-					channel.rm_op(param);
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				case 'l':
-					channel.limit(false);
-					channel.broadcast(RPL::channel_mode_is(_conn.info(), channel.name(), mode));
-					break;
-				default:
-					_conn.enqueue(RPL::unknown_mode(_conn.info(), mode[i + 1]));
-			}
+			remove_mode(mode.c_str() + i, channel);
+			return 0;
 		}
 	}
 	return 0;

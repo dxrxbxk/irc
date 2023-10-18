@@ -23,7 +23,6 @@ Nick::~Nick(void) {}
 
 Command::ret_type Nick::execute(void) {
 	std::string& first = _msg.params_first();
-	static int nb_guest = 1;
 
 		Logger::debug(first);
 	if (!(_conn.tracker() & PASS)) { //hein ?
@@ -45,16 +44,6 @@ Command::ret_type Nick::execute(void) {
 
 		_conn.enqueue(RPL::nickname_in_use(_conn.info(), first));
 		return 0;
-		/*
-		if (not _conn.registered()) {
-			_conn.tracker(NICK);
-			_conn.nickname("Guest" + utils::to_string(nb_guest));
-			nb_guest++;
-			if (nb_guest > GUEST_LIMIT)
-				return -1;
-			return 0;
-		}
-		*/
 	}
 
 	if (_conn.registered()) {
