@@ -51,8 +51,10 @@ void	Mode::add_mode(const char* mode, Channel &channel) {
 					_conn.enqueue(RPL::need_more_params(_conn.info(), _msg.command()));
 					break;
 				}
-				if (not channel.key().empty())
+				else if (not channel.key().empty()) {
 					_conn.enqueue(RPL::key_set(_conn.info(), channel.name()));
+					break ;
+				}
 				channel.key(param);
 				added_mode += *mode;
 				i < p_len ? i++ : i;
@@ -99,12 +101,15 @@ void	Mode::remove_mode(const char* mode, Channel& channel) {
 		switch (*mode) {
 			case 'i':
 				channel.invite_only(false);
+				added_mode += *mode;
 				break;
 			case 't':
 				channel.topic(false);
+				added_mode += *mode;
 				break;
 			case 'k':
 				channel.key("");
+				added_mode += *mode;
 				break;
 			case 'o':
 				if (not channel.user_in(param)) {
@@ -113,9 +118,11 @@ void	Mode::remove_mode(const char* mode, Channel& channel) {
 				}
 				i < p_len ? i++ : i;
 				channel.rm_op(param);
+				added_mode += *mode;
 				break;
 			case 'l':
 				channel.limit(false);
+				added_mode += *mode;
 				break;
 			default:
 				_conn.enqueue(RPL::unknown_mode(_conn.info(), *mode));

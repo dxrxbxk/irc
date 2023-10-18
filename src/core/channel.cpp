@@ -139,6 +139,9 @@ std::size_t Channel::size(void) const {
 }
 
 void Channel::add_user(Connexion& user) {
+	if (is_invited(user.nickname())) {
+		rm_invite(user.nickname());
+	}
 	_users[user.nickname()] = &user;
 }
 
