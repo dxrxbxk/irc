@@ -1,0 +1,188 @@
+/usr/bin/valgrind valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./ircserv 8080 pass
+==4989== Memcheck, a memory error detector
+==4989== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==4989== Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info
+==4989== Command: /usr/bin/valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --track-fds=yes ./ircserv 8080 pass
+==4989== 
+==4989== Memcheck, a memory error detector
+==4989== Copyright (C) 2002-2022, and GNU GPL'd, by Julian Seward et al.
+==4989== Using Valgrind-3.19.0 and LibVEX; rerun with -h for copyright info
+==4989== Command: ./ircserv 8080 pass
+==4989== 
+Starting server, password: pass
+
+Creating an endpoint for communication
+IP address: 127.0.0.1
+Port: 8080
+epoll instance: 4
+new connection
+recv CAP LS 302
+
+command [CAP] middle [LS] [302] 
+recv JOIN :
+
+command [JOIN]trailing [:]
+recv CAP END
+
+command [CAP] middle [END] 
+recv PASS pass
+
+command [PASS] middle [pass] 
+recv NICK bob
+
+command [NICK] middle [bob] 
+recv USER richtofen richtofen localhost :richtofen
+
+command [USER] middle [richtofen] [richtofen] [localhost] trailing [:richtofen]
+recv MODE bob +i
+
+command [MODE] middle [bob] [+i] 
+recv JOIN #qwe
+
+command [JOIN] middle [#qwe] 
+recv PING localhost
+
+command [PING] middle [localhost] 
+recv PRIVMSG #qwe :hello
+
+command [PRIVMSG] middle [#qwe] trailing [:hello]
+recv MODE #qwe +olk321 123 123 123
+
+command [MODE] middle [#qwe] [+olk321] [123] [123] [123] 
+new connection
+recv CAP LS 302
+
+command [CAP] middle [LS] [302] 
+recv JOIN :
+
+command [JOIN]trailing [:]
+recv CAP END
+
+command [CAP] middle [END] 
+recv PASS pass
+
+command [PASS] middle [pass] 
+recv NICK rictofen
+
+command [NICK] middle [rictofen] 
+recv USER richtofen richtofen localhost :richtofen
+
+command [USER] middle [richtofen] [richtofen] [localhost] trailing [:richtofen]
+recv MODE rictofen +i
+
+command [MODE] middle [rictofen] [+i] 
+recv JOIN #qwe
+
+command [JOIN] middle [#qwe] 
+recv PRIVMSG #qwe :asd
+
+command [PRIVMSG] middle [#qwe] trailing [:asd]
+recv PING localhost
+
+command [PING] middle [localhost] 
+recv JOIN #qwe
+
+command [JOIN] middle [#qwe] 
+recv JOIN #qwe 123
+
+command [JOIN] middle [#qwe] [123] 
+recv PING localhost
+
+command [PING] middle [localhost] 
+recv PART #qwe
+
+command [PART] middle [#qwe] 
+recv PART #qwe
+
+command [PART] middle [#qwe] 
+recv JOIN #qwe
+
+command [JOIN] middle [#qwe] 
+recv JOIN #qwe
+
+command [JOIN] middle [#qwe] 
+recv MODE #qwe +lk 1 123
+
+command [MODE] middle [#qwe] [+lk] [1] [123] 
+recv PART #qwe
+
+command [PART] middle [#qwe] 
+recv JOIN #qwe
+
+command [JOIN] middle [#qwe] 
+recv PING localhost
+
+command [PING] middle [localhost] 
+recv JOIN #qwe 12
+
+command [JOIN] middle [#qwe] [12] 
+recv JOIN #qwe 123
+
+command [JOIN] middle [#qwe] [123] 
+channel is full
+recv PRIVMSG #qwe :asd
+
+command [PRIVMSG] middle [#qwe] trailing [:asd]
+recv JOIN #qwe 123
+
+command [JOIN] middle [#qwe] [123] 
+channel is full
+recv PRIVMSG #qwe :asd
+
+command [PRIVMSG] middle [#qwe] trailing [:asd]
+recv PING localhost
+
+command [PING] middle [localhost] 
+^CError: epoll_wait: Interrupted system call
+closing fd : 6
+closing fd : 5
+closing fd : 3
+==4989== 
+==4989== FILE DESCRIPTORS: 3 open (3 std) at exit.
+==4989== 
+==4989== HEAP SUMMARY:
+==4989==     in use at exit: 288 bytes in 6 blocks
+==4989==   total heap usage: 720 allocs, 714 frees, 161,240 bytes allocated
+==4989== 
+==4989== 64 bytes in 2 blocks are indirectly lost in loss record 1 of 3
+==4989==    at 0x4840F2F: operator new(unsigned long) (vg_replace_malloc.c:422)
+==4989==    by 0x110E0D: std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x120CAC: Join::split_channel(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x1210F9: Join::execute() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x113FCC: Connexion::read() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x10CEA5: Poll::run() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x10E4AB: Server::run() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x11776A: Irc::start(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x10D826: main (in /home/richtofen/ircp2/ircserv)
+==4989== 
+==4989== 64 bytes in 2 blocks are indirectly lost in loss record 2 of 3
+==4989==    at 0x4840F2F: operator new(unsigned long) (vg_replace_malloc.c:422)
+==4989==    by 0x110E0D: std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x121004: Join::split_keys(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x121121: Join::execute() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x113FCC: Connexion::read() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x10CEA5: Poll::run() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x10E4AB: Server::run() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x11776A: Irc::start(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x10D826: main (in /home/richtofen/ircp2/ircserv)
+==4989== 
+==4989== 288 (160 direct, 128 indirect) bytes in 2 blocks are definitely lost in loss record 3 of 3
+==4989==    at 0x4840F2F: operator new(unsigned long) (vg_replace_malloc.c:422)
+==4989==    by 0x121D04: Join::create(Connexion&, Message&) (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x113FBA: Connexion::read() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x10CEA5: Poll::run() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x10E4AB: Server::run() (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x11776A: Irc::start(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&) (in /home/richtofen/ircp2/ircserv)
+==4989==    by 0x10D826: main (in /home/richtofen/ircp2/ircserv)
+==4989== 
+==4989== LEAK SUMMARY:
+==4989==    definitely lost: 160 bytes in 2 blocks
+==4989==    indirectly lost: 128 bytes in 4 blocks
+==4989==      possibly lost: 0 bytes in 0 blocks
+==4989==    still reachable: 0 bytes in 0 blocks
+==4989==         suppressed: 0 bytes in 0 blocks
+==4989== 
+==4989== For lists of detected and suppressed errors, rerun with: -s
+==4989== ERROR SUMMARY: 1 errors from 1 contexts (suppressed: 0 from 0)
+make: *** [Makefile:205: leaks] Error 1
+
